@@ -38,17 +38,17 @@
 
 ---
 
-## 3. Кандидати на розбір
+## 3. Конкуренти для аналізу
 
-Чернетка списку, уточнюється на старті.
+Повний список із обґрунтуванням, критеріями відбору та порядком розбору — **[`competitors.md`](competitors.md)**.
 
-**Прямі конкуренти:** Things · Sunsama · Amie · Motion · Linear · Todoist · TeuxDeux
-**Показ руху:** Strava · Duolingo · Streaks · Oura · Apple Fitness
-**Не-списки:** Milanote · tldraw · Obsidian Canvas · Kinopio · Muse
-**Рефлексія:** Stoic · Reflectly · Day One · Exist
-**Поза категорією:** карти прогресу в іграх · навігація в Google Maps · Kanban-альтернативи
+Коротко: три групи по п'ять.
 
----
+- **ХАРД** (той самий кут бачення, та сама аудиторія): Sunsama · Amie · Motion · Complice · Superlist
+- **СОФТ** (інший продукт, та сама задача — вести довге з фокусом на прогрес): Strava · Duolingo · Beeminder · Oura · GitHub
+- **АСПІРАЦІЙНІ** (міжнародні еталони категорії): Things · Linear · Basecamp · Asana · Notion
+
+Розбираємо не за популярністю, а за тим, які відкриті питання продукт закриває. Перша черга — Duolingo, Beeminder, Basecamp: усі три б'ють у **O5**, головний блокер дизайну.
 
 ## 4. Знахідки
 
