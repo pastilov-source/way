@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAY — ресерч</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Commissioner:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#0D120F; --surface:#151C18; --surface-2:#1C2520; --surface-3:#232E27;
+  --ink:#E5ECE6; --ink-2:#B2C0B7; --muted:#7E8D85;
+  --line:#232E27; --line-2:#314037;
+  --accent:#77C79A; --accent-dim:#3E7A5B; --accent-soft:#16271E;
+  --signal:#E0A45C; --signal-soft:#2C2318;
+  --danger:#E08B7C;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Commissioner","Helvetica Neue",Arial,sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(119,199,154,.28)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+.shell{max-width:1340px;margin:0 auto;padding:0 32px 120px;display:grid;grid-template-columns:216px 1fr;gap:56px;align-items:start}
+
+/* ---------- toc ---------- */
+.toc{position:sticky;top:0;padding:48px 0 0;font-size:13.5px}
+.toc-mark{font-family:"Unbounded",sans-serif;font-weight:700;font-size:15px;letter-spacing:.16em;color:var(--accent);margin-bottom:4px}
+.toc-sub{font-size:11px;letter-spacing:.06em;color:var(--muted);margin-bottom:26px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px;border-left:1px solid var(--line-2)}
+.toc a{display:block;padding:7px 0 7px 15px;color:var(--ink-2);border:0;border-left:2px solid transparent;margin-left:-1px;line-height:1.3}
+.toc a:hover{color:var(--accent);border-left-color:var(--accent-dim)}
+.toc .n{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);display:block;margin-bottom:1px}
+
+/* ---------- head ---------- */
+header.doc{padding:64px 0 12px;max-width:74ch}
+h1{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(32px,4.6vw,52px);line-height:1.04;letter-spacing:-.035em;margin:0 0 20px;text-wrap:balance}
+.lede{font-size:17.5px;color:var(--ink-2);margin:0 0 24px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.meta span{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.02em;padding:5px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line-2);color:var(--ink-2)}
+.rule{background:var(--surface);border:1px solid var(--line-2);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:18px 22px;font-size:15px;color:var(--ink-2)}
+.rule b{color:var(--ink)}
+
+/* ---------- sections ---------- */
+section{padding-top:72px;scroll-margin-top:24px}
+.sec-h{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.sec-n{font-family:"Unbounded",sans-serif;font-weight:500;font-size:12.5px;color:var(--accent);letter-spacing:.06em}
+h2{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(23px,2.6vw,31px);letter-spacing:-.025em;margin:0;flex:1 1 auto}
+.sec-rule{height:1px;background:linear-gradient(90deg,var(--line-2),transparent);margin:14px 0 30px}
+h3{font-size:20px;font-weight:700;letter-spacing:-.015em;margin:44px 0 12px;text-wrap:balance}
+h4{font-size:16.5px;font-weight:700;margin:28px 0 8px;color:var(--ink)}
+p{margin:0 0 15px;max-width:78ch}
+.sub{color:var(--muted);font-size:14px;max-width:78ch}
+
+/* ---------- chips ---------- */
+.chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 7px;border-radius:4px;vertical-align:middle;white-space:nowrap}
+.chip.unver{background:var(--signal-soft);color:var(--signal);border:1px solid rgba(224,164,92,.3)}
+.chip.ours{background:var(--surface-3);color:var(--ink-2);border:1px solid var(--line-2)}
+.chip.q{background:var(--accent-soft);color:var(--accent);border:1px solid rgba(119,199,154,.28)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 14px;border:1px solid var(--line-2);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+thead th{background:var(--surface-2);color:var(--ink);font-weight:700;font-size:13px;position:sticky;top:0;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody th{background:var(--surface-2);font-weight:600;color:var(--ink-2);font-size:13px;white-space:nowrap;width:1%}
+td b,th b{color:var(--ink)}
+.src{font-size:12.5px;color:var(--muted);margin:0 0 34px;max-width:none;line-height:1.7}
+.src b{color:var(--ink-2);font-weight:600}
+
+/* score table */
+table.scores{min-width:680px}
+table.scores td,table.scores th{text-align:center}
+table.scores tbody th,table.scores thead th:first-child{text-align:left}
+table.scores thead th{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:400;color:var(--muted);white-space:normal;line-height:1.3}
+.s{font-family:"JetBrains Mono",monospace;font-style:normal;font-weight:600;font-size:13.5px;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:6px}
+.s1{background:rgba(224,139,124,.13);color:var(--danger)}
+.s2{background:rgba(224,164,92,.13);color:var(--signal)}
+.s3{background:var(--surface-3);color:var(--ink-2)}
+.s4{background:rgba(119,199,154,.13);color:var(--accent)}
+.s5{background:rgba(119,199,154,.24);color:var(--accent)}
+.sum{font-family:"JetBrains Mono",monospace;font-weight:600;color:var(--ink)}
+
+/* ---------- cards ---------- */
+.mech{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px}
+.mech.no{border-color:rgba(224,139,124,.3)}
+.mech-t{display:flex;align-items:baseline;gap:11px;margin-bottom:10px;flex-wrap:wrap}
+.mech-id{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;color:var(--accent)}
+.mech.no .mech-id{color:var(--danger)}
+.mech-n{font-size:18px;font-weight:700;letter-spacing:-.015em;margin:0}
+.mech p:last-child{margin-bottom:0}
+.mech ol{margin:0;padding-left:20px}
+.mech ol li{margin-bottom:9px;max-width:78ch}
+.mech ol li:last-child{margin-bottom:0}
+
+.note{background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--radius);padding:16px 20px;margin:18px 0;font-size:14.5px;color:var(--ink-2)}
+.note b{color:var(--ink)}
+
+/* pattern loop */
+.loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin:20px 0 18px}
+.beat{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:18px 19px;position:relative}
+.beat-n{font-family:"Unbounded",sans-serif;font-size:11px;font-weight:500;color:var(--accent);letter-spacing:.08em;margin-bottom:7px}
+.beat-t{font-size:16px;font-weight:700;margin:0 0 6px}
+.beat p{font-size:14px;color:var(--ink-2);margin:0}
+
+/* ---------- screens ---------- */
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:8px 0 34px}
+figure{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
+figure a{display:block;border:0;line-height:0}
+figure img{width:100%;height:132px;object-fit:cover;object-position:top center;display:block;filter:saturate(.85) brightness(.94);transition:filter .2s}
+figure a:hover img{filter:saturate(1) brightness(1)}
+figcaption{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);padding:8px 10px;line-height:1.4;border-top:1px solid var(--line)}
+figcaption .gated{color:var(--signal)}
+
+footer{margin-top:80px;padding-top:26px;border-top:1px solid var(--line-2);font-size:13.5px;color:var(--muted)}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:1fr;gap:0;padding:0 20px 80px}
+  .toc{position:static;padding:26px 0 0;border-bottom:1px solid var(--line-2);padding-bottom:22px}
+  .toc ol{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));display:grid;border-left:0;gap:4px}
+  .toc a{border-left:0;padding-left:0}
+  header.doc{padding-top:34px}
+  section{padding-top:52px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="toc" aria-label="Зміст">
+  <div class="toc-mark">WAY</div>
+  <div class="toc-sub">РЕСЕРЧ · 2026-09-04</div>
+  <ol>
+    <li><a href="#konkurenty"><span class="n">01</span>Конкуренти</a></li>
+    <li><a href="#benchmark"><span class="n">02</span>Бенчмарк</a></li>
+    <li><a href="#paterny"><span class="n">03</span>Патерни</a></li>
+    <li><a href="#vysnovky"><span class="n">04</span>Висновки</a></li>
+    <li><a href="#vidkladene"><span class="n">05</span>Відкладене</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="doc">
+  <h1>Ресерч WAY</h1>
+  <p class="lede">Пʼятнадцять продуктів у трьох групах, вимір спільної болі на пʼятьох еталонах поза категорією, обраний патерн взаємодії та гіпотеза на кожну прогалину.</p>
+  <div class="meta">
+    <span>основний раунд завершено</span>
+    <span>метод: кабінетний</span>
+    <span>інтервʼю немає — D19</span>
+    <span>15 продуктів · 20 скрінів</span>
+  </div>
+  <div class="rule">
+    <b>Правило доказовості.</b> Кожен факт має посилання на джерело або скрін. Де перевіреного джерела немає — стоїть <span class="chip unver">дані не підтверджені</span>. Власні судження позначені як <span class="chip ours">наша оцінка</span> і чужими джерелами не прикриваються.
+  </div>
+</header>
+
+<!-- ================= 1 ================= -->
+<section id="konkurenty">
+  <div class="sec-h"><span class="sec-n">01</span><h2>Конкуренти</h2></div>
+  <div class="sec-rule"></div>
+  <p>Розподіл по групах — <span class="chip ours">наша оцінка</span>, не чиясь класифікація. Критерій потрапляння — не популярність, а те, чи закриває продукт відкрите питання.</p>
+
+  <div class="note"><b>Дві зміни, виявлені під час розбору.</b> <a href="https://amie.so/">amie.so</a> тепер називається «Amie — AI Note Taker»: продукт перепозиціонувався з календаря на ШІ-конспекти зустрічей. <code class="mono">complice.co</code> віддає 301 на <a href="https://intend.do/">intend.do</a> — Complice перейменовано на Intend.</p></div>
+
+  <h3>Група ХАРД</h3>
+  <p class="sub">Максимально близькі за ідеєю підходу: змінюють кут бачення й відчуття від ведення проєкту. Та сама аудиторія.</p>
+  <div class="tw"><table>
+    <thead><tr><th></th><th>Sunsama</th><th>Motion</th><th>Intend</th><th>Superlist</th><th>Amie</th></tr></thead>
+    <tbody>
+      <tr><th>Аудиторія</th><td>Знаннєві працівники, засновники</td><td>Операційні менеджери й засновники</td><td>Розчаровані в класичних системах; окремо — люди з executive dysfunction</td><td>Професіонали й родини</td><td>Команди зі зустрічами: GTM, customer success</td></tr>
+      <tr><th>Основа</th><td><b>День</b> між ранковим плануванням і вечірнім shutdown</td><td><b>Календар.</b> Беклог є, людина його не бачить</td><td><b>Ціль первинна, задача похідна</b></td><td>Список, доведений до краси</td><td><b>Зустріч</b></td></tr>
+      <tr><th>Механізм</th><td>Ритуал: «що реально влізе сьогодні» → ввечері «що вийшло»</td><td>ШІ розставляє задачі по слотах, перебудовує при змінах</td><td>Цикли рефлексії: день → тиждень → місяць → квартал → рік</td><td>Швидкість введення, голос у задачу</td><td>ШІ-аналіз зустрічі + дії в календарі й пошті</td></tr>
+      <tr><th>Довіра</th><td>Інтеграції з наявними інструментами; тріал без картки</td><td>Обіцянка ШІ. Критикують за плутану ціну</td><td>Чотири публічні принципи; соло-засновник, історія з 2012–13</td><td>Імена творців Wunderlist</td><td>Відгуки GTM-команд</td></tr>
+      <tr><th>Монетизація</th><td>$20/міс річно, $25/міс помісячно</td><td>$19/міс річно → $49/міс помісячно</td><td>$10/міс річно, $12/міс помісячно, коучинг $200/міс</td><td>$0 → $5 → $21 за особу/міс</td><td><span class="chip unver">дані не підтверджені</span> ціни на сторінці не вказані</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src"><b>Джерела.</b> Sunsama: <a href="https://dhruvirzala.com/sunsama-review/">dhruvirzala</a>, <a href="https://thebusinessdive.com/sunsama-review">The Business Dive</a> · Motion: <a href="https://ellieplanner.com/comparisons/motion-app-review">Ellie</a>, <a href="https://thebusinessdive.com/motion-app-review">The Business Dive</a> · Intend: <a href="https://intend.do/">intend.do</a>, <a href="https://intend.do/pricing">pricing</a>, <a href="https://intentionality.substack.com/p/complice-is-now-intend">Complice is now Intend</a> · Superlist: <a href="https://www.superlist.com/pricing">pricing</a> · Amie: <a href="https://amie.so/pricing">pricing</a></p>
+
+  <div class="note"><b>Ключове з групи.</b> Принципи Intend дослівно: <i>choosing &amp; doing over organizing · aliveness instead of exhaustiveness · goals as fundamental rather than tasks · proactive rather than reactive</i>. Цитата засновника: «There's no big backlog of tasks, piling up out there. There are a small handful of intentions for today, chosen by you today.»<br><br><b>$23 000 MRR, соло-засновник, бутстрап</b> (<a href="https://superframeworks.com/blog/intend">superframeworks</a>). Кількість користувачів — <span class="chip unver">дані не підтверджені</span>. При D18 це найрелевантніший бенчмарк розміру бізнесу з усіх пʼятнадцяти — <span class="chip ours">наша оцінка</span>.</div>
+
+  <div class="shots">
+    <figure><a href="screens/sunsama--marketing--rytual-dnya.png"><img src="screens/sunsama--marketing--rytual-dnya.png" alt="Sunsama — ритуал дня"></a><figcaption>sunsama · ритуал дня</figcaption></figure>
+    <figure><a href="screens/sunsama--app--DOSTUP-OBMEZHENO.png"><img src="screens/sunsama--app--DOSTUP-OBMEZHENO.png" alt="Sunsama — логін"></a><figcaption>sunsama · <span class="gated">доступ обмежено</span></figcaption></figure>
+    <figure><a href="screens/motion--marketing--rozklad-zamist-spysku.png"><img src="screens/motion--marketing--rozklad-zamist-spysku.png" alt="Motion — розклад замість списку"></a><figcaption>motion · розклад замість списку</figcaption></figure>
+    <figure><a href="screens/motion--app--DOSTUP-OBMEZHENO.png"><img src="screens/motion--app--DOSTUP-OBMEZHENO.png" alt="Motion — логін"></a><figcaption>motion · <span class="gated">доступ обмежено</span></figcaption></figure>
+    <figure><a href="screens/complice-intend--namir-dnya.png"><img src="screens/complice-intend--namir-dnya.png" alt="Intend — намір дня"></a><figcaption>intend · намір дня</figcaption></figure>
+    <figure><a href="screens/superlist--spysok-polagodzhenyi-vidchuttyam.png"><img src="screens/superlist--spysok-polagodzhenyi-vidchuttyam.png" alt="Superlist"></a><figcaption>superlist · список, полагоджений відчуттям</figcaption></figure>
+    <figure><a href="screens/amie--pivot-na-ai-notatky.png"><img src="screens/amie--pivot-na-ai-notatky.png" alt="Amie — пивот"></a><figcaption>amie · пивот на AI-нотатки</figcaption></figure>
+  </div>
+
+  <h3>Група СОФТ</h3>
+  <p class="sub">Інший продукт, та сама базова задача: вести щось довге з фокусом на прогрес.</p>
+  <div class="tw"><table>
+    <thead><tr><th></th><th>Duolingo</th><th>Beeminder</th><th>Strava</th><th>Oura</th><th>GitHub</th></tr></thead>
+    <tbody>
+      <tr><th>Аудиторія</th><td>Масовий самоучка</td><td>Self-quantification; ті, кого мотивують фінансові наслідки</td><td>Бігуни, велосипедисти</td><td>Ті, хто відстежує сон і відновлення</td><td>Розробники — та сама аудиторія, що наша ІТ-частина</td></tr>
+      <tr><th>Основа</th><td><b>Лінійний шлях</b> замість дерева навичок; один активний вузол</td><td><b>Графік-дорога</b>, на яку нанесено твою фактичну траєкторію</td><td><b>Активність як обʼєкт</b>: маршрут зберігається</td><td><b>Денна оцінка стану</b></td><td><b>Накопичена історія</b>: рік як сітка квадратиків</td></tr>
+      <tr><th>Механізм</th><td>Послідовність вирішує за тебе; стрік як паливо</td><td>Зійшов із лінії — списують гроші</td><td>Сегменти, рекорди, соціальне визнання</td><td>Продукт радить узяти день відпочинку</td><td>День = квадратик; залишок не показується ніколи</td></tr>
+      <tr><th>Довіра</th><td>Масштаб і публічні дослідження ефективності</td><td>Власна теорія слабкості волі, радикальна прозорість</td><td>Спільнота</td><td>Залізо, клінічні партнерства</td><td>Стандарт індустрії</td></tr>
+      <tr><th>Монетизація</th><td>Freemium; ціна Super — <span class="chip unver">не підтверджено</span></td><td>Гроші беруть за провал, не за доступ</td><td>Для України $4.99/міс або $29.99/рік</td><td><span class="chip unver">дані не підтверджені</span></td><td>$0 → $4 → $21 за особу/міс</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src"><b>Джерела.</b> Duolingo: <a href="https://blog.duolingo.com/new-duolingo-home-screen-design">blog.duolingo.com</a>, <a href="https://duoplanet.com/duolingo-new-learning-path-review/">duoplanet</a> · Beeminder: <a href="https://www.beeminder.com/">beeminder.com</a> · Strava: <a href="https://www.strava.com/pricing">pricing</a> · Oura: <a href="https://ouraring.com/">ouraring.com</a> · GitHub: <a href="https://github.com/pricing">pricing</a></p>
+
+  <div class="shots">
+    <figure><a href="screens/duolingo--marketing--home.png"><img src="screens/duolingo--marketing--home.png" alt="Duolingo"></a><figcaption>duolingo · маркетинг</figcaption></figure>
+    <figure><a href="screens/duolingo--path--DOSTUP-OBMEZHENO.png"><img src="screens/duolingo--path--DOSTUP-OBMEZHENO.png" alt="Duolingo path — логін"></a><figcaption>duolingo · шлях, <span class="gated">доступ обмежено</span></figcaption></figure>
+    <figure><a href="screens/beeminder--doroga-i-tvoya-liniya.png"><img src="screens/beeminder--doroga-i-tvoya-liniya.png" alt="Beeminder"></a><figcaption>beeminder · дорога і твоя лінія</figcaption></figure>
+    <figure><a href="screens/strava--proydena-vidstan-yak-obyekt.png"><img src="screens/strava--proydena-vidstan-yak-obyekt.png" alt="Strava"></a><figcaption>strava · пройдена відстань як обʼєкт</figcaption></figure>
+    <figure><a href="screens/oura--myaka-mova-pro-poganyi-den.png"><img src="screens/oura--myaka-mova-pro-poganyi-den.png" alt="Oura"></a><figcaption>oura · мʼяка мова про поганий день</figcaption></figure>
+    <figure><a href="screens/github--contribution-graph--kvadratyky.png"><img src="screens/github--contribution-graph--kvadratyky.png" alt="GitHub contribution graph"></a><figcaption>github · квадратики</figcaption></figure>
+    <figure><a href="screens/github--nakopychene-bez-zalyshku.png"><img src="screens/github--nakopychene-bez-zalyshku.png" alt="GitHub"></a><figcaption>github · накопичене без залишку</figcaption></figure>
+  </div>
+
+  <h3>Група АСПІРАЦІЙНІ</h3>
+  <p class="sub">Міжнародні еталони в категорії ведення проєктів.</p>
+  <div class="tw"><table>
+    <thead><tr><th></th><th>Things</th><th>Linear</th><th>Basecamp</th><th>Asana</th><th>Notion</th></tr></thead>
+    <tbody>
+      <tr><th>Аудиторія</th><td>Індивідуал в Apple-екосистемі</td><td>Продуктові й інженерні команди</td><td>Малі студії та агенції</td><td>Компанії з портфелем робіт і цілей</td><td>Усі — і це проблема <span class="chip ours">наша оцінка</span></td></tr>
+      <tr><th>Основа</th><td>Список, доведений до ремесла. <b>«Today» як єдиний екран рішення</b></td><td><b>Цикли</b>: робота живе в періоді, не в беклозі</td><td><b>Проєкт як набір скоупів, не задач</b>; Hill Chart поверх них</td><td>Портфель, цілі, звітність</td><td>Конструктор блоків</td></tr>
+      <tr><th>Механізм</th><td>Швидкість введення, відсутність зайвого; рішення за людиною</td><td>Momentum замість накопичення беклогу</td><td>Дві фази: вгору (зʼясовуємо) → вниз (виконуємо)</td><td>Automations, Goals, Portfolios</td><td>Гнучкість: будь-яка структура можлива, жодна не запропонована</td></tr>
+      <tr><th>Довіра</th><td>Незалежна студія зі Штутгарта, Apple Design Award 2017, один продукт за історію</td><td><b>The Linear Method</b> — публічна методологія</td><td>25 років, Shape Up і Rework, відмова від per-user цін</td><td>Масштаб і сертифікації</td><td>Екосистема шаблонів</td></tr>
+      <tr><th>Монетизація</th><td><b>Разова покупка</b>: iPhone $9.99. Mac та iPad — <span class="chip unver">не підтверджено</span></td><td>$0 → $10 → $16 за особу/міс</td><td><b>Фікс без per-user</b>: $0 → $25 → $59 → $99 → $299/міс</td><td>$0 (до 2 осіб) → $10.99 → $24.99</td><td>$0 → $10 → $20 за особу/міс</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src"><b>Джерела.</b> Things: <a href="https://apps.apple.com/us/app/things-3/id904237743">App Store</a>, <a href="https://productivewithchris.com/tools/things-3/">Productive with Chris</a> · Linear: <a href="https://linear.app/method">method</a>, <a href="https://linear.app/pricing">pricing</a> · Basecamp: <a href="https://basecamp.com/shapeup/3.4-chapter-13">Shape Up ch.13</a>, <a href="https://basecamp.com/hill-charts">hill-charts</a>, <a href="https://basecamp.com/pricing">pricing</a> · Asana: <a href="https://asana.com/pricing">pricing</a> · Notion: <a href="https://www.notion.com/pricing">pricing</a></p>
+
+  <div class="shots">
+    <figure><a href="screens/things--marketing--spokiy-i-today.png"><img src="screens/things--marketing--spokiy-i-today.png" alt="Things"></a><figcaption>things · спокій і Today</figcaption></figure>
+    <figure><a href="screens/linear--metodologiya-yak-produkt.png"><img src="screens/linear--metodologiya-yak-produkt.png" alt="Linear"></a><figcaption>linear · методологія як продукт</figcaption></figure>
+    <figure><a href="screens/basecamp--hill-chart--pagorb-zamist-spysku.png"><img src="screens/basecamp--hill-chart--pagorb-zamist-spysku.png" alt="Basecamp Hill Chart"></a><figcaption>basecamp · пагорб замість списку</figcaption></figure>
+    <figure><a href="screens/basecamp--shapeup-ch13--chomu-spysok-ne-pokazuye-prohres.png"><img src="screens/basecamp--shapeup-ch13--chomu-spysok-ne-pokazuye-prohres.png" alt="Shape Up ch.13"></a><figcaption>basecamp · чому список не показує прогрес</figcaption></figure>
+    <figure><a href="screens/asana--te-shcho-drazhnyt-zamovnyka.png"><img src="screens/asana--te-shcho-drazhnyt-zamovnyka.png" alt="Asana"></a><figcaption>asana · те, що дратує замовника</figcaption></figure>
+    <figure><a href="screens/notion--tsina-gnuchkosti.png"><img src="screens/notion--tsina-gnuchkosti.png" alt="Notion"></a><figcaption>notion · ціна гнучкості</figcaption></figure>
+  </div>
+
+  <h3>Три спільні патерни ринку</h3>
+  <div class="mech"><div class="mech-t"><span class="mech-id">П1</span><p class="mech-n">Категорія рухається від «покажи все» до «покажи одне»</p></div>
+    <p>Things звузив до екрана «Today». Sunsama — до дня, зібраного вручну. Motion — до слота в календарі. Duolingo — до одного активного вузла: редизайн мотивували тим, що люди питали, «чи правильно вони користуються продуктом», і компанія дала «чіткий шлях, яким можна йти» (<a href="https://blog.duolingo.com/new-duolingo-home-screen-design">blog.duolingo.com</a>). Basecamp — до однієї точки на скоуп.</p>
+    <p class="sub"><span class="chip ours">наша оцінка</span> «Крок дня» не є нашим диференціатором — це те, до чого категорія прийшла незалежно з пʼяти боків.</p></div>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">П2</span><p class="mech-n">Прогрес показують агрегацією; сотні одиниць не показує ніхто</p></div>
+    <p>Basecamp формулює прямо: списки задач <b>зростають</b> у міру просування, а hill chart показує <b>скоупи, а не задачі</b>, бо інакше картинка бреше (<a href="https://basecamp.com/shapeup/3.4-chapter-13">Shape Up ch.13</a>). Duolingo згортає уроки в секції.</p></div>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">П3</span><p class="mech-n">Довіра будується декларованою думкою, а не набором фіч</p></div>
+    <p><a href="https://linear.app/method">The Linear Method</a>, Shape Up у Basecamp, чотири принципи Intend, ритуал Sunsama. Продукт на методології — норма категорії.</p>
+    <p class="sub"><span class="chip ours">наша оцінка</span> Наш спосіб виходу на ринок стандартний для категорії, і його зрозуміють.</p></div>
+
+  <h3>Три відмінності</h3>
+  <div class="mech"><div class="mech-t"><span class="mech-id">В1</span><p class="mech-n">Хто обирає наступний крок — і чим за це платять</p></div>
+    <p>Пʼять відповідей: людина (Things, Basecamp, Notion) · система (Motion) · послідовність контенту (Duolingo) · ритуал-діалог (Sunsama, Intend) · фінансова ставка (Beeminder).</p>
+    <p>Ціна автоматизації задокументована з обох боків: користувачі Duolingo пишуть, що новий формат ставиться до дорослих «як до школяра» й забрав автономію (<a href="https://duoplanet.com/duolingo-new-learning-path-review/">duoplanet</a>); Motion критикують за «агресивну автономність» (<a href="https://ellieplanner.com/comparisons/motion-app-review">Ellie</a>). Протилежний полюс має іншу ціну — не провал, а масштаб: Intend із вибором у центрі має $23K MRR при одному засновнику.</p></div>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">В2</span><p class="mech-n">Що є одиницею прогресу</p></div>
+    <p>Задача (Things) · невизначеність скоупу (Basecamp) · урок (Duolingo) · день (Sunsama) · слот (Motion) · квадратик дня (GitHub). Basecamp окремо: єдиний, хто вимірює прогрес <b>зменшенням невідомого</b>, а не кількістю зробленого.</p></div>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">В3</span><p class="mech-n">Монетизація не корелює з якістю досвіду</p></div>
+    <p>Things — Apple Design Award 2017 і єдиний без підписки взагалі, разова покупка. Motion — найдорожчий у вибірці й найбільш критикований саме за ціну.</p></div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section id="benchmark">
+  <div class="sec-h"><span class="sec-n">02</span><h2>Бенчмарк</h2></div>
+  <div class="sec-rule"></div>
+  <p><b>Вимір:</b> наскільки продукт перетворює зусилля у <b>відчуття позиції</b>.</p>
+  <p><b>Чому це вимір.</b> Біль має арифметичну природу, і Basecamp її назвав: списки задач зростають у міру просування. Обмежене денне зусилля проти необмеженої множини читається як нуль. Отже критерій провалу з брифу — «не дає відчуття хоча б мікрориху» — недосяжний у списковій формі <b>за побудовою</b>, а не через поганий дизайн. <span class="chip ours">наша оцінка</span> на основі цитованого механізму.</p>
+
+  <div class="note">Еталони взято <b>поза нашою категорією</b> навмисно: у таск-менеджерах цей вимір вирішено погано в усіх. <b>Скрінів для цього розділу немає</b> — Google Maps, Breath of the Wild, Death Stranding, Kindle і Apple Fitness не знімалися. Усі твердження спираються на текстові джерела.</div>
+
+  <h3>Вісім критеріїв</h3>
+  <div class="tw"><table>
+    <thead><tr><th>#</th><th>Критерій</th><th>1 бал</th><th>5 балів</th><th>Привʼязка</th></tr></thead>
+    <tbody>
+      <tr><th>К1</th><td><b>Слід пройденого існує і не зникає</b></td><td>Зроблене зникає одразу</td><td>Накопичується на головному екрані</td><td>§1, D12</td></tr>
+      <tr><th>К2</th><td><b>Головне питання екрана — «де я», не «скільки лишилось»</b></td><td>Головна цифра — борг</td><td>Позиція первинна</td><td>Aha 2</td></tr>
+      <tr><th>К3</th><td><b>Ціна фіксації руху</b></td><td>Треба заповнити форму</td><td>Один жест або автоматично</td><td>D18</td></tr>
+      <tr><th>К4</th><td><b>Наступний крок очевидний</b></td><td>Обирати з великого набору</td><td>Один крок, готовий до дії</td><td>Aha 1, D31</td></tr>
+      <tr><th>К5</th><td><b>Простір попереду заповнений</b></td><td>Порожньо або нескінченно</td><td>Закрите, але відчутне</td><td><span class="chip q">O15</span></td></tr>
+      <tr><th>К6</th><td><b>Поведінка після паузи</b></td><td>Докоряє, обнуляє</td><td>Мʼяко повертає найменшою дією</td><td>D28</td></tr>
+      <tr><th>К7</th><td><b>Читабельність на масштабі</b></td><td>Розсипається на десятках</td><td>Тримається на сотнях</td><td><span class="chip q">O17</span></td></tr>
+      <tr><th>К8</th><td><b>Слід переживає зміну цілі</b></td><td>Історія втрачена</td><td>Лишається й перевикористовується</td><td>D12</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Оцінки пʼятьох еталонів</h3>
+  <div class="tw"><table class="scores">
+    <thead><tr><th>Продукт</th><th>К1<br>слід</th><th>К2<br>позиція</th><th>К3<br>ціна</th><th>К4<br>крок</th><th>К5<br>попереду</th><th>К6<br>пауза</th><th>К7<br>масштаб</th><th>К8<br>переживає</th><th>Σ</th></tr></thead>
+    <tbody>
+      <tr><th>Death Stranding</th><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s4">4</i></td><td><i class="s s3">3</i></td><td><i class="s s4">4</i></td><td><i class="s s4">4</i></td><td><i class="s s4">4</i></td><td><i class="s s5">5</i></td><td class="sum">34</td></tr>
+      <tr><th>Google Maps</th><td><i class="s s2">2</i></td><td><i class="s s4">4</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s2">2</i></td><td class="sum">33</td></tr>
+      <tr><th>Breath of the Wild</th><td><i class="s s3">3</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s2">2</i></td><td><i class="s s5">5</i></td><td><i class="s s3">3</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td class="sum">33</td></tr>
+      <tr><th>Kindle</th><td><i class="s s3">3</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s5">5</i></td><td><i class="s s4">4</i></td><td><i class="s s2">2</i></td><td><i class="s s5">5</i></td><td><i class="s s1">1</i></td><td class="sum">30</td></tr>
+      <tr><th>Apple Fitness</th><td><i class="s s5">5</i></td><td><i class="s s3">3</i></td><td><i class="s s5">5</i></td><td><i class="s s4">4</i></td><td><i class="s s2">2</i></td><td><i class="s s1">1</i></td><td><i class="s s3">3</i></td><td><i class="s s2">2</i></td><td class="sum">25</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Сума другорядна — важливий профіль. <b>Maps</b> сильний скрізь, крім памʼяті: маршрут зникає, щойно приїхав. <b>BotW</b> дзеркальний: найкращий у «що попереду», найгірший у «що далі», і це свідомий вибір гри. <b>Apple Fitness</b> — єдиний із одиницею в К6, і це рівно та механіка, яку в нас просять.</p>
+
+  <h3>Три механізми для MVP</h3>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">М1</span><p class="mech-n">Туман замість порожнечі</p><span class="chip q">закриває O15</span></div>
+    <p><b>Що це.</b> На старті карта Breath of the Wild закрита текстурованою сіткою з ледь помітними обрисами регіонів — не класичний туман, а поверхня «ще не зчитаного». Коли вежа відкриває регіон, <b>він відкривається порожнім</b>: ні міток колекціонування, ні квестів — сама топографія плюс те, що гравець уже знайшов дорогою. Мітки ставить сам гравець (<a href="https://www.gamedeveloper.com/art/a-ui-ux-analysis-of-zelda-breath-of-the-wilds">Game Developer</a>, <a href="https://stamen.com/cartographers-play-video-games-a-review-of-the-map-in-the-legend-of-zelda-breath-of-the-wild/">Stamen</a>).</p>
+    <p><b>Чому нам.</b> Єдина знайдена відповідь на питання, що показувати попереду, коли дороги наперед не існує. І вона не суперечить <b>D31</b>: система відкриває місцевість, рішення й мітки лишаються за людиною.</p></div>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">М2</span><p class="mech-n">Локальний горизонт замість глобального залишку</p></div>
+    <p><b>Що це.</b> Kindle показує «скільки лишилось до кінця <b>розділу</b>», а не тільки до кінця книжки, і рахує це з фактичної швидкості читання самої людини. Призначення описано прямо: щоб легше було вирішити, чи є час ще на один шматок, чи час зупинитися (<a href="https://goodereader.com/blog/kindle/amazon-kindle-reading-progress-explained">Good e-Reader</a>, <a href="https://www.makeuseof.com/show-reading-progress-kindle/">MakeUseOf</a>).</p>
+    <p><b>Чому нам.</b> Прямий контрзахід проти арифметики болі: розділ — обмежена множина, книжка — ні. Для нас означає показувати відстань до кінця <b>етапу</b>, ніколи — до кінця дороги. Найдешевша реалізація з трьох при D18 — <span class="chip ours">наша оцінка</span>.</p></div>
+
+  <div class="mech"><div class="mech-t"><span class="mech-id">М3</span><p class="mech-n">Перерахунок без осуду</p><span class="chip q">форма D28</span></div>
+    <p><b>Що це.</b> У навігації перерахунок маршруту спрацьовує автоматично, щойно система виявляє, що ви більше не на маршруті, — і не чекає запиту користувача (<a href="https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6487497">патент US6487497</a>). Мікровзаємодії перерахунку описують як те, що будує довіру (<a href="https://medium.com/design-bootcamp/decoding-google-maps-what-it-taught-me-about-real-world-ux-9c8fcce06c89">Bootcamp</a>).</p>
+    <p><b>Чому нам.</b> Готова форма поведінки для D28: не «ви пропустили пʼять днів», а «звідси до цілі — ось так».</p></div>
+
+  <div class="note"><b>Death Stranding</b> набрав найбільше, але нового механізму не дає: «рух малює дорогу, і вона лишається» вже ухвалено як <b>D25</b> і <b>D12</b>. Його роль — підтвердити, що механіка витримує вагу цілого продукту. Опис нагороди: відчуття, ніби підкорив ворожий ландшафт, і тим сильніше, що раніше проходив тут без цієї мережі; стежки самі проступають там, де гравці ходять найчастіше (<a href="https://www.pcgamer.com/death-stranding-relaxed-me-so-hard-i-became-a-road-building-madman/">PC Gamer</a>, <a href="https://media.cordite.org.au/degrees-of-freedom-in-live-space/">Cordite</a>).</div>
+
+  <h3>Один механізм, який не спрацює</h3>
+  <div class="mech no"><div class="mech-t"><span class="mech-id">✕</span><p class="mech-n">Кільця активності: обовʼязкове щоденне замикання</p></div>
+    <p><b>Чому спокусливо.</b> D13 дозволяє гейміфікацію й стріки; кільце — найвідоміша її форма й дає максимум за критерієм «слід пройденого».</p>
+    <p><b>Чому зламається.</b> Пункти 1–3 — <span class="chip ours">наша оцінка</span>, пункт 4 задокументовано.</p>
+    <ol>
+      <li><b>У нас немає сенсора.</b> Apple вимірює автоматично. У нас фіксує людина руками — тож незамкнене кільце означає не лише «не зробив», а й «не відзвітував». Подвійний сором за той самий день.</li>
+      <li><b>Творча й ІТ-робота не має гарантованого щоденного виходу.</b> Дослідження, узгодження, очікування чужої відповіді — рух є, кільце порожнє. Механіка каратиме саме за другорядні дороги з методології.</li>
+      <li><b>Кільце бінарне, а D28 вимагає мʼякості.</b> «Замкнене або ні» не має середини, а вся поведінка після паузи побудована на середині.</li>
+      <li><b>Ціна задокументована.</b> Критики радять зміщувати акцент із денних стріків на <b>тижневу консистентність</b>, бо вона «реалістичніша й менш винувата»; користувачі описують вправи о 22:00 заради стріка як «маніпуляцію, що вдає із себе дизайн» (<a href="https://www.macworld.com/article/3183369/ring-toss-why-the-apple-watch-activity-goals-need-an-update.html">Macworld</a>, <a href="https://www.corahealth.app/blog/how-to-close-apple-watch-rings-consistently">Cora</a>, <a href="https://www.michigandaily.com/opinion/you-dont-have-to-close-your-rings/">Michigan Daily</a>).</li>
+    </ol>
+    <p style="margin-top:14px"><b>Що звідти все-таки береться.</b> Не кільце, а порада його ж критиків: <b>одиниця сталості — тиждень, не день</b>. День лишається одиницею руху, тиждень стає одиницею сталості, і пропущений день перестає бути подією.</p></div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section id="paterny">
+  <div class="sec-h"><span class="sec-n">03</span><h2>Патерни</h2></div>
+  <div class="sec-rule"></div>
+
+  <h3 style="margin-top:8px">Обраний патерн: «Слід і провідник»</h3>
+  <div class="note"><b>Статус: пропозиція, не ухвалене рішення.</b> Потребує підтвердження замовником і перевірки скетчем. Синтез із D25, D31, М1, М2, М3 — <span class="chip ours">наша оцінка</span>, не запозичення в готовому вигляді з жодного продукту.</div>
+
+  <p>Денний цикл із трьох тактів поверх тижневого такту.</p>
+  <div class="loop">
+    <div class="beat"><div class="beat-n">ТАКТ 1</div><p class="beat-t">Позиція</p><p>Продукт відкривається не списком і не порожнім полем, а місцем, де людина стоїть: пройдений відрізок позаду, закрита поверхня попереду, до кінця <b>поточного етапу</b> — конкретна обмежена відстань.</p></div>
+    <div class="beat"><div class="beat-n">ТАКТ 2</div><p class="beat-t">Узгодження</p><p>Продукт пропонує <b>один</b> наступний крок або мікрокрок і питає, чи він. Людина підтверджує, замінює або відкладає. Рішення за нею — <b>D31</b>.</p></div>
+    <div class="beat"><div class="beat-n">ТАКТ 3</div><p class="beat-t">Слід</p><p>Крок почато — пунктир; завершено — суцільна лінія (<b>D25</b>). Дорога подовжується. Це і є фіксація руху, ціною в один жест.</p></div>
+  </div>
+  <p><b>Тижневий такт.</b> Раз на тиждень — вибір доріг у зоні уваги. Тиждень — одиниця сталості, день — одиниця руху.</p>
+
+  <h3>Чому саме він під наш контекст</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Аргумент</th><th>Обґрунтування</th></tr></thead>
+    <tbody>
+      <tr><th>Метафора як механіка</th><td>Дорога, слід, закрита поверхня, обрій — елементи інтерфейсу, а не оздоблення. Інакше порушується критерій провалу з брифу</td></tr>
+      <tr><th>Не потрапляє в зону втрати автономії</th><td>Продукт пропонує, людина вирішує — D31. Обидва продукти вибірки, які пішли далі, дістали одну й ту саму претензію</td></tr>
+      <tr><th>Знімає арифметику болі</th><td>Горизонт — етап, не дорога (М2). Множина стає обмеженою без брехні</td></tr>
+      <tr><th>Здійсненно однією людиною</th><td>При М2 на екрані одночасно живе <b>один етап</b>, а не двісті кроків. <span class="chip ours">наша оцінка</span>; оцінки в людино-днях — <span class="chip unver">не підтверджено</span></td></tr>
+      <tr><th>Потребує тих даних, які людина й так уводить</th><td>Позиція виводиться з відмічених кроків і щотижневого вибору. AI-шар додається пізніше — розділ 05</td></tr>
+      <tr><th>Спирається на ритуал замовника</th><td>Крок дня плюс щотижневий вибір фокусних проєктів — його ручна практика з блокнота, перенесена в продукт</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Що відкидаємо</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Патерн</th><th>Чому</th></tr></thead>
+    <tbody>
+      <tr><th>Автоматичний розклад (Motion)</th><td>Суперечить D31; задокументована ціна — втрата автономії</td></tr>
+      <tr><th>Дошка або список як основний режим</th><td>Критерій провалу з брифу. Допустимі лише як альтернативний режим — D27</td></tr>
+      <tr><th>Обовʼязкове щоденне замикання</th><td>Розділ 02</td></tr>
+      <tr><th>Вежа, що відкриває регіон наперед (BotW)</th><td>Потребує світу, який існує до приходу гравця. У проєктній роботі дорога не існує до того, як нею пішли — <span class="chip ours">наша оцінка</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ================= 4 ================= -->
+<section id="vysnovky">
+  <div class="sec-h"><span class="sec-n">04</span><h2>Висновки</h2></div>
+  <div class="sec-rule"></div>
+  <p>Для кожної прогалини — гіпотеза й розділ, з якого вона випливає. Гіпотези <b>не є рішеннями</b>: вони йдуть у <code class="mono">concept/</code> на перевірку.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Прогалина</th><th>Гіпотеза</th><th>Звідки випливає</th></tr></thead>
+    <tbody>
+      <tr><th><span class="chip q">O15</span><br>Чим заповнене місце попереду</th><td>Попереду не порожнеча, а закрита поверхня «ще не розвідано». Коли ділянка відкривається — вона порожня від вказівок: є рельєф, немає інструкцій</td><td><b>Бенчмарк</b>, М1 — Breath of the Wild</td></tr>
+      <tr><th><span class="chip q">O17</span><br>Граф на 200 кроках</th><td>Верхній рівень графа — <b>етапи</b>, не кроки. Кроки живуть усередині етапу й видимі лише в ньому</td><td><b>Конкуренти</b>, П2 — Basecamp: скоупи, не задачі; «нескінченна змія» Duolingo</td></tr>
+      <tr><th><span class="chip q">O18</span><br>Чи є день обʼєктом системи</th><td>День — одиниця <b>руху</b>, має підсумок і власний стан. Але одиниця <b>сталості</b> — тиждень</td><td><b>Бенчмарк</b>, порада критиків кілець</td></tr>
+      <tr><th><span class="chip q">O14</span><br>Скільки доріг у зоні уваги</th><td>Обмеження діє не на кількість доріг, а на кількість <b>у зоні уваги тижня</b>. Фокус вимірюється періодом</td><td><b>Конкуренти</b>, цикли Linear + ритуал замовника. Оптимальне число — <span class="chip unver">не підтверджено</span></td></tr>
+      <tr><th><span class="chip q">O16</span><br>Щоб список не став основним</th><td>Список доступний лише як <b>перевірка</b>: режим читання без можливості працювати в ньому</td><td><b>Патерни</b>. Прямих даних немає — <span class="chip unver">дані не підтверджені</span></td></tr>
+      <tr><th><span class="chip q">O12</span><br>Джерело сигналу про позицію</th><td>Ритуал рефлексії первинний, AI вторинний. Ритм — за зразком фрактальної рефлексії Intend</td><td><b>Конкуренти</b>, група ХАРД. Відкладено — розділ 05</td></tr>
+      <tr><th><span class="chip q">O13</span><br>Як наповнювати ресурси</th><td>Ресурси наповнюються побічно — із записів прогулянок і кроків, а не окремою роботою</td><td><span class="chip unver">дані не підтверджені</span> жоден із пʼятнадцяти не має аналога цієї секції</td></tr>
+      <tr><th><span class="chip q">O9-b</span><br>Що беремо з Things</th><td>Швидкість введення й дисципліну «нічого зайвого», не форму списку</td><td><b>Конкуренти</b>, аспіраційна група</td></tr>
+      <tr><th><span class="chip q">O7</span><br>Нейминг, домен, ТМ</th><td>Гіпотези немає — це не ресерчеве питання</td><td>Домен і ТМ не перевірялися — <span class="chip unver">не підтверджено</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section id="vidkladene">
+  <div class="sec-h"><span class="sec-n">05</span><h2>Відкладене й непокрите</h2></div>
+  <div class="sec-rule"></div>
+
+  <h3 style="margin-top:8px">R1 · Джерело сигналу про позицію — ритуал і AI</h3>
+  <p class="sub">Відкладено 2026-09-04 · питання O12 · <b>не блокує</b> перехід у <code class="mono">concept/</code></p>
+  <p>Повноваження розподілені (<b>D31</b>): продукт рекомендує або узгоджує, вибір за людиною. Лишилося визначити, <b>звідки він знає позицію</b>. Робочий напрям — ритуал рефлексії плюс AI; висновок із патерну відмічених кроків лишається допоміжним уточнювачем.</p>
+  <p><b>Ритуал.</b> Фрактальна система Intend день → тиждень → місяць → квартал → рік: як влаштований синтез рівнів і що питають на кожному. Sunsama: формулювання питань, довжина ритуалу, поведінка при пропуску. Головний ризик — churn ритуалів рефлексії; кількісних даних по ньому немає — <span class="chip unver">дані не підтверджені</span>.</p>
+  <p><b>AI.</b> Що можна вивести з мінімальних даних: секція ресурсів (D23), записи прогулянок (D24), історія кроків. Як формулювати рекомендацію, щоб вона лишалась пропозицією — межа D31. Вартість при D18.</p>
+  <p><b>Окремо перевірити:</b> чи можна перших користувачів провести взагалі без AI, самим ритуалом — щоб не будувати найдорожчу частину до того, як стане ясно, чи вона потрібна.</p>
+
+  <h3>Що не досліджувалось</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Прогалина</th><th>Причина</th></tr></thead>
+    <tbody>
+      <tr><th>Інтервʼю з користувачами</th><td>Рішення D19. Єдиний носій проблеми — сам замовник; ризик n = 1 лишається непокритим</td></tr>
+      <tr><th>Продуктові інтерʼєри за логіном</th><td>Sunsama, Motion, Duolingo — доступу немає, скріни логін-стін позначено <span class="gated mono">DOSTUP-OBMEZHENO</span>. Superlist, Amie, Intend, Beeminder, Linear, Asana, Notion — оцінка за маркетинговими матеріалами. <b>Things вебверсії не має взагалі</b></td></tr>
+      <tr><th>Кількісні дані ринку</th><td>Обсяг, частки, retention не збиралися — <span class="chip unver">дані не підтверджені</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>
+  WAY · кабінетний ресерч, 2026-09-04 · джерело правди — <code class="mono">research/research.md</code>, скріни — <code class="mono">research/screens/</code>
+</footer>
+</main>
+</div>
+</body>
+</html>
