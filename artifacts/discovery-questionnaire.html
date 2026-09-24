@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дискавері WAY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Commissioner:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#EDF1EC; --surface:#FBFCFA; --surface-2:#E4EAE3;
+  --ink:#15201B; --ink-2:#3D4B44; --muted:#6B7970;
+  --line:#D2DBD1; --line-2:#BDC8BC;
+  --accent:#2F6B4F; --accent-soft:#DCE9E0; --accent-ink:#F6FAF7;
+  --signal:#A85E12; --signal-soft:#F3E4CE;
+  --done:#4F8F6B;
+  --shadow:0 1px 2px rgba(21,32,27,.05), 0 8px 24px -16px rgba(21,32,27,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1310; --surface:#161D19; --surface-2:#1E2721;
+    --ink:#E3EAE4; --ink-2:#B4C1B8; --muted:#83918A;
+    --line:#25302A; --line-2:#334036;
+    --accent:#77C79A; --accent-soft:#1D2E25; --accent-ink:#0E1310;
+    --signal:#E0A45C; --signal-soft:#2E2418;
+    --done:#77C79A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1310; --surface:#161D19; --surface-2:#1E2721;
+  --ink:#E3EAE4; --ink-2:#B4C1B8; --muted:#83918A;
+  --line:#25302A; --line-2:#334036;
+  --accent:#77C79A; --accent-soft:#1D2E25; --accent-ink:#0E1310;
+  --signal:#E0A45C; --signal-soft:#2E2418;
+  --done:#77C79A;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Commissioner","Helvetica Neue",Arial,sans-serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* ---------- masthead ---------- */
+.bar{
+  position:sticky; top:0; z-index:40;
+  background:color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.bar-in{
+  max-width:1220px; margin:0 auto; padding:12px 24px;
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+}
+.mark{
+  font-family:"Unbounded",sans-serif; font-weight:700; font-size:15px;
+  letter-spacing:.16em; color:var(--accent); line-height:1;
+}
+.mark small{display:block;font-family:"Commissioner",sans-serif;font-weight:500;font-size:11px;letter-spacing:.06em;color:var(--muted);margin-top:5px}
+.bar-spacer{flex:1 1 auto}
+
+.clock{display:flex;align-items:center;gap:10px}
+.clock-time{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.clock-time.over{color:var(--signal)}
+.btn{
+  border:1px solid var(--line-2); background:var(--surface); color:var(--ink-2);
+  padding:6px 13px; border-radius:999px; font-size:13px; font-weight:600; cursor:pointer;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{color:var(--accent-ink);filter:brightness(1.08)}
+
+.tally{display:flex;gap:16px;align-items:baseline}
+.tally b{font-family:"JetBrains Mono",monospace;font-size:16px;font-weight:600}
+.tally span{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.tally .warn b{color:var(--signal)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1220px;margin:0 auto;padding:0 24px 96px;display:grid;grid-template-columns:236px 1fr;gap:44px;align-items:start}
+
+/* ---------- route rail ---------- */
+.rail{position:sticky;top:86px;padding:34px 0 0}
+.route{position:relative;padding-left:30px}
+.route::before{
+  content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;
+  background:repeating-linear-gradient(var(--line-2) 0 6px, transparent 6px 12px);
+}
+.route-fill{position:absolute;left:9px;top:6px;width:2px;background:var(--accent);transition:height .4s ease}
+.traveller{
+  position:absolute;left:4px;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--ground);
+  box-shadow:0 0 0 2px var(--accent); transition:top .4s ease; z-index:3;
+}
+.stop{position:relative;display:block;width:100%;text-align:left;background:none;border:0;padding:0 0 22px;cursor:pointer}
+.stop:last-child{padding-bottom:0}
+.stop::before{
+  content:"";position:absolute;left:-26px;top:7px;width:9px;height:9px;border-radius:50%;
+  background:var(--ground);border:2px solid var(--line-2);transition:border-color .2s,background .2s;
+}
+.stop.reached::before{border-color:var(--accent);background:var(--accent)}
+.stop-t{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+.stop-n{font-size:13.5px;font-weight:600;color:var(--ink-2);line-height:1.35;margin-top:1px;transition:color .2s}
+.stop:hover .stop-n{color:var(--accent)}
+.stop.active .stop-n{color:var(--accent)}
+.stop-c{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);margin-top:2px}
+.stop.complete .stop-c{color:var(--done)}
+
+/* ---------- intro ---------- */
+.intro{padding:52px 0 8px;max-width:64ch}
+h1{
+  font-family:"Unbounded",sans-serif;font-weight:700;
+  font-size:clamp(30px,4.4vw,46px);line-height:1.06;letter-spacing:-.03em;
+  margin:0 0 18px;text-wrap:balance;
+}
+.lede{font-size:17px;color:var(--ink-2);margin:0 0 22px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.fact{
+  font-size:12.5px;padding:5px 11px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);color:var(--ink-2);
+}
+.opener{
+  background:var(--accent-soft);border-left:3px solid var(--accent);
+  padding:16px 20px;border-radius:0 8px 8px 0;font-size:15px;color:var(--ink);
+}
+.opener em{display:block;font-size:11px;font-style:normal;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+
+/* ---------- blocks ---------- */
+.block{padding-top:52px;scroll-margin-top:82px}
+.block-h{display:flex;align-items:baseline;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:22px;flex-wrap:wrap}
+.block-num{font-family:"Unbounded",sans-serif;font-weight:500;font-size:13px;color:var(--accent);letter-spacing:.02em}
+.block-t{font-size:23px;font-weight:700;letter-spacing:-.02em;margin:0;flex:1 1 auto}
+.block-time{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted)}
+
+/* ---------- question card ---------- */
+.q{
+  background:var(--surface);border:1px solid var(--line);border-radius:11px;
+  padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);
+  transition:border-color .2s, opacity .2s;
+}
+.q.must{border-left:3px solid var(--signal)}
+.q.done{opacity:.62}
+.q.done.must{border-left-color:var(--done)}
+.q-top{display:flex;gap:14px;align-items:flex-start}
+.tick{
+  flex:0 0 auto;width:22px;height:22px;margin-top:2px;border-radius:6px;
+  border:1.5px solid var(--line-2);background:var(--ground);cursor:pointer;
+  display:grid;place-items:center;padding:0;transition:background .15s,border-color .15s;
+}
+.tick svg{width:13px;height:13px;stroke:var(--accent-ink);stroke-width:2.6;fill:none;opacity:0;transition:opacity .15s}
+.tick[aria-pressed="true"]{background:var(--done);border-color:var(--done)}
+.tick[aria-pressed="true"] svg{opacity:1}
+.q-body{flex:1 1 auto;min-width:0}
+.q-meta{display:flex;align-items:center;gap:9px;margin-bottom:6px;flex-wrap:wrap}
+.q-id{font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:600;color:var(--muted)}
+.pri{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2.5px 8px;border-radius:4px}
+.pri.m{background:var(--signal-soft);color:var(--signal)}
+.pri.o{background:var(--surface-2);color:var(--muted)}
+.q-text{font-size:16.5px;line-height:1.48;font-weight:500;margin:0}
+.q.done .q-text{text-decoration:line-through;text-decoration-color:var(--line-2);text-decoration-thickness:1px}
+.q-opts{margin:11px 0 0;padding:0 0 0 18px;font-size:14.5px;color:var(--ink-2)}
+.q-opts li{margin-bottom:3px}
+.q-note{
+  margin-top:11px;font-size:13.5px;color:var(--muted);line-height:1.5;
+  padding-left:12px;border-left:2px solid var(--line);
+}
+.q-note b{color:var(--ink-2);font-weight:600}
+.q-jot{
+  margin-top:12px;width:100%;resize:vertical;min-height:38px;
+  font:inherit;font-size:14.5px;line-height:1.5;color:var(--ink);
+  background:var(--ground);border:1px solid var(--line);border-radius:7px;
+  padding:9px 11px;
+}
+.q-jot::placeholder{color:var(--muted);opacity:.75}
+.q-jot:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+
+/* ---------- tensions ---------- */
+.tensions{margin-top:64px;background:var(--surface);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.tensions summary{
+  cursor:pointer;padding:18px 22px;font-weight:700;font-size:16px;
+  display:flex;align-items:center;gap:11px;list-style:none;
+}
+.tensions summary::-webkit-details-marker{display:none}
+.tensions summary::before{content:"›";font-size:20px;color:var(--accent);transition:transform .2s;display:inline-block}
+.tensions[open] summary::before{transform:rotate(90deg)}
+.tensions-in{padding:0 22px 24px}
+.tensions-in > p{font-size:14px;color:var(--muted);margin:0 0 18px;max-width:62ch}
+.tensions-in ol{margin:0;padding-left:20px;display:grid;gap:11px}
+.tensions-in li{font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.tensions-in li b{color:var(--ink);font-weight:600}
+
+.outro{
+  margin-top:26px;padding:20px 22px;border:1px dashed var(--line-2);border-radius:11px;
+  font-size:14.5px;color:var(--ink-2);
+}
+.outro b{color:var(--ink)}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:0;padding:0 18px 80px}
+  .rail{position:static;padding:26px 0 0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .route{display:flex;gap:9px;padding-left:0;min-width:min-content}
+  .route::before,.route-fill,.traveller{display:none}
+  .stop{width:auto;flex:0 0 auto;padding:9px 13px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+  .stop::before{display:none}
+  .stop.active{border-color:var(--accent)}
+  .stop-n{white-space:nowrap}
+  .intro{padding-top:30px}
+  .bar-in{padding:10px 18px;gap:12px}
+  .tally{gap:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:0.01ms !important;animation-duration:0.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="mark">WAY<small>дискавері-сесія</small></div>
+    <div class="bar-spacer"></div>
+    <div class="tally">
+      <div><b id="tDone">0</b>/<b id="tAll">0</b> <span>пройдено</span></div>
+      <div class="warn"><b id="tMust">0</b> <span>must-ask лишилось</span></div>
+    </div>
+    <div class="clock">
+      <span class="clock-time" id="clock">00:00</span>
+      <button class="btn btn-primary" id="clockBtn">Старт</button>
+    </div>
+    <button class="btn" id="copyBtn">Копіювати нотатки</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="rail" aria-label="Маршрут зустрічі">
+    <div class="route" id="route">
+      <div class="route-fill" id="routeFill" style="height:0"></div>
+      <div class="traveller" id="traveller" style="top:2px"></div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="intro">
+      <h1>Питання до автора WAY</h1>
+      <p class="lede">Година живої розмови. Мета — вийти з відповідями, яких достатньо, щоб скласти повний продуктовий бриф і почати ресерч.</p>
+      <div class="facts">
+        <span class="fact">Співрозмовник — автор методології</span>
+        <span class="fact">60 хвилин</span>
+        <span class="fact">7 блоків · 37 питань</span>
+        <span class="fact">Критика через «а що буде, якщо…»</span>
+      </div>
+      <div class="opener">
+        <em>Одне речення на початок</em>
+        Методологію прочитав повністю. Сьогодні не про філософію — про те, де вона перетворюється на екрани й рішення. Буду ставити незручні питання, це нормально.
+      </div>
+    </section>
+    <div id="blocks"></div>
+
+    <details class="tensions">
+      <summary>Дев'ять напружень, які я побачив у методології</summary>
+      <div class="tensions-in">
+        <p>Не для того, щоб зачитувати вголос. Для того, щоб чути їх у відповідях і копати глибше там, де вони випливають.</p>
+        <ol id="tensionList"></ol>
+      </div>
+    </details>
+
+    <div class="outro">
+      <b>Домовитися на виході:</b> дата наступної синхронізації, канал для дрібних питань, хто відповідає за спірні продуктові рішення між зустрічами.
+    </div>
+  </main>
+</div>
+
+<script>
+const DATA = [
+ {n:"Рамка", from:0, to:5, qs:[
+  {id:"Q0.1", must:1, q:"Якщо через рік WAY існує і працює — що конкретно змінилося в житті людини, яка ним користується? Опишіть одну людину і один день.",
+   note:"<b>Слухати:</b> чи це про роботу, чи про життя загалом. Відповідь визначає, ми будуємо таск-трекер чи інструмент рефлексії."},
+  {id:"Q0.2", must:1, q:"Хто ухвалює продуктові рішення на цьому проєкті — ви одноосібно, чи є ще хтось, чиє «ні» зупиняє?"},
+  {id:"Q0.3", must:0, q:"Що для вас буде провалом? Не «ним не користуються», а конкретніше — який результат ви б назвали зрадою ідеї?"}
+ ]},
+ {n:"Користувач і момент використання", from:5, to:17, qs:[
+  {id:"Q1.1", must:1, q:"Аудиторія — креативна й ІТ-сфера, від креативного директора до лінійного виконавця. Різниця між ними не в галузі, а в тому, <b>хто ставить ціль</b>. Кого обслуговуємо першим — того, хто обирає дорогу, чи того, кому її призначили?",
+   note:"Тиснути на конкретику. «Всіх» — це не відповідь, це відкладене рішення."},
+  {id:"Q1.2", must:1, q:"Методологія написана від першої особи: «де ви зараз», «оберіть свою дорогу». Але лінійний виконавець не обирає свою дорогу — її обирає керівник. Як WAY працює для людини, якій шлях призначили?"},
+  {id:"Q1.3", must:1, q:"v1 — це продукт для однієї людини чи для команди?",
+   opts:["<b>solo</b>, команда потім","<b>команда</b> з першого дня — потрібні ролі, права, призначення, нотифікації","<b>solo-досвід + агрегована карта</b> для керівника («де хто зараз»)"],
+   note:"Три можливі відповіді, і кожна — інший продукт."},
+  {id:"Q1.4", must:1, q:"Коли людина відкриває WAY? Уранці замість пошти? Раз на тиждень на планування? Кожного разу, коли щось зробила? Опишіть частоту й тригер.",
+   note:"Це визначає, чи це daily driver, чи weekly ritual. Від цього залежить усе — від нотифікацій до того, чи потрібен мобільний застосунок узагалі."},
+  {id:"Q1.5", must:0, q:"Що людина використовує зараз і від чого вона має відмовитися, щоб перейти на WAY? Чи взагалі має відмовлятися?"},
+  {id:"Q1.6", must:0, q:"Є вже хтось, хто застосовує методологію вручну — у блокноті, Notion, на папері? Можна з ними поговорити?",
+   note:"Якщо так — це найцінніший ресурс для найближчого ресерч-горизонту."}
+ ]},
+ {n:"Межа продукту v1", from:17, to:29, qs:[
+  {id:"Q2.1", must:1, q:"Методологія описує п'ять кроків: точка старту → ціль і головна дорога → етапи → ресурси → фокус. Які з них реально живуть у v1, а які лишаються словами в лендингу?"},
+  {id:"Q2.2", must:1, q:"WAY замінює таск-менеджер чи додається до нього?",
+   note:"Наше робоче припущення: <b>standalone v1</b>, інтеграції — потім. Підтвердити або спростувати."},
+  {id:"Q2.3", must:1, q:"Якщо людина вже має 200 задач у Jira або Notion — що ми їй кажемо в перший день? Переносити вручну? Імпорт? Почати з чистого аркуша тільки з однією дорогою?"},
+  {id:"Q2.4", must:1, q:"Що WAY свідомо не робить? Назвіть три речі, яких у продукті не буде, навіть якщо користувачі проситимуть.",
+   note:"Найважливіше питання блоку. Без нього скоуп поповзе."},
+  {id:"Q2.5", must:1, q:"У методології немає жодного слова про час і дедлайни. У реальній роботі дедлайни є завжди. Де дедлайн на дорозі — це знак на узбіччі, чи його немає взагалі?"},
+  {id:"Q2.6", must:0, q:"Чи є в WAY поняття «чужа задача»? Хтось попросив, це не моя дорога, але зробити треба. Куди воно падає?"}
+ ]},
+ {n:"Метафора: як далеко ми її ведемо", from:29, to:40, qs:[
+  {id:"Q3.1", must:1, q:"Наскільки буквальна дорога в інтерфейсі? Оберіть найближчий варіант:",
+   opts:["справжня <b>візуальна карта</b> з маршрутом, поворотами, зупинками","<b>абстрактний шлях</b> — лінія, точки, пройдене vs попереду","<b>звичайний список і дошка</b>, а метафора живе в мові, ритуалах і мікровзаємодіях"],
+   note:"Питання-пастка навздогін: <b>як це виглядає, коли доріг двадцять?</b> Карта, що красива на трьох цілях, розсипається на двадцяти."},
+  {id:"Q3.2", must:1, q:"«Фокус на одній дорозі» — це рекомендація чи обмеження, яке продукт нав'язує? Ми дозволяємо вести п'ять головних доріг одночасно, чи технічно не даємо?",
+   note:"Тут головний ризик продукту. Жорстке обмеження — сильна позиція й вузький ринок. М'яка рекомендація — ще один трекер."},
+  {id:"Q3.3", must:1, q:"«Прогулянки без мети» — відпочинок, хобі, тиша. Як це виглядає в таск-трекері? Ми це трекаємо, плануємо, чи просто не заважаємо?"},
+  {id:"Q3.4", must:1, q:"Що робить продукт, коли людина зупинилася? Тиждень нічого не робила по головній дорозі. Методологія каже «повернутися назад — це навігація, не поразка». Як це звучить на екрані, щоб не бути ані докором, ані фальшивою підтримкою?"},
+  {id:"Q3.5", must:1, q:"Ціль скасували. Дорога більше не веде нікуди. Що відбувається з пройденим шляхом — він зникає, архівується, чи лишається як пройдена відстань?",
+   note:"Це прямо про головну обіцянку продукту: «показувати пройдене, а не залишок»."},
+  {id:"Q3.8", must:1, q:"П'ять кроків методології — це вихід у дорогу: де я, куди йду, які етапи, які ресурси, на чому фокус. Усе це відпрацьовує до першого кілометра. Що людина робить на 47-й день, коли вирушати вже нема куди?",
+   note:"<b>Конкретніше:</b> як часто продукт перепитує «де ви зараз» — щодня, щотижня, ніколи? За яким критерієм дорога визнається мертвою? Що продукт показує в день із нульовим рухом?<br>Методологія тут дає оптику («гнучкість — це навігація, не поразка»), але не дію. Механіку доведеться придумати нам — питання в тому, які межі ставить автор."},
+  {id:"Q3.6", must:0, q:"Наскільки допустима гейміфікація? Стріки, бейджі, рівні. Метафора дороги дуже близька до них — але «радість подорожі» і «стрік 47 днів» це різні речі. Де межа?"},
+  {id:"Q3.7", must:0, q:"Чи має WAY власний голос — він звертається до людини? Якщо так, хто він: попутник, провідник, картограф, мовчазна карта?"}
+ ]},
+ {n:"Бізнес і ринок", from:40, to:48, qs:[
+  {id:"Q4.1", must:1, q:"Як продукт заробляє? Підписка B2C, B2B-місця, freemium, разова покупка?"},
+  {id:"Q4.2", must:1, q:"Хто платить — людина за себе, чи студія / агенція за свою команду? Якщо студія — що саме вона купує, якщо трекер у неї вже є?"},
+  {id:"Q4.3", must:1, q:"Мова й ринок v1: Україна й українська? Одразу англійська? Обидві?",
+   note:"Впливає на копірайт, який тут не декоративний — він і є продукт."},
+  {id:"Q4.4", must:0, q:"З ким ми конкуруємо в голові користувача? Sunsama, Amie, Motion, Things, Notion, Linear — чи щось із простору рефлексії й well-being?"},
+  {id:"Q4.5", must:0, q:"Чи є методологія WAY активом сама по собі — курс, книга, консалтинг? Продукт її обслуговує чи вона обслуговує продукт?"}
+ ]},
+ {n:"Обмеження реальності", from:48, to:55, qs:[
+  {id:"Q5.1", must:1, q:"Строки. Є дата, до якої щось має існувати? Демо, інвестор, конференція, запуск?"},
+  {id:"Q5.2", must:1, q:"Хто робитиме продукт? Є команда, чи вона ще збирається? Скільки людей, які ролі?"},
+  {id:"Q5.3", must:1, q:"Бюджет — це порядок сум чи ще не визначено?",
+   note:"Питаю не з цікавості: він визначає, чи ми говоримо про буквальну карту (дорого) чи про абстрактний шлях (розумно)."},
+  {id:"Q5.4", must:1, q:"Платформи: бриф каже web desktop + mobile. Мобільний — це адаптивний веб / PWA чи нативні застосунки? І що людина реально робить з телефона — планує чи тільки відмічає кроки?"},
+  {id:"Q5.5", must:0, q:"Бренд: є нейминг, логотип, візуальна мова, чи все з нуля? Назва WAY фінальна? Домен і торгова марка — перевіряли?"},
+  {id:"Q5.6", must:0, q:"Приватність: особисті цілі — чутливі дані. Є вимоги щодо зберігання, локального режиму, експорту, видалення?"}
+ ]},
+ {n:"Найближчий горизонт — ресерч", from:55, to:60, qs:[
+  {id:"Q6.1", must:1, q:"Що ви хочете дізнатися з ресерчу такого, чого не знаєте зараз? Назвіть гіпотезу, яку готові побачити спростованою."},
+  {id:"Q6.2", must:1, q:"Чи можете дати доступ до 5–8 людей із цільової аудиторії для інтерв'ю? Хто вони?"},
+  {id:"Q6.3", must:0, q:"Чи є вже щось написане, окрім цієї методології — нотатки, скетчі, спроби прототипу, попередні розмови з людьми?"}
+ ]}
+];
+
+const TENSIONS = [
+ ["Особисте vs командне.","Уся методологія — від першої особи. Аудиторія — команди. Це не деталь, це розвилка продукту."],
+ ["«Фокус на одній дорозі» vs реальність.","Люди ведуть кілька проєктів одночасно не з дурості, а тому що так влаштована робота."],
+ ["Дедлайни відсутні.","Метафора дороги ігнорує час. Продуктивність без часу неможлива."],
+ ["Обіцянка «показувати пройдене» вимагає історії.","Це серйозна модель даних: кожен крок має лишати слід, який не зникає при завершенні."],
+ ["Карта не масштабується.","Красива на трьох цілях, нечитабельна на тридцяти. І особливо — на мобільному."],
+ ["«Прогулянки без мети» в трекері — парадокс.","Щойно відпочинок потрапляє в систему, він перестає бути безцільним."],
+ ["Естетика — актив, і саме тому ризик зворотний.","Креативна аудиторія прощає красу й не прощає марності. Продукт можуть полюбити візуально, зберегти в закладки й не відкривати щодня."],
+ ["«Де ви зараз» вимагає чесності щодня.","Ритуали рефлексії мають найвищий churn серед усіх продуктових механік."],
+ ["Про середину є оптика, немає механіки.","Принцип гнучкості, етапи «щоб озирнутися», «сісти при дорозі й перевести подих», «щодня один усвідомлений крок» — методологія каже, як почуватися в дорозі. Але п'ять кроків структури всі відпрацьовують до першого кілометра. Немає ритуалу перегляду, критерію «дорога мертва» і відповіді на день із нульовим рухом."]
+];
+
+const KEY = "way-discovery-v1";
+let state = {done:{}, notes:{}, started:null, elapsed:0, running:false};
+try{ const s = localStorage.getItem(KEY); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+const pad = n => String(n).padStart(2,"0");
+const fmt = m => pad(Math.floor(m/60))+":"+pad(m%60);
+
+/* ---- render blocks ---- */
+const blocksEl = document.getElementById("blocks");
+blocksEl.innerHTML = DATA.map((b,i)=>`
+  <section class="block" id="b${i}">
+    <div class="block-h">
+      <span class="block-num">Блок ${i}</span>
+      <h2 class="block-t">${b.n}</h2>
+      <span class="block-time">${fmt(b.from*60)}–${fmt(b.to*60)}</span>
+    </div>
+    ${b.qs.map(q=>`
+      <article class="q${q.must?" must":""}" data-q="${q.id}">
+        <div class="q-top">
+          <button class="tick" aria-pressed="false" aria-label="Позначити ${q.id} як поставлене">
+            <svg viewBox="0 0 16 16"><polyline points="2.5,8.5 6,12 13.5,4"/></svg>
+          </button>
+          <div class="q-body">
+            <div class="q-meta">
+              <span class="q-id">${q.id}</span>
+              <span class="pri ${q.must?"m":"o"}">${q.must?"обов'язково":"якщо буде час"}</span>
+            </div>
+            <p class="q-text">${q.q}</p>
+            ${q.opts?`<ul class="q-opts">${q.opts.map(o=>`<li>${o}</li>`).join("")}</ul>`:""}
+            ${q.note?`<div class="q-note">${q.note}</div>`:""}
+            <textarea class="q-jot" rows="1" placeholder="Відповідь…"></textarea>
+          </div>
+        </div>
+      </article>`).join("")}
+  </section>`).join("");
+
+document.getElementById("tensionList").innerHTML =
+  TENSIONS.map(([h,t])=>`<li><b>${h}</b> ${t}</li>`).join("");
+
+/* ---- rail ---- */
+const routeEl = document.getElementById("route");
+DATA.forEach((b,i)=>{
+  const btn = document.createElement("button");
+  btn.className = "stop"; btn.dataset.i = i;
+  btn.innerHTML = `<div class="stop-t">${fmt(b.from*60)}–${fmt(b.to*60)}</div>
+                   <div class="stop-n">${b.n}</div>
+                   <div class="stop-c" data-c="${i}">0/${b.qs.length}</div>`;
+  btn.addEventListener("click",()=>document.getElementById("b"+i).scrollIntoView({behavior:"smooth",block:"start"}));
+  routeEl.appendChild(btn);
+});
+
+/* ---- wire cards ---- */
+const allQs = DATA.flatMap(b=>b.qs);
+document.getElementById("tAll").textContent = allQs.length;
+
+function autoGrow(t){ t.style.height="auto"; t.style.height=Math.max(38,t.scrollHeight)+"px"; }
+
+document.querySelectorAll(".q").forEach(card=>{
+  const id = card.dataset.q;
+  const tick = card.querySelector(".tick");
+  const jot = card.querySelector(".q-jot");
+  if(state.done[id]){ tick.setAttribute("aria-pressed","true"); card.classList.add("done"); }
+  if(state.notes[id]){ jot.value = state.notes[id]; }
+  tick.addEventListener("click",()=>{
+    const on = tick.getAttribute("aria-pressed")==="true";
+    tick.setAttribute("aria-pressed", String(!on));
+    card.classList.toggle("done", !on);
+    state.done[id] = !on; save(); tally();
+  });
+  jot.addEventListener("input",()=>{ state.notes[id]=jot.value; autoGrow(jot); save(); });
+  autoGrow(jot);
+});
+
+function tally(){
+  let done=0, mustLeft=0;
+  allQs.forEach(q=>{ if(state.done[q.id]) done++; else if(q.must) mustLeft++; });
+  document.getElementById("tDone").textContent = done;
+  document.getElementById("tMust").textContent = mustLeft;
+  DATA.forEach((b,i)=>{
+    const c = b.qs.filter(q=>state.done[q.id]).length;
+    const el = document.querySelector(`[data-c="${i}"]`);
+    el.textContent = c+"/"+b.qs.length;
+    el.closest(".stop").classList.toggle("complete", c===b.qs.length);
+  });
+}
+tally();
+
+/* ---- clock ---- */
+const clockEl = document.getElementById("clock");
+const clockBtn = document.getElementById("clockBtn");
+const fillEl = document.getElementById("routeFill");
+const travEl = document.getElementById("traveller");
+
+function elapsedSec(){
+  return state.elapsed + (state.running && state.started ? Math.floor((Date.now()-state.started)/1000) : 0);
+}
+function paint(){
+  const s = elapsedSec();
+  clockEl.textContent = fmt(s);
+  clockEl.classList.toggle("over", s > 3600);
+  const frac = Math.min(1, s/3600);
+  const h = routeEl.offsetHeight - 12;
+  fillEl.style.height = (frac*h)+"px";
+  travEl.style.top = (2 + frac*h)+"px";
+  travEl.style.opacity = state.running || s>0 ? "1" : "0";
+  const min = s/60;
+  document.querySelectorAll(".stop").forEach(st=>{
+    const b = DATA[+st.dataset.i];
+    st.classList.toggle("reached", min >= b.from);
+    st.classList.toggle("active", s>0 && min >= b.from && min < b.to);
+  });
+}
+clockBtn.addEventListener("click",()=>{
+  if(state.running){ state.elapsed = elapsedSec(); state.running=false; state.started=null; clockBtn.textContent="Далі"; }
+  else { state.started = Date.now(); state.running=true; clockBtn.textContent="Пауза"; }
+  save(); paint();
+});
+if(state.running){ clockBtn.textContent="Пауза"; } else if(state.elapsed>0){ clockBtn.textContent="Далі"; }
+paint();
+setInterval(paint, 1000);
+
+/* ---- copy ---- */
+document.getElementById("copyBtn").addEventListener("click", async (e)=>{
+  const lines = ["# WAY — нотатки з дискавері-сесії",""];
+  DATA.forEach((b,i)=>{
+    lines.push(`## Блок ${i}. ${b.n}`,"");
+    b.qs.forEach(q=>{
+      const txt = q.q.replace(/<[^>]+>/g,"");
+      lines.push(`**${q.id}${q.must?" ★":""}** ${txt}`);
+      lines.push((state.notes[q.id]||"").trim() || "_(без відповіді)_", "");
+    });
+  });
+  try{
+    await navigator.clipboard.writeText(lines.join("\n"));
+    const b = e.currentTarget, o = b.textContent;
+    b.textContent = "Скопійовано"; setTimeout(()=>{b.textContent=o;},1600);
+  }catch(err){
+    const b = e.currentTarget, o = b.textContent;
+    b.textContent = "Не вдалося"; setTimeout(()=>{b.textContent=o;},1600);
+  }
+});
+</script>
+
+</body>
+</html>
