@@ -1,0 +1,8 @@
+# На сайт ідуть лише сторінки. Документи, PDF і робочі теки лишаються тільки в репозиторії.
+/*
+!/index.html
+!/research
+/research/*
+!/research/research.html
+!/research/personas.html
+!/research/screens

@@ -45,6 +45,18 @@
 | [DISCOVERY-2026-09-03.md](DISCOVERY-2026-09-03.md) | Транскрипт дискавері-сесії з автором методології. |
 | [WAY_методологія.pdf](WAY_методологія.pdf) | Першоджерело. Незмінне. |
 
+## Сайт
+
+Головна сторінка з кроками процесу опублікована на Vercel: **https://way-tau.vercel.app**
+
+Деплой ручний, з кореня репозиторію:
+
+```bash
+npx vercel@latest deploy --prod
+```
+
+На сайт потрапляють лише `index.html`, `research/research.html`, `research/personas.html` і скріни — цей список задає `.vercelignore`. Документи, PDF і робочі теки лишаються тільки в репозиторії.
+
 ## Робочі теки
 
 Порядок роботи: **research → concept → wireframes → tokens + components → design-system → handoff.** Стадії перекриваються, ресерч не пропускаємо.
