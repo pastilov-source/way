@@ -37,7 +37,7 @@ a{color:inherit;text-decoration:none}
 .step{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 12px;border-bottom:1px solid var(--line);border-radius:8px}
 .step:hover{background:var(--surface-2)}
 .step[aria-current="page"]{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--accent)}
-.s-name{font-family:"JetBrains Mono",monospace;font-size:13.5px;color:var(--ink-2);line-height:1.35}
+.s-name{font-size:14.5px;font-weight:500;color:var(--ink-2);line-height:1.35}
 .s-lbl{font-family:"Unbounded",sans-serif;font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .step.done .s-name{color:var(--ink)}
 .step.done .s-lbl{color:var(--accent)}
@@ -58,7 +58,9 @@ h1{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(30px,4.2vw
 .board{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
 .board ol{list-style:none;margin:0;padding:0}
 .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 4px;border-bottom:1px solid var(--line-2)}
-.row .s-name{font-size:15.5px}
+.row .s-name{font-size:16.5px;font-weight:600}
+.r-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto}
+.r-desc{font-size:13.5px;color:var(--muted);line-height:1.45}
 .row .s-lbl{font-size:11px}
 .row:hover .s-name{color:var(--ink)}
 .row.done{border-bottom-color:rgba(119,199,154,.35)}
@@ -70,7 +72,7 @@ h1{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(30px,4.2vw
 .frame-h{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 22px;border-bottom:1px solid var(--line-2);background:var(--surface);flex-wrap:wrap}
 .frame-t{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
 .frame-n{font-family:"Unbounded",sans-serif;font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-.frame-name{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--ink)}
+.frame-name{font-size:15.5px;font-weight:600;color:var(--ink)}
 .open{font-size:13px;color:var(--accent);border-bottom:1px solid rgba(119,199,154,.3);white-space:nowrap}
 .open:hover{border-bottom-color:var(--accent)}
 iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
@@ -78,7 +80,8 @@ iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
 /* ---------- ще не наповнений крок ---------- */
 .empty{padding:64px 56px;max-width:760px}
 .empty-n{font-family:"Unbounded",sans-serif;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.empty-name{font-family:"JetBrains Mono",monospace;font-size:clamp(24px,3.4vw,36px);color:var(--ink);margin:0 0 18px;line-height:1.2;font-weight:600}
+.empty-name{font-family:"Unbounded",sans-serif;font-size:clamp(26px,3.6vw,40px);color:var(--ink);margin:0 0 12px;line-height:1.1;font-weight:700;letter-spacing:-.03em}
+.empty .desc{font-size:17px;color:var(--ink-2);margin:0 0 20px}
 .chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.04em;padding:3px 9px;border-radius:5px;background:var(--surface-3);color:var(--ink-2);border:1px dashed var(--line-2)}
 .chip.next{background:var(--signal-soft);color:var(--signal);border:1px solid rgba(224,164,92,.4)}
 .empty p{font-size:17px;color:var(--ink-2);margin:20px 0 0}
@@ -111,28 +114,28 @@ iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
   <a class="home-link" href="#" data-home>Огляд <span class="s-lbl">головна</span></a>
   <nav aria-label="Кроки процесу">
     <ol class="steps">
-      <li><a class="step done" href="#01" data-step="01" data-status="done" data-src="research/research.html" data-title="Ресерч"><span class="s-name">research.md</span><span class="s-lbl">✓ 01</span></a></li>
-      <li><a class="step done" href="#02" data-step="02" data-status="done" data-src="research/personas.html" data-title="Персони й JTBD"><span class="s-name">personas.md · jtbd.md</span><span class="s-lbl">✓ 02</span></a></li>
-      <li><a class="step next" href="#03" data-step="03" data-status="next"><span class="s-name">sitemap · flows</span><span class="s-lbl">★ 03 · далі</span></a></li>
-      <li><a class="step" href="#04" data-step="04"><span class="s-name">wireframes/</span><span class="s-lbl">04</span></a></li>
-      <li><a class="step" href="#05" data-step="05"><span class="s-name">voice.md · microcopy</span><span class="s-lbl">05</span></a></li>
-      <li><a class="step" href="#06" data-step="06"><span class="s-name">concept/</span><span class="s-lbl">06</span></a></li>
-      <li><a class="step" href="#07" data-step="07"><span class="s-name">ui/ + visuals</span><span class="s-lbl">07</span></a></li>
-      <li><a class="step" href="#08" data-step="08"><span class="s-name">tokens.css · components/</span><span class="s-lbl">08</span></a></li>
-      <li><a class="step" href="#09" data-step="09"><span class="s-name">design-system/</span><span class="s-lbl">09</span></a></li>
-      <li><a class="step" href="#10" data-step="10"><span class="s-name">responsive/</span><span class="s-lbl">10</span></a></li>
-      <li><a class="step" href="#11" data-step="11"><span class="s-name">animations/</span><span class="s-lbl">11</span></a></li>
-      <li><a class="step" href="#12" data-step="12"><span class="s-name">handoff/ · README</span><span class="s-lbl">12</span></a></li>
+      <li><a class="step done" href="#01" data-step="01" data-status="done" data-src="research/research.html" data-desc="Хто вже розв'язує проблему руху до цілі, як саме і що з цього взяти"><span class="s-name">Ресерч</span><span class="s-lbl">✓ 01</span></a></li>
+      <li><a class="step done" href="#02" data-step="02" data-status="done" data-src="research/personas.html" data-desc="Для кого продукт, чого людина хоче досягти і що робити першим"><span class="s-name">Персони й потреби</span><span class="s-lbl">✓ 02</span></a></li>
+      <li><a class="step next" href="#03" data-step="03" data-status="next" data-desc="Які екрани є і як людина між ними рухається"><span class="s-name">Структура й сценарії</span><span class="s-lbl">★ 03 · далі</span></a></li>
+      <li><a class="step" href="#04" data-step="04" data-desc="Чорнові схеми екранів: що де стоїть, без кольору й стилю"><span class="s-name">Каркаси екранів</span><span class="s-lbl">04</span></a></li>
+      <li><a class="step" href="#05" data-step="05" data-desc="Як продукт говорить: тон, підписи, підказки, порожні стани"><span class="s-name">Голос і тексти</span><span class="s-lbl">05</span></a></li>
+      <li><a class="step" href="#06" data-step="06" data-desc="Головні об'єкти й механіки: дорога, крок, етап і зв'язки між ними"><span class="s-name">Концепція</span><span class="s-lbl">06</span></a></li>
+      <li><a class="step" href="#07" data-step="07" data-desc="Як екрани виглядають насправді: колір, шрифт, образ"><span class="s-name">Інтерфейс і візуал</span><span class="s-lbl">07</span></a></li>
+      <li><a class="step" href="#08" data-step="08" data-desc="Кольори, шрифти, відступи й повторювані елементи: кнопки, картки, поля"><span class="s-name">Стилі й компоненти</span><span class="s-lbl">08</span></a></li>
+      <li><a class="step" href="#09" data-step="09" data-desc="Правила, за якими стилі й компоненти складаються в цілий продукт"><span class="s-name">Дизайн-система</span><span class="s-lbl">09</span></a></li>
+      <li><a class="step" href="#10" data-step="10" data-desc="Як продукт поводиться на телефоні, планшеті й великому екрані"><span class="s-name">Адаптація під екрани</span><span class="s-lbl">10</span></a></li>
+      <li><a class="step" href="#11" data-step="11" data-desc="Як елементи з'являються, змінюються й відповідають на дії"><span class="s-name">Анімації</span><span class="s-lbl">11</span></a></li>
+      <li><a class="step" href="#12" data-step="12" data-desc="Специфікації й інструкція, щоб за макетами можна було будувати"><span class="s-name">Передача в розробку</span><span class="s-lbl">12</span></a></li>
     </ol>
   </nav>
-  <div class="side-foot">Пройдено: <b>ресерч</b> і <b>персони з jobs</b>. Сторінки кроків лежать у своїх теках — тут вони лише зібрані в одне меню.</div>
+  <div class="side-foot">Пройдено: <b>ресерч</b> і <b>персони й потреби</b>. Сторінки кроків лежать у своїх теках — тут вони лише зібрані в одне меню.</div>
 </aside>
 
 <main class="view">
 
   <section class="home" id="home" aria-labelledby="home-h">
     <h1 id="home-h">Процес WAY</h1>
-    <p class="lede">Дванадцять кроків від ресерчу до передачі в розробку. Кожен крок лишає артефакт у репозиторії. Пройдено два: ресерч і персони з jobs. Наступний — карта сайту й флоу.</p>
+    <p class="lede">Дванадцять кроків від ресерчу до передачі в розробку. Кожен крок лишає артефакт у репозиторії. Пройдено два: ресерч і персони з їхніми потребами. Наступний — структура й сценарії.</p>
     <div class="board">
       <ol id="col-a"></ol>
       <ol id="col-b"></ol>
@@ -151,6 +154,7 @@ iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
   <section class="empty" id="empty" hidden aria-live="polite">
     <div class="empty-n" id="empty-n"></div>
     <h1 class="empty-name" id="empty-name"></h1>
+    <p class="desc" id="empty-desc"></p>
     <span class="chip" id="empty-chip"></span>
     <p>Цей блок поки не наповнений.</p>
     <p class="hint" id="empty-hint"></p>
@@ -172,9 +176,12 @@ iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
     var row = document.createElement('a');
     row.className = 'row ' + (a.dataset.status || '');
     row.href = '#' + a.dataset.step;
-    row.innerHTML = a.innerHTML;
-    var lbl = row.querySelector('.s-lbl');
-    if (a.dataset.status === 'done') lbl.textContent = '✓ ' + a.dataset.step + ' · пройдено';
+    var main = document.createElement('span'); main.className = 'r-main';
+    var t = document.createElement('span'); t.className = 's-name'; t.textContent = a.querySelector('.s-name').textContent;
+    var d = document.createElement('span'); d.className = 'r-desc'; d.textContent = a.dataset.desc || '';
+    main.appendChild(t); main.appendChild(d);
+    var lbl = a.querySelector('.s-lbl').cloneNode(true);
+    row.appendChild(main); row.appendChild(lbl);
     li.appendChild(row);
     document.getElementById(i < 6 ? 'col-a' : 'col-b').appendChild(li);
   });
@@ -194,16 +201,17 @@ iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
     var name = a.querySelector('.s-name').textContent;
 
     if (a.dataset.src) {
-      document.getElementById('frame-n').textContent = 'Крок ' + id + ' · пройдено · ' + a.dataset.title;
+      document.getElementById('frame-n').textContent = 'Крок ' + id + ' · пройдено';
       document.getElementById('frame-name').textContent = name;
       document.getElementById('frame-open').href = a.dataset.src;
-      iframe.title = a.dataset.title;
+      iframe.title = name;
       if (iframe.getAttribute('src') !== a.dataset.src) iframe.setAttribute('src', a.dataset.src);
       frame.hidden = false;
-      document.title = 'WAY — ' + a.dataset.title;
+      document.title = 'WAY — ' + name;
     } else {
       document.getElementById('empty-n').textContent = 'Крок ' + id;
       document.getElementById('empty-name').textContent = name;
+      document.getElementById('empty-desc').textContent = a.dataset.desc || '';
       var chip = document.getElementById('empty-chip');
       var isNext = a.dataset.status === 'next';
       chip.textContent = isNext ? 'наступний крок' : 'не наповнено';
