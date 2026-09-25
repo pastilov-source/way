@@ -12,3 +12,4 @@ node_modules/
 .playwright-mcp/
 .vercel
 .env*
+tools/.timecount-cache.json

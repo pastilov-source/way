@@ -57,6 +57,14 @@ npx vercel@latest deploy --prod
 
 На сайт потрапляють лише `index.html`, `research/research.html`, `research/personas.html` і скріни — цей список задає `.vercelignore`. Документи, PDF і робочі теки лишаються тільки в репозиторії.
 
+## Час на проєкт
+
+```bash
+python3 tools/timecount.py
+```
+
+Рахує години за логами сесій Claude Code: з Claude, поза ним і разом. Як саме — [tools/README.md](tools/README.md).
+
 ## Робочі теки
 
 Порядок роботи: **research → concept → wireframes → tokens + components → design-system → handoff.** Стадії перекриваються, ресерч не пропускаємо.
