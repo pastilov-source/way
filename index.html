@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAY — процес</title>
+<meta name="description" content="Головна сторінка WAY: дванадцять кроків процесу. Пройдені кроки відкривають свої сторінки, решта ще не наповнені.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Commissioner:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#0D120F; --surface:#151C18; --surface-2:#1C2520; --surface-3:#232E27;
+  --ink:#E5ECE6; --ink-2:#B2C0B7; --muted:#7E8D85;
+  --line:#232E27; --line-2:#314037;
+  --accent:#77C79A; --accent-dim:#3E7A5B; --accent-soft:#16271E;
+  --signal:#E0A45C; --signal-soft:#2C2318;
+  --radius:12px; --side:320px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Commissioner","Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+[hidden]{display:none!important}
+
+/* ---------- каркас ---------- */
+.app{display:grid;grid-template-columns:var(--side) 1fr;height:100vh;height:100dvh}
+.side{border-right:1px solid var(--line-2);background:var(--surface);display:flex;flex-direction:column;min-height:0}
+.brand{padding:26px 26px 18px;border-bottom:1px solid var(--line-2)}
+.brand a{display:block}
+.brand-mark{font-family:"Unbounded",sans-serif;font-weight:700;font-size:17px;letter-spacing:.16em;color:var(--accent)}
+.brand-sub{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.08em;color:var(--muted);margin-top:4px;text-transform:uppercase}
+.steps{list-style:none;margin:0;padding:8px 14px 18px;overflow-y:auto;flex:1;min-height:0}
+.steps li{margin:0}
+.step{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 12px;border-bottom:1px solid var(--line);border-radius:8px}
+.step:hover{background:var(--surface-2)}
+.step[aria-current="page"]{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--accent)}
+.s-name{font-family:"JetBrains Mono",monospace;font-size:13.5px;color:var(--ink-2);line-height:1.35}
+.s-lbl{font-family:"Unbounded",sans-serif;font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.step.done .s-name{color:var(--ink)}
+.step.done .s-lbl{color:var(--accent)}
+.step.next .s-name{color:var(--signal)}
+.step.next .s-lbl{color:var(--signal)}
+.home-link{display:flex;justify-content:space-between;align-items:baseline;padding:12px;margin:8px 14px 0;border-radius:8px;border:1px solid var(--line-2);font-size:14px;color:var(--ink-2)}
+.home-link:hover{background:var(--surface-2)}
+.home-link[aria-current="page"]{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--accent);color:var(--ink)}
+.side-foot{padding:16px 26px 22px;border-top:1px solid var(--line-2);font-size:12.5px;color:var(--muted);line-height:1.5}
+.side-foot b{color:var(--accent);font-weight:600}
+
+.view{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:auto}
+
+/* ---------- огляд ---------- */
+.home{padding:64px 56px 80px;max-width:1080px}
+h1{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(30px,4.2vw,48px);line-height:1.05;letter-spacing:-.035em;margin:0 0 18px}
+.lede{font-size:17px;color:var(--ink-2);margin:0 0 36px;max-width:64ch}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
+.board ol{list-style:none;margin:0;padding:0}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 4px;border-bottom:1px solid var(--line-2)}
+.row .s-name{font-size:15.5px}
+.row .s-lbl{font-size:11px}
+.row:hover .s-name{color:var(--ink)}
+.row.done{border-bottom-color:rgba(119,199,154,.35)}
+.row.next{border-bottom-color:rgba(224,164,92,.45)}
+.note{margin-top:34px;font-size:14px;color:var(--muted);max-width:70ch}
+
+/* ---------- пройдений крок ---------- */
+.frame{flex:1;display:flex;flex-direction:column;min-height:0}
+.frame-h{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 22px;border-bottom:1px solid var(--line-2);background:var(--surface);flex-wrap:wrap}
+.frame-t{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;min-width:0}
+.frame-n{font-family:"Unbounded",sans-serif;font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.frame-name{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--ink)}
+.open{font-size:13px;color:var(--accent);border-bottom:1px solid rgba(119,199,154,.3);white-space:nowrap}
+.open:hover{border-bottom-color:var(--accent)}
+iframe{flex:1;width:100%;border:0;background:var(--ground);min-height:0}
+
+/* ---------- ще не наповнений крок ---------- */
+.empty{padding:64px 56px;max-width:760px}
+.empty-n{font-family:"Unbounded",sans-serif;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.empty-name{font-family:"JetBrains Mono",monospace;font-size:clamp(24px,3.4vw,36px);color:var(--ink);margin:0 0 18px;line-height:1.2;font-weight:600}
+.chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.04em;padding:3px 9px;border-radius:5px;background:var(--surface-3);color:var(--ink-2);border:1px dashed var(--line-2)}
+.chip.next{background:var(--signal-soft);color:var(--signal);border:1px solid rgba(224,164,92,.4)}
+.empty p{font-size:17px;color:var(--ink-2);margin:20px 0 0}
+.empty .hint{font-size:14px;color:var(--muted);margin-top:10px}
+
+@media (max-width:860px){
+  .app{display:block;height:auto}
+  .side{border-right:0;border-bottom:1px solid var(--line-2)}
+  .brand{padding:18px 16px 12px}
+  .home-link{margin:10px 16px 0}
+  .steps{display:flex;gap:8px;overflow-x:auto;padding:10px 16px 14px;scroll-snap-type:x proximity}
+  .steps li{flex:0 0 auto;scroll-snap-align:start}
+  .step{flex-direction:column;gap:3px;border:1px solid var(--line-2);padding:10px 12px}
+  .side-foot{display:none}
+  .view{overflow:visible}
+  .frame{height:100vh;height:100dvh}
+  .home,.empty{padding:32px 16px 48px}
+  .board{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="side">
+  <div class="brand">
+    <a href="#"><div class="brand-mark">WAY</div><div class="brand-sub">процес · 12 кроків</div></a>
+  </div>
+  <a class="home-link" href="#" data-home>Огляд <span class="s-lbl">головна</span></a>
+  <nav aria-label="Кроки процесу">
+    <ol class="steps">
+      <li><a class="step done" href="#01" data-step="01" data-status="done" data-src="research/research.html" data-title="Ресерч"><span class="s-name">research.md</span><span class="s-lbl">✓ 01</span></a></li>
+      <li><a class="step done" href="#02" data-step="02" data-status="done" data-src="research/personas.html" data-title="Персони й JTBD"><span class="s-name">personas.md · jtbd.md</span><span class="s-lbl">✓ 02</span></a></li>
+      <li><a class="step next" href="#03" data-step="03" data-status="next"><span class="s-name">sitemap · flows</span><span class="s-lbl">★ 03 · далі</span></a></li>
+      <li><a class="step" href="#04" data-step="04"><span class="s-name">wireframes/</span><span class="s-lbl">04</span></a></li>
+      <li><a class="step" href="#05" data-step="05"><span class="s-name">voice.md · microcopy</span><span class="s-lbl">05</span></a></li>
+      <li><a class="step" href="#06" data-step="06"><span class="s-name">concept/</span><span class="s-lbl">06</span></a></li>
+      <li><a class="step" href="#07" data-step="07"><span class="s-name">ui/ + visuals</span><span class="s-lbl">07</span></a></li>
+      <li><a class="step" href="#08" data-step="08"><span class="s-name">tokens.css · components/</span><span class="s-lbl">08</span></a></li>
+      <li><a class="step" href="#09" data-step="09"><span class="s-name">design-system/</span><span class="s-lbl">09</span></a></li>
+      <li><a class="step" href="#10" data-step="10"><span class="s-name">responsive/</span><span class="s-lbl">10</span></a></li>
+      <li><a class="step" href="#11" data-step="11"><span class="s-name">animations/</span><span class="s-lbl">11</span></a></li>
+      <li><a class="step" href="#12" data-step="12"><span class="s-name">handoff/ · README</span><span class="s-lbl">12</span></a></li>
+    </ol>
+  </nav>
+  <div class="side-foot">Пройдено: <b>ресерч</b> і <b>персони з jobs</b>. Сторінки кроків лежать у своїх теках — тут вони лише зібрані в одне меню.</div>
+</aside>
+
+<main class="view">
+
+  <section class="home" id="home" aria-labelledby="home-h">
+    <h1 id="home-h">Процес WAY</h1>
+    <p class="lede">Дванадцять кроків від ресерчу до передачі в розробку. Кожен крок лишає артефакт у репозиторії. Пройдено два: ресерч і персони з jobs. Наступний — карта сайту й флоу.</p>
+    <div class="board">
+      <ol id="col-a"></ol>
+      <ol id="col-b"></ol>
+    </div>
+    <p class="note">Пройдені кроки відкривають свої сторінки. Решта поки не наповнені: сторінка кроку з'явиться тут, щойно в нього буде артефакт.</p>
+  </section>
+
+  <section class="frame" id="frame" hidden>
+    <div class="frame-h">
+      <div class="frame-t"><span class="frame-n" id="frame-n"></span><span class="frame-name" id="frame-name"></span></div>
+      <a class="open" id="frame-open" href="#" target="_blank" rel="noopener">Відкрити окремо ↗</a>
+    </div>
+    <iframe id="frame-i" title=""></iframe>
+  </section>
+
+  <section class="empty" id="empty" hidden aria-live="polite">
+    <div class="empty-n" id="empty-n"></div>
+    <h1 class="empty-name" id="empty-name"></h1>
+    <span class="chip" id="empty-chip"></span>
+    <p>Цей блок поки не наповнений.</p>
+    <p class="hint" id="empty-hint"></p>
+  </section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.side [data-step]'));
+  var homeLink = document.querySelector('[data-home]');
+  var home = document.getElementById('home'), frame = document.getElementById('frame'), empty = document.getElementById('empty');
+  var iframe = document.getElementById('frame-i');
+
+  // огляд у дві колонки, як у меню
+  steps.forEach(function (a, i) {
+    var li = document.createElement('li');
+    var row = document.createElement('a');
+    row.className = 'row ' + (a.dataset.status || '');
+    row.href = '#' + a.dataset.step;
+    row.innerHTML = a.innerHTML;
+    var lbl = row.querySelector('.s-lbl');
+    if (a.dataset.status === 'done') lbl.textContent = '✓ ' + a.dataset.step + ' · пройдено';
+    li.appendChild(row);
+    document.getElementById(i < 6 ? 'col-a' : 'col-b').appendChild(li);
+  });
+
+  function show(id) {
+    steps.concat([homeLink]).forEach(function (el) { el.removeAttribute('aria-current'); });
+    var a = steps.filter(function (s) { return s.dataset.step === id; })[0];
+    home.hidden = frame.hidden = empty.hidden = true;
+
+    if (!a) {
+      home.hidden = false;
+      homeLink.setAttribute('aria-current', 'page');
+      document.title = 'WAY — процес';
+      return;
+    }
+    a.setAttribute('aria-current', 'page');
+    var name = a.querySelector('.s-name').textContent;
+
+    if (a.dataset.src) {
+      document.getElementById('frame-n').textContent = 'Крок ' + id + ' · пройдено · ' + a.dataset.title;
+      document.getElementById('frame-name').textContent = name;
+      document.getElementById('frame-open').href = a.dataset.src;
+      iframe.title = a.dataset.title;
+      if (iframe.getAttribute('src') !== a.dataset.src) iframe.setAttribute('src', a.dataset.src);
+      frame.hidden = false;
+      document.title = 'WAY — ' + a.dataset.title;
+    } else {
+      document.getElementById('empty-n').textContent = 'Крок ' + id;
+      document.getElementById('empty-name').textContent = name;
+      var chip = document.getElementById('empty-chip');
+      var isNext = a.dataset.status === 'next';
+      chip.textContent = isNext ? 'наступний крок' : 'не наповнено';
+      chip.className = 'chip' + (isNext ? ' next' : '');
+      document.getElementById('empty-hint').textContent = isNext ? 'Це наступний крок процесу.' : '';
+      empty.hidden = false;
+      document.title = 'WAY — крок ' + id;
+    }
+  }
+
+  function route() { show(location.hash.replace('#', '')); }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>
