@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAY — структура й сценарії</title>
+<meta name="description" content="Інформаційна архітектура WAY: дерево екранів із jobs, навігація, вісім user flows і матриця трасування.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Commissioner:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#0D120F; --surface:#151C18; --surface-2:#1C2520; --surface-3:#232E27;
+  --ink:#E5ECE6; --ink-2:#B2C0B7; --muted:#7E8D85;
+  --line:#232E27; --line-2:#314037;
+  --accent:#77C79A; --accent-dim:#3E7A5B; --accent-soft:#16271E;
+  --signal:#E0A45C; --signal-soft:#2C2318;
+  --danger:#E08B7C;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Commissioner","Helvetica Neue",Arial,sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(119,199,154,.28)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+.shell{max-width:1340px;margin:0 auto;padding:0 32px 120px;display:grid;grid-template-columns:216px 1fr;gap:56px;align-items:start}
+
+/* ---------- toc ---------- */
+.toc{position:sticky;top:0;padding:48px 0 0;font-size:13.5px}
+.toc-mark{font-family:"Unbounded",sans-serif;font-weight:700;font-size:15px;letter-spacing:.16em;color:var(--accent);margin-bottom:4px}
+.toc-sub{font-size:11px;letter-spacing:.06em;color:var(--muted);margin-bottom:26px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px;border-left:1px solid var(--line-2)}
+.toc a{display:block;padding:7px 0 7px 15px;color:var(--ink-2);border:0;border-left:2px solid transparent;margin-left:-1px;line-height:1.3}
+.toc a:hover{color:var(--accent);border-left-color:var(--accent-dim)}
+.toc .n{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);display:block;margin-bottom:1px}
+
+/* ---------- head ---------- */
+header.doc{padding:64px 0 12px;max-width:74ch}
+h1{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(32px,4.6vw,52px);line-height:1.04;letter-spacing:-.035em;margin:0 0 20px;text-wrap:balance}
+.lede{font-size:17.5px;color:var(--ink-2);margin:0 0 24px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.meta span{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.02em;padding:5px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line-2);color:var(--ink-2)}
+.rule{background:var(--surface);border:1px solid var(--line-2);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:18px 22px;font-size:15px;color:var(--ink-2)}
+.rule b{color:var(--ink)}
+
+/* ---------- sections ---------- */
+section{padding-top:72px;scroll-margin-top:24px}
+.sec-h{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.sec-n{font-family:"Unbounded",sans-serif;font-weight:500;font-size:12.5px;color:var(--accent);letter-spacing:.06em}
+h2{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(23px,2.6vw,31px);letter-spacing:-.025em;margin:0;flex:1 1 auto}
+.sec-rule{height:1px;background:linear-gradient(90deg,var(--line-2),transparent);margin:14px 0 30px}
+h3{font-size:20px;font-weight:700;letter-spacing:-.015em;margin:44px 0 12px;text-wrap:balance}
+h4{font-size:16.5px;font-weight:700;margin:28px 0 8px;color:var(--ink)}
+p{margin:0 0 15px;max-width:78ch}
+.sub{color:var(--muted);font-size:14px;max-width:78ch}
+
+/* ---------- chips ---------- */
+.chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 7px;border-radius:4px;vertical-align:middle;white-space:nowrap}
+.chip.unver{background:var(--signal-soft);color:var(--signal);border:1px solid rgba(224,164,92,.3)}
+.chip.ours{background:var(--surface-3);color:var(--ink-2);border:1px solid var(--line-2)}
+.chip.q{background:var(--accent-soft);color:var(--accent);border:1px solid rgba(119,199,154,.28)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 14px;border:1px solid var(--line-2);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+thead th{background:var(--surface-2);color:var(--ink);font-weight:700;font-size:13px;position:sticky;top:0;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody th{background:var(--surface-2);font-weight:600;color:var(--ink-2);font-size:13px;white-space:nowrap;width:1%}
+td b,th b{color:var(--ink)}
+.src{font-size:12.5px;color:var(--muted);margin:0 0 34px;max-width:none;line-height:1.7}
+.src b{color:var(--ink-2);font-weight:600}
+
+/* score table */
+table.scores{min-width:680px}
+table.scores td,table.scores th{text-align:center}
+table.scores tbody th,table.scores thead th:first-child{text-align:left}
+table.scores thead th{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:400;color:var(--muted);white-space:normal;line-height:1.3}
+.s{font-family:"JetBrains Mono",monospace;font-style:normal;font-weight:600;font-size:13.5px;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:6px}
+.s1{background:rgba(224,139,124,.13);color:var(--danger)}
+.s2{background:rgba(224,164,92,.13);color:var(--signal)}
+.s3{background:var(--surface-3);color:var(--ink-2)}
+.s4{background:rgba(119,199,154,.13);color:var(--accent)}
+.s5{background:rgba(119,199,154,.24);color:var(--accent)}
+.sum{font-family:"JetBrains Mono",monospace;font-weight:600;color:var(--ink)}
+
+/* ---------- cards ---------- */
+.mech{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px}
+.mech.no{border-color:rgba(224,139,124,.3)}
+.mech-t{display:flex;align-items:baseline;gap:11px;margin-bottom:10px;flex-wrap:wrap}
+.mech-id{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;color:var(--accent)}
+.mech.no .mech-id{color:var(--danger)}
+.mech-n{font-size:18px;font-weight:700;letter-spacing:-.015em;margin:0}
+.mech p:last-child{margin-bottom:0}
+.mech ol{margin:0;padding-left:20px}
+.mech ol li{margin-bottom:9px;max-width:78ch}
+.mech ol li:last-child{margin-bottom:0}
+
+.note{background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--radius);padding:16px 20px;margin:18px 0;font-size:14.5px;color:var(--ink-2)}
+.note b{color:var(--ink)}
+
+/* pattern loop */
+.loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin:20px 0 18px}
+.beat{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:18px 19px;position:relative}
+.beat-n{font-family:"Unbounded",sans-serif;font-size:11px;font-weight:500;color:var(--accent);letter-spacing:.08em;margin-bottom:7px}
+.beat-t{font-size:16px;font-weight:700;margin:0 0 6px}
+.beat p{font-size:14px;color:var(--ink-2);margin:0}
+
+/* ---------- screens ---------- */
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:8px 0 34px}
+figure{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
+figure a{display:block;border:0;line-height:0}
+figure img{width:100%;height:132px;object-fit:cover;object-position:top center;display:block;filter:saturate(.85) brightness(.94);transition:filter .2s}
+figure a:hover img{filter:saturate(1) brightness(1)}
+figcaption{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);padding:8px 10px;line-height:1.4;border-top:1px solid var(--line)}
+figcaption .gated{color:var(--signal)}
+
+footer{margin-top:80px;padding-top:26px;border-top:1px solid var(--line-2);font-size:13.5px;color:var(--muted)}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:1fr;gap:0;padding:0 20px 80px}
+  .toc{position:static;padding:26px 0 0;border-bottom:1px solid var(--line-2);padding-bottom:22px}
+  .toc ol{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));display:grid;border-left:0;gap:4px}
+  .toc a{border-left:0;padding-left:0}
+  header.doc{padding-top:34px}
+  section{padding-top:52px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+
+
+/* ================= ia.html: додано до стилів personas.html ================= */
+code.mono{font-size:.86em;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.chip.unk{background:var(--signal-soft);color:var(--signal);border:1px solid rgba(224,164,92,.38)}
+.chip.feed{background:transparent;color:var(--muted);border:1px dashed var(--line-2)}
+.ref{color:var(--ink-2)}
+ul,ol{margin:0 0 15px;padding-left:22px;max-width:80ch}
+li{margin-bottom:6px}
+li>ul,li>ol{margin:6px 0 0}
+th.c,td.c{text-align:center}
+blockquote.job{margin:0 0 18px;padding:14px 20px;border-left:3px solid var(--accent-dim);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;color:var(--ink-2);font-style:italic;max-width:80ch}
+pre.ascii{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:18px 20px;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-2);margin:0 0 16px}
+details{margin:14px 0;border:1px solid var(--line-2);border-radius:var(--radius);background:var(--surface)}
+details>summary{cursor:pointer;padding:13px 18px;font-weight:600;color:var(--ink);list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"▸";color:var(--accent);margin-right:10px;display:inline-block;transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+details>.in{padding:4px 18px 8px}
+details .tw{background:var(--surface-2)}
+
+/* stat tiles */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:6px 0 26px}
+.stat{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:16px 18px}
+.stat b{display:block;font-family:"Unbounded",sans-serif;font-size:26px;letter-spacing:-.03em;color:var(--accent);line-height:1.1}
+.stat span{font-size:13px;color:var(--ink-2)}
+
+/* tree */
+.tree{display:grid;gap:16px;margin:10px 0 18px}
+.tg{border:1px solid var(--line-2);border-radius:var(--radius);background:linear-gradient(180deg,var(--surface),var(--ground));padding:16px}
+.tg-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:2px 4px 14px}
+.tg-t{font-family:"Unbounded",sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--accent)}
+.tg-s{font-size:14px;color:var(--muted)}
+.tg-screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.scr{background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:16px 18px}
+.scr-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.scr-h h4{margin:0 8px 0 0;font-size:17px}
+.scr-note{font-size:12.5px;color:var(--muted);font-family:"JetBrains Mono",monospace;margin-bottom:10px}
+.secs{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.secs li{padding:8px 0;border-bottom:1px solid var(--line);margin:0;font-size:14px;line-height:1.45}
+.secs li:last-child{border-bottom:0}
+.sec-n{color:var(--ink)}
+.sec-note{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+
+/* flows */
+.flow-toc{list-style:none;padding:0;margin:0 0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px;max-width:none}
+.flow-toc a.fl{display:block;background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--ink-2)}
+.flow-toc a.fl:hover{border-color:var(--accent-dim);color:var(--ink)}
+.flow{border-top:1px solid var(--line-2);padding-top:34px;margin-top:40px;scroll-margin-top:20px}
+.flow-h{display:flex;align-items:baseline;gap:14px;margin-bottom:12px}
+.flow-h h3{margin:0}
+.flow-n{font-family:"Unbounded",sans-serif;font-size:12px;color:var(--accent);letter-spacing:.06em}
+.diagram{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:22px 16px;margin:6px 0 18px;overflow-x:auto;text-align:center}
+.diagram pre.mermaid{margin:0;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);text-align:left;white-space:pre}
+.diagram pre.mermaid[data-processed]{white-space:normal;text-align:center}
+.diagram svg{max-width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:13px;color:var(--ink-2);margin:0 0 18px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:7px;border:1px solid}
+.lg-screen{background:#1f2937;border-color:#81B29A}
+.lg-state{background:#232E27;border-color:#7E8D85;border-radius:9px!important}
+.lg-good{background:#16271E;border-color:#77C79A;border-radius:9px!important}
+.lg-dead{background:#2B1916;border-color:#E08B7C;border-radius:9px!important}
+.lg-exit{background:#1A211D;border-color:#7E8D85;border-style:dashed!important;border-radius:9px!important}
+.flow-notes p,.flow-notes li{font-size:14.5px;color:var(--ink-2)}
+.flow-notes b{color:var(--ink)}
+
+/* matrix */
+table.matrix{min-width:640px}
+table.matrix td,table.matrix th{white-space:nowrap}
+table.matrix td:first-child{white-space:normal;min-width:240px}
+.tick{color:var(--accent);font-weight:700}
+tr.orphan td{background:rgba(224,139,124,.10)}
+tr.orphan td:first-child{box-shadow:inset 3px 0 0 var(--danger)}
+tr.thin td:first-child{box-shadow:inset 3px 0 0 var(--signal)}
+td.orphan-col{background:rgba(224,139,124,.10)}
+td.thin-col{background:rgba(224,164,92,.07)}
+tr.tot td{background:var(--surface-2);font-family:"JetBrains Mono",monospace;font-weight:600;color:var(--ink)}
+.mx-legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-2);margin:4px 0 14px}
+.mx-legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.mx-legend .o::before{background:rgba(224,139,124,.35);box-shadow:inset 3px 0 0 var(--danger)}
+.mx-legend .t::before{background:rgba(224,164,92,.25);box-shadow:inset 3px 0 0 var(--signal)}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="toc" aria-label="Зміст">
+  <div class="toc-mark">WAY</div>
+  <div class="toc-sub">СТРУКТУРА Й СЦЕНАРІЇ · 2026-09-30</div>
+  <ol>
+    <li><a href="#korotko"><span class="n">01</span>Коротко</a></li><li><a href="#sutnosti"><span class="n">02</span>Сутності</a></li><li><a href="#tree"><span class="n">03</span>Дерево екранів</a></li><li><a href="#nav"><span class="n">04</span>Навігація</a></li><li><a href="#flows"><span class="n">05</span>User flows</a></li><li><a href="#trace"><span class="n">06</span>Трасування</a></li><li><a href="#rishennia"><span class="n">07</span>Рішення виконавця</a></li><li><a href="#open"><span class="n">08</span>Відкрите</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="doc">
+  <h1>Структура й сценарії</h1>
+  <p class="lede">Інформаційна архітектура WAY: з чим людина має справу, які екрани це тримають, як між ними рухатися і як кожна потреба проходить крізь продукт — з усіма станами й тупиками.</p>
+  <div class="meta"><span>чернетка</span><span>2026-09-30</span><span>5 екранів · 8 flows</span><span>до main job — 1 тап</span><span>тупиків у flows — 11</span><span>рішення виконавця не узгоджено із замовником</span></div>
+  <div class="rule"><b>Звідки ця сторінка.</b> Її зібрано скриптом із двох файлів у репозиторії — <code class="mono">wireframes/sitemap.md</code> і <code class="mono">wireframes/flows.md</code>. Джерело правди — вони. Позначки: <span class="chip q">J4</span> job, яку закриває екран чи секція; <span class="chip feed">→ J0</span> секція лише подає дані; <span class="chip unk">?</span> припущення; <span class="chip ours">Н</span> наша оцінка.</div>
+</header>
+
+<section id="korotko">
+  <div class="sec-h"><span class="sec-n">01</span><h2>Коротко</h2></div><div class="sec-rule"></div>
+  <div class="stats">
+    <div class="stat"><b>5</b><span>екранів у трьох групах</span></div>
+    <div class="stat"><b>3 + 1</b><span>глобальні пункти й плаваючий крок дня</span></div>
+    <div class="stat"><b>1 тап</b><span>до main job — «бачити свій рух»</span></div>
+    <div class="stat"><b>8</b><span>user flows, 11 тупиків</span></div>
+    <div class="stat"><b>0</b><span>екранів і jobs-сиріт</span></div>
+    <div class="stat"><b>21</b><span>рішення виконавця</span></div>
+  </div>
+  <ul>
+    <li><b>Перший екран — «Сьогодні».</b> Продукт відкривають щодня, а «не загубити сьогоднішню дію» — перша в ядрі MVP.</li>
+    <li><b>Main job тримається на одному екрані — «Дорога».</b> Там пройдене, позиція й фініш; це й найдорожчий рядок оцінки.</li>
+    <li><b>Крок дня висить на кожному екрані</b> й живе поза вкладкою — у вікні поверх інших програм і в сповіщеннях. Це тимчасове рішення; цільове — застосунки й віджет.</li>
+    <li><b>Жоден тупик не виникає через дірку в діаграмі.</b> Лишились ті, що стоять на відкритих питаннях, на межі можливого для продукту або на свідомих рішеннях.</li>
+    <li><b>Усі рішення ухвалив виконавець</b> 2026-09-30; із замовником їх ще не узгоджено.</li>
+  </ul>
+</section>
+
+<section id="sutnosti">
+  <div class="sec-h"><span class="sec-n">02</span><h2>Сутності</h2></div><div class="sec-rule"></div>
+  <p class="sub">Головні об'єкти, з якими людина має справу, щоб закрити свої jobs.</p>
+  <div class="tw"><table class=""><thead><tr><th>#</th><th>Сутність</th><th>Jobs</th><th>Пов'язана з</th><th>Наскільки певна</th></tr></thead><tbody><tr><td>1</td><td><b>Дорога</b></td><td>J0, J1, J2, J3, J5</td><td>етап, крок, зона уваги</td><td>рішення D8, D25</td></tr><tr><td>2</td><td><b>Етап</b></td><td>J2, J3</td><td>дорога, крок</td><td>бриф §5; межі етапу — <span class="chip unk" title="припущення">?</span></td></tr><tr><td>3</td><td><b>Крок</b></td><td>J0, J3, J4, E1, E2</td><td>дорога, етап, день</td><td>бриф §6</td></tr><tr><td>4</td><td><b>Зона уваги</b></td><td>J1, E3</td><td>дорога, день</td><td>практика замовника; назва робоча</td></tr><tr><td>5</td><td><b>День <span class="chip unk" title="припущення">?</span></b></td><td>J4, E1, E3</td><td>крок, зона уваги</td><td>O18 відкрите</td></tr><tr><td>6</td><td><b>Пропозиція кроку</b></td><td>J3, J5, E2</td><td>крок, дорога</td><td>готує ШІ; схоже, це стан кроку, а не окремий об'єкт</td></tr></tbody></table></div>
+</section>
+
+<section id="tree">
+  <div class="sec-h"><span class="sec-n">03</span><h2>Дерево екранів</h2></div><div class="sec-rule"></div>
+  <p class="sub">Біля екрана — jobs, які він закриває; вони збігаються з матрицею трасування. Стани екранів — не окремі екрани, вони в таблиці нижче.</p>
+  <div class="tree"><div class="tg"><div class="tg-h"><span class="tg-t">СЬОГОДНІ</span><span class="tg-s">«що я роблю сьогодні»</span></div><div class="tg-screens"><article class="scr"><div class="scr-h"><h4>Сьогодні</h4><span class="chip q">J4</span> <span class="chip q">E1</span> <span class="chip q">J3</span> <span class="chip q">E2</span> <span class="chip q">J5</span> <span class="chip q">E3</span></div><div class="scr-note">primary</div><ul class="secs"><li><span class="sec-n">крок дня</span> <span class="chip q">J4</span><span class=sec-note>поточний крок і черга</span></li><li><span class="sec-n">наступний крок: пропозиція й відповідь</span> <span class="chip q">J3</span> <span class="chip q">E2</span><span class=sec-note>коли кроку на сьогодні немає або його зроблено</span></li><li><span class="sec-n">зроблено сьогодні <span class="chip unk" title="припущення">?</span></span> <span class="chip q">E1</span><span class=sec-note>залежить від O18</span></li><li><span class="sec-n">записати зроблене</span> <span class="chip feed" title="подає дані; job закривається на іншому екрані">→ J0</span><span class=sec-note>одним рядком; зокрема прогулянка</span></li></ul></article><article class="scr"><div class="scr-h"><h4>Крок із собою</h4><span class="chip q">J4</span> <span class="chip q">E2</span> <span class="chip q">E4</span></div><div class="scr-note">primary · плаваючий екран</div><ul class="secs"><li><span class="sec-n">крок із собою</span> <span class="chip q">J4</span> <span class="chip q">E2</span><span class=sec-note>поточний крок і п'ять дій над ним</span></li><li><span class="sec-n">записати зроблене</span> <span class="chip feed" title="подає дані; job закривається на іншому екрані">→ J0</span></li><li><span class="sec-n">вікно поверх інших програм</span> <span class="chip q">J4</span><span class=sec-note>комп'ютер; тимчасове рішення</span></li><li><span class="sec-n">на телефоні</span> <span class="chip q">J4</span><span class=sec-note>інструкція; друга інструкція після відмови</span></li><li><span class="sec-n">коли нагадувати</span> <span class="chip q">J4</span> <span class="chip q">E4</span><span class=sec-note>раз, двічі чи тричі на день; вимкнути</span></li><li><span class="sec-n">сповіщення з кроком</span> <span class="chip q">J4</span><span class=sec-note>пуш на телефон; тимчасове рішення</span></li></ul></article></div></div><div class="tg"><div class="tg-h"><span class="tg-t">ДОРОГА</span><span class="tg-s">«де я і що далі»</span></div><div class="tg-screens"><article class="scr"><div class="scr-h"><h4>Дорога</h4><span class="chip q">J0</span> <span class="chip q">J2</span> <span class="chip q">J3</span> <span class="chip q">J5</span> <span class="chip q">E1</span> <span class="chip q">E2</span></div><div class="scr-note">primary</div><ul class="secs"><li><span class="sec-n">пройдене</span> <span class="chip q">J0</span> <span class="chip q">E1</span><span class=sec-note>лінії, відкладені кроки, прогулянки</span></li><li><span class="sec-n">позиція: де я зараз</span> <span class="chip q">J2</span></li><li><span class="sec-n">фініш</span> <span class="chip q">J0</span> <span class="chip q">J2</span><span class=sec-note>як людина уявляє фінал; «я дійшла»</span></li><li><span class="sec-n">наступний крок: пропозиція й відповідь</span> <span class="chip q">J3</span> <span class="chip q">E2</span></li><li><span class="sec-n">етапи</span> <span class="chip q">J2</span> <span class="chip q">J3</span></li><li><span class="sec-n">записати зроблене</span> <span class="chip q">J0</span></li><li><span class="sec-n">точка старту й дедлайн</span> <span class="chip feed" title="подає дані; job закривається на іншому екрані">→ J2</span><span class=sec-note>можна дописати будь-коли; тут же — скасувати дорогу</span></li><li><span class="sec-n">ресурси</span> <span class="chip feed" title="подає дані; job закривається на іншому екрані">→ J3</span> <span class="chip ours" title="наша оцінка">Н</span><span class=sec-note>контекст для ШІ</span></li></ul></article><article class="scr"><div class="scr-h"><h4>Нова дорога</h4><span class="chip q">J3</span> <span class="chip q">E2</span> <span class="chip q">J1</span></div><div class="scr-note">primary на старті · secondary П3</div><ul class="secs"><li><span class="sec-n">фінал</span> <span class="chip q">J3</span><span class=sec-note>єдине обов'язкове поле</span></li><li><span class="sec-n">точка старту</span> <span class="chip feed" title="подає дані; job закривається на іншому екрані">→ J2</span><span class=sec-note>можна пропустити</span></li><li><span class="sec-n">перший крок: пропозиція й відповідь</span> <span class="chip q">J3</span> <span class="chip q">E2</span></li><li><span class="sec-n">коли почати</span> <span class="chip q">J1</span><span class=sec-note>і чи додати в зону уваги цього тижня</span></li></ul></article></div></div><div class="tg"><div class="tg-h"><span class="tg-t">ТИЖДЕНЬ</span><span class="tg-s">«чому я віддаю увагу»</span></div><div class="tg-screens"><article class="scr"><div class="scr-h"><h4>Тиждень</h4><span class="chip q">J1</span> <span class="chip q">E3</span></div><div class="scr-note">primary</div><ul class="secs"><li><span class="sec-n">що зрушило за тиждень</span> <span class="chip q">E3</span> <span class="chip q">J1</span></li><li><span class="sec-n">вибір доріг на тиждень</span> <span class="chip q">J1</span><span class=sec-note>дороги в русі й заплановані; порядок; пошук</span></li><li><span class="sec-n">пройдені й скасовані</span> <span class="chip feed" title="подає дані; job закривається на іншому екрані">→ J0</span><span class=sec-note>згорнуто; вхід до пройденого (D12)</span></li></ul></article></div></div></div>
+  <details><summary>Стани екранів</summary><div class="in"><div class="tw"><table class=""><thead><tr><th>Екран чи елемент</th><th>Стани</th></tr></thead><tbody><tr><td><b>Сьогодні</b></td><td>завантаження · помилка · немає зв'язку · жодної дороги (перший запуск) · кроку на сьогодні ще немає · є поточний крок · поточний зроблено, є наступний · усі кроки на сьогодні зроблено · сьогодні без кроку · крок переходить на завтра · після паузи · тиждень почався, вибір не переглянуто · зберігаємо · збережемо, щойно зможемо</td></tr><tr><td><b>Секція «зроблено сьогодні»</b></td><td>є зроблене · нічого ще не зроблено — без докору (E3)</td></tr><tr><td><b>Плаваючий крок дня</b></td><td>кроку немає · поточний крок · усі кроки на сьогодні зроблено · на екрані «Сьогодні» — <span class="chip unk" title="припущення">?</span></td></tr><tr><td><b>Крок із собою</b></td><td>кроку немає · крок є · усі кроки на сьогодні зроблено · крок висить кілька днів · вікно: відкрито · закрито · браузер не підтримує · телефон: дані недоступні · застосунок не встановлено · дозвіл не запитано · чекаємо на системний запит · дозвіл надано · у дозволі відмовлено · сповіщення: увімкнено · вимкнено · пробне не надійшло</td></tr><tr><td><b>Дорога</b></td><td>завантаження · помилка · чернетка · запланована · без кроків · у русі · на паузі · позицію не визначено · поруч із фінішем · пройдена · скасована · зберігаємо · збережемо, щойно зможемо</td></tr><tr><td><b>Нова дорога</b></td><td>порожня · фінал записано · чернетка збережена · зберігаємо · збережемо, щойно зможемо</td></tr><tr><td><b>Тиждень</b></td><td>завантаження · помилка · жодної дороги · перший тиждень (секція «що зрушило» порожня) · діє вибір минулого тижня · обрано більше трьох: продукт питає · вибір зроблено · тиждень без руху · зберігаємо · збережемо, щойно зможемо</td></tr><tr><td><b>Секція «наступний крок»</b></td><td>чекаємо на пропозицію · пропозиція є · пропозиції немає · пропозицію не отримано · ліміт ШІ на сьогодні вичерпано · пропозицію відкладено · дві-три невдалі пропозиції — запитання замість пропозиції</td></tr><tr><td><b>Наскрізні</b></td><td>немає зв'язку: крок дня видно з останнього відомого, відмітки чекають · доступ до даних не надано — лише якщо лишається рамка з файлами на комп'ютері (<code class="mono">ESTIMATE.md</code> §2)</td></tr></tbody></table></div>
+<p><b>«Збережемо, щойно зможемо»</b> замінює петлю «не збережено → зберігаємо»: уведене лишається на екрані й не губиться, людина йде далі.</p></div></details>
+  <details><summary>Primary і secondary</summary><div class="in"><div class="tw"><table class=""><thead><tr><th>Екран</th><th>Персона 1 · primary</th><th>Персона 2 · secondary</th><th>Персона 3 · secondary</th></tr></thead><tbody><tr><td><b>Сьогодні</b></td><td>так — J4, E1, J3</td><td>стан «після паузи» — J5, E3</td><td>секція «наступний крок» — J3, E2</td></tr><tr><td><b>Крок із собою</b></td><td>так — J4, E4</td><td>секція «коли нагадувати» — E4</td><td>—</td></tr><tr><td><b>Дорога</b></td><td>так — J0, J2, J3</td><td>стан «на паузі» — J5</td><td>секція «наступний крок» — J3, E2</td></tr><tr><td><b>Нова дорога</b></td><td>так, на старті нової цілі — J3</td><td>—</td><td>так, це її головний екран — J3, E2</td></tr><tr><td><b>Тиждень</b></td><td>так — J1</td><td>секція «що зрушило» — E3</td><td>—</td></tr></tbody></table></div>
+<p>Жодного екрана лише для secondary немає. Персона 2 живе в станах і сповіщеннях, Персона 3 — на «Новій дорозі». Це збігається з гіпотезою personas.md, що обидві — стани Персони 1, але збіг не доказ (<span class="chip ours" title="наша оцінка">Н</span>).</p></div></details>
+</section>
+
+<section id="nav">
+  <div class="sec-h"><span class="sec-n">04</span><h2>Навігація</h2></div><div class="sec-rule"></div>
+  <h3>Глобальна навігація</h3>
+  <pre class="ascii">видно завжди
+│
+├─ Сьогодні        (J4, E1)    перший екран
+├─ Дорога          (J2, J0)    відкриває дорогу поточного кроку
+├─ Тиждень         (J1, E3)
+│
+└─ крок дня        (J4)        не пункт, а плаваючий елемент на кожному екрані;
+                               розгортається в «Крок із собою»</pre>
+<div class="tw"><table class=""><thead><tr><th>Пункт</th><th>Кластер jobs</th><th>Чому глобальний</th></tr></thead><tbody><tr><td><b>Сьогодні</b></td><td>J4, E1; сюди ж J3 і E2 (коли кроку немає) і J5 («після паузи»)</td><td>Продукт відкривають щодня (дискавері :38); J4 — перша в ядрі MVP</td></tr><tr><td><b>Дорога</b></td><td>J2, J0; сюди ж J3 і J5</td><td>J2: «коли я повертаюся до своєї цілі» — повертатися одним рухом. Тут закривається main job</td></tr><tr><td><b>Тиждень</b></td><td>J1, E3</td><td>Окремий ритм — тижневий. Тут усі дороги: в русі, заплановані, пройдені</td></tr><tr><td><b>Крок дня</b></td><td>J4</td><td>«Тримати перед очима, доки не зроблю» — на кожному екрані, а не лише на «Сьогодні»</td></tr></tbody></table></div>
+<p><b>Яку дорогу відкриває пункт «Дорога».</b></p>
+<ol><li>Є поточний крок — його дорогу.</li><li>Кроку немає — останню відкриту серед доріг у русі.</li><li>Такої немає — першу з вибору тижня за порядком важливості.</li><li>Доріг немає — «Нову дорогу».</li></ol>
+<p><b>Чого в глобальній навігації немає.</b> «Наступного кроку» — він завжди про конкретну дорогу чи день. «Нової дороги» — її починають рідко, а кнопка «додати» на виду запрошує заводити дороги, а не йти обраними (<span class="chip ours" title="наша оцінка">Н</span>).</p>
+  <h3>Глибина</h3>
+  <p><b>Перший екран — «Сьогодні»,</b> а не позиція на дорозі (research.md 3.1): доріг у зоні уваги кілька, і відкритися «на дорозі» означало б, що продукт обирає за людину (E2).</p>
+<p><b>До main job — 1 тап.</b></p>
+<div class="tw"><table class=""><thead><tr><th>Job</th><th>Шлях</th><th class=c>Тапів</th></tr></thead><tbody><tr><td><b>J0 Бачити свій рух — main job</b></td><td>Сьогодні → Дорога → «пройдене»</td><td class="c"><b>1</b></td></tr><tr><td>J0 — інша дорога тижня</td><td>Сьогодні → Дорога → перемкнути</td><td class="c">2</td></tr><tr><td>J0 — пройдена чи скасована дорога</td><td>Сьогодні → Тиждень → розгорнути «пройдені й скасовані» → дорога</td><td class="c">3</td></tr><tr><td>J2 Зрозуміти, де я зараз</td><td>Сьогодні → Дорога → «позиція»</td><td class="c">1</td></tr><tr><td>J4 Не загубити сьогоднішню дію</td><td>крок дня видно на будь-якому екрані</td><td class="c">0</td></tr><tr><td>Відмітити крок зробленим</td><td>плаваючий крок → «зроблено»</td><td class="c">1</td></tr><tr><td>Записати зроблене заднім числом</td><td>плаваючий крок → «записати зроблене»</td><td class="c">1</td></tr><tr><td>J4, коли кроку немає</td><td>Сьогодні → прийняти пропозицію</td><td class="c">1 на кожну дорогу</td></tr><tr><td>E1 Відчувати рух</td><td>Сьогодні → «зроблено сьогодні» <span class="chip unk" title="припущення">?</span></td><td class="c">0</td></tr><tr><td>J3 — на сьогодні</td><td>Сьогодні → «наступний крок»</td><td class="c">0</td></tr><tr><td>J3 — для нової цілі</td><td>Сьогодні → Тиждень → Нова дорога</td><td class="c">2</td></tr><tr><td>J1 Обрати, чому віддати увагу</td><td>Сьогодні → Тиждень → позначити дороги</td><td class="c">1 + по тапу на дорогу</td></tr><tr><td>J5 Повернутися після паузи</td><td>Сьогодні у стані «після паузи» → прийняти дію</td><td class="c">0–1</td></tr><tr><td>E3 Не почуватися винною</td><td>Сьогодні → Тиждень → «що зрушило»</td><td class="c">1</td></tr><tr><td>E4 Вимкнути сповіщення</td><td>плаваючий крок → «коли нагадувати» → вимикач</td><td class="c">2</td></tr><tr><td>Дорога поза зоною уваги, зокрема запланована</td><td>Сьогодні → Тиждень → дорога</td><td class="c">2</td></tr></tbody></table></div>
+<p><b>Найглибше — 4 тапи, і лише для рідкісних дій:</b> змінити щось на пройденій чи скасованій дорозі (Тиждень → розгорнути → дорога → дія). Main job і часті related jobs — не глибше двох.</p>
+<p><b>Не пораховано.</b> Вузький екран телефона: після рішення про PWA продукт живе й там. Три пункти й плаваючий крок мають уміститися в одну смугу — перевірить крок «Адаптація під екрани».</p>
+  <h3>Глобальне, контекстне, глибоке</h3>
+  <div class="tw"><table class=""><thead><tr><th>Шар</th><th>Що</th></tr></thead><tbody><tr><td><b>Глобальне</b> — видно завжди</td><td>Сьогодні · Дорога · Тиждень · плаваючий крок дня</td></tr><tr><td><b>Контекстне</b> — з'являється, коли є привід</td><td>секція «наступний крок» · перемикач доріг тижня на «Дорозі» · перехід із кроку на його дорогу · дія після паузи · запрошення переглянути вибір на початку тижня · запитання «чи втримаєш стільки?» · «додати в зону уваги? коли почнеш?» наприкінці «Нової дороги» · «схоже, ти дійшла?» біля фінішу · запрошення взяти крок із собою (один раз) · запит дозволу на сповіщення</td></tr><tr><td><b>Глибоке</b> — рідкісні дії</td><td>пройдені й скасовані дороги · точка старту й дедлайн · скасувати дорогу · ресурси · інструкції для телефона</td></tr></tbody></table></div>
+  <details><summary>Схема переходів</summary><div class="in"><pre class="ascii">            ┌──────────────── глобально, з будь-якого екрана ─────────────────┐
+            ▼                             ▼                                    ▼
+        Сьогодні                       Дорога  ⇄  інша дорога тижня         Тиждень
+            │                             ▲                                  │   │
+ крок дня ──┼─────────────────────────────┤◀──── дорога з вибору ────────────┘   │
+ [жодної дороги] ─────────────────▶ Нова дорога ◀────────────────────────────────┘
+                                          │
+                                          └──▶ Дорога (нова)
+
+ плаваючий крок дня ──▶ Крок із собою  (з будь-якого екрана)</pre></div></details>
+  <details><summary>Крок дня поза вкладкою: вікно, сповіщення, інструкції</summary><div class="in"><p>Крок дня має три місця: плаваючий елемент у продукті (поки вкладку відкрито), вікно поверх інших програм на комп'ютері й сповіщення на телефоні.</p>
+<div class="tw"><table class=""><thead><tr><th>Де</th><th>Що</th><th>Чого не вміє</th></tr></thead><tbody><tr><td>Комп'ютер</td><td>Маленьке вікно поверх усіх програм з поточним кроком. Відкривається з «Кроку із собою»</td><td>Chrome, Edge й Opera; Firefox — з версії 151; Safari — ні. Відкривається лише у відповідь на дію людини, тож щоранку — самій. <b>Закривається разом із вкладкою продукту:</b> рятує, коли вкладка загубилась серед інших, але не коли її закрили (research.md §7.1)</td></tr><tr><td>Телефон</td><td>PWA й пуш із кроком; тап веде на «Сьогодні»</td><td>На iPhone — лише після додавання на початковий екран, iOS 16.4+ (<a href="https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/" target="_blank" rel="noopener">WebKit</a>). Пуш — нагадування, а не випадкова зустріч, як з аркушем</td></tr></tbody></table></div>
+<p><b>Статус.</b> Тимчасове, дешеве рішення. Цільове — застосунки для iOS і Android; для Mac чи Windows — хоча б віджет із поточним кроком і загальним шляхом; веб. Зачіпає D16 («ніяких PWA») і D29 («крок у кишені» у v1 не робимо) — треба узгодити із замовником.</p>
+<p><b>Ціна.</b> Вікно — справді дешеве: сервер не потрібен. Пуші й телефон потребують сервера, сховища й входу — саме того, що прибрала рамка <code class="mono">ESTIMATE.md</code> §1. Поки рамка діє, секцію «на телефоні» не показуємо: замість неї — «поки недоступно».</p>
+<p><b>Сповіщення.</b></p>
+<div class="tw"><table class=""><thead><tr><th>Сповіщення</th><th>Коли</th><th>Скільки</th><th>Умова</th><th>Що в ньому</th></tr></thead><tbody><tr><td><b>Крок дня</b></td><td>Продукт розкладає по дню залежно від частоти. Наприклад <span class="chip unk" title="припущення">?</span>: одне — посеред дня; два — до обіду й після; три — зранку, посеред дня, надвечір</td><td>раз, двічі або тричі на день — обирає людина</td><td>є незроблений крок на сьогодні</td><td>скільки кроків на сьогодні ще не зроблено; чи поруч текст поточного — <span class="chip unk" title="припущення">?</span></td></tr><tr><td><b>Після паузи</b></td><td>після кількох днів без кроків <span class="chip unk" title="припущення">?</span></td><td>одне; далі тиша</td><td>дорога в русі, не запланована</td><td>запрошення зробити найперший крок (дискавері :86, D28)</td></tr></tbody></table></div>
+<p><b>Правила.</b></p>
+<ol><li>Без докору: жодних «ви ще не зробили» і стріків (E3, E4).</li><li>Не частіше, ніж обрала людина; сповіщення «після паузи» входить у це число.</li><li>Зроблено все на сьогодні — мовчимо. Кроку не обрано — теж мовчимо.</li><li>Вимкнути — два тапи: плаваючий крок → «коли нагадувати». Продукт не вмовляє лишити (E4).</li><li>Дозвіл просимо лише після пояснення й у відповідь на дію людини (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Notification/requestPermission_static" target="_blank" rel="noopener">MDN</a>).</li><li>Крок висить кілька днів — сповіщення пропонує менший, а не повторює той самий.</li></ol>
+<p><b>Інструкція на телефон.</b></p>
+<div class="tw"><table class=""><thead><tr><th>Телефон</th><th>Кроки</th><th>Джерело</th></tr></thead><tbody><tr><td>iPhone, iOS 16.4+</td><td>Safari → «Поділитися» → «На початковий екран» → відкрити з іконки → «Дозволити сповіщення» → підтвердити</td><td><a href="https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/" target="_blank" rel="noopener">WebKit</a></td></tr><tr><td>Android</td><td>Chrome → «Дозволити сповіщення» → підтвердити. Встановлювати не обов'язково; на Android 13+ самому Chrome потрібен системний дозвіл на сповіщення</td><td>research.md §7.3</td></tr></tbody></table></div>
+<p>Після налаштування — пробне сповіщення. <b>Якщо в дозволі відмовлено, сайт не може спитати вдруге</b> — повернути дозвіл можна лише в налаштуваннях (research.md §7.2). Тому друга інструкція — де саме це ввімкнути — обов'язкова.</p>
+<p><b>Позначити крок зробленим просто зі сповіщення</b> можна в Chrome на комп'ютері й на Android; у Safari й на iPhone кнопок у сповіщеннях немає (research.md §7.4).</p></div></details>
+</section>
+
+<section id="flows">
+  <div class="sec-h"><span class="sec-n">05</span><h2>User flows</h2></div><div class="sec-rule"></div>
+  <p class="sub">Вісім діаграм: main job, її фінал і шість related jobs. Кожна — з рішеннями, станами й обома кінцями: успіхом і тупиками.</p>
+  <div class="legend">
+    <span><i class="lg-screen"></i>екран або секція</span>
+    <span><i class="lg-state"></i>стан екрана</span>
+    <span><i class="lg-good"></i>успіх</span>
+    <span><i class="lg-dead"></i>тупик</span>
+    <span><i class="lg-exit"></i>вихід в інший flow</span>
+    <span>ромб — рішення «так / ні»</span>
+  </div>
+  <ol class="flow-toc"><li><a class="fl" href="#flow-1">J0 · Бачити свій рух</a></li><li><a class="fl" href="#flow-2">J0 · Дійти до цілі</a></li><li><a class="fl" href="#flow-3">J4 · Не загубити сьогоднішню дію</a></li><li><a class="fl" href="#flow-4">J4 · Узяти крок із собою</a></li><li><a class="fl" href="#flow-5">J3 · Зрозуміти, що робити далі</a></li><li><a class="fl" href="#flow-6">J2 · Зрозуміти, де я зараз</a></li><li><a class="fl" href="#flow-7">J5 · Повернутися після паузи</a></li><li><a class="fl" href="#flow-8">J1 · Обрати, чому віддати увагу</a></li></ol>
+  <article class="flow" id="flow-1"><div class="flow-h"><span class="flow-n">01</span><h3>J0 · Бачити свій рух</h3></div><blockquote class="job">«Коли я роблю щось для цілі, до якої ще далеко, я хочу бачити свій рух таким, яким він є, навіть коли він малий, щоб знати, що наближаюся, а не стою на місці.»</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Зробила щось для цілі й відкриває продукт"]) --&gt; a1("Чекаємо: завантаження")
+    a1 --&gt; a2{"Дані завантажились?"}
+    a2 --&gt;|ні| a3("Помилка: дані не завантажились")
+    a3 --&gt; a4{"Повторна спроба допомогла?"}
+    a4 --&gt;|так| a5
+    a4 --&gt;|ні| a6("Немає зв'язку: видно останнє відоме")
+    a6 --&gt; z1(["Тупик: свіжого руху не видно, доки немає зв'язку"])
+    a2 --&gt;|так| a5{"Є хоча б одна дорога?"}
+    a5 --&gt;|ні| a7("Сьогодні, порожній стан: жодної дороги")
+    a7 --&gt; x1(["Вихід: руху ще немає, далі flow J3"])
+    a5 --&gt;|так| b1["Сьогодні"]
+    b1 --&gt; b2{"Це був поточний крок?"}
+    b2 --&gt;|так| b3["Крок із собою: крок із собою"]
+    b2 --&gt;|ні| b4["Сьогодні: записати зроблене"]
+    b3 --&gt; b5("Чекаємо: зберігаємо")
+    b4 --&gt; b5
+    b5 --&gt; b6{"Збережено?"}
+    b6 --&gt;|ні| b7("Збережемо, щойно зможемо: запис лишається")
+    b7 --&gt; c1
+    b6 --&gt;|так| c1["Дорога"]
+    c1 --&gt; c2("Чекаємо: завантаження дороги")
+    c2 --&gt; c3{"Дорога завантажилась?"}
+    c3 --&gt;|ні| c4("Помилка: видно останнє відоме")
+    c4 --&gt; c5
+    c3 --&gt;|так| c5{"Відкрилась потрібна дорога?"}
+    c5 --&gt;|ні| c6{"Вона в зоні уваги тижня?"}
+    c6 --&gt;|так| c1
+    c6 --&gt;|ні| c7["Тиждень: вибір доріг на тиждень"]
+    c7 --&gt; c1
+    c5 --&gt;|так| d1{"Кроків давно не було?"}
+    d1 --&gt;|так| d2("Дорога, стан: на паузі")
+    d2 --&gt; d3
+    d1 --&gt;|ні| d3["Дорога: пройдене"]
+    d3 --&gt; d4{"Видно, що пройдене тягнеться до фінішу?"}
+    d4 --&gt;|так| d5{"Пройдене вже біля фінішу?"}
+    d5 --&gt;|так| x2(["Вихід: фінал дороги, flow «Дійти до цілі»"])
+    d5 --&gt;|ні| ok(["Успіх: бачить свій рух і знає, що наближається"])
+    d4 --&gt;|ні| d6["Дорога: етапи"]
+    d6 --&gt; d7{"У межах поточного етапу рух помітний?"}
+    d7 --&gt;|так| ok
+    d7 --&gt;|ні| z2(["Тупик: рух чесний, але замалий, щоб його відчути"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef dead fill:#2B1916,stroke:#E08B7C,color:#F2B7AB
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a1,a3,a6,a7,b5,b7,c2,c4,d2 state
+    class ok good
+    class z1,z2 dead
+    class x1,x2 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Це був поточний крок?</i> Так — відмітка з плаваючого кроку, один тап. Ні — «записати зроблене» заднім числом, одним рядком: рух, якого не планували, теж потрапляє на дорогу.</li><li><i>Відкрилась потрібна дорога?</i> Пункт «Дорога» відкриває дорогу поточного кроку. Інша дорога тижня — перемикач на тому ж екрані; дорога поза зоною — через «Тиждень».</li><li><i>Видно, що пройдене тягнеться до фінішу?</i> Головне питання flow. Фініш людина описала на старті; ШІ показує, чи рух іде до нього.</li><li><i>У межах поточного етапу рух помітний?</i> Остання спроба: менша рамка, ніж уся дорога.</li></ul>
+<p><b>Стани:</b> завантаження · помилка · немає зв'язку (видно останнє відоме) · «Сьогодні» без доріг · зберігаємо · збережемо, щойно зможемо · завантаження дороги · дорога на паузі.</p>
+<p><b>Кінці.</b></p>
+<ul><li><b>Успіх:</b> бачить свій рух і знає, що наближається.</li><li><b>Вихід у J3:</b> руху ще немає.</li><li><b>Вихід у фінал:</b> пройдене біля фінішу.</li><li><b>Тупик: свіжого руху не видно без зв'язку.</b> Видно лише останнє відоме.</li><li><b>Тупик: рух чесний, але замалий.</b> Напруга між J0 і E1 (personas.md). Чи рятує менша рамка етапу — гіпотеза H1, не перевірена.</li></ul></div></article><article class="flow" id="flow-2"><div class="flow-h"><span class="flow-n">02</span><h3>J0 · Дійти до цілі</h3></div><blockquote class="job">Фінал main job. Бриф обіцяє прибрати «відсутність фіналу» (§1): дорога має вміти закінчитися.</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Кроки ведуть до фінішу"]) --&gt; a1{"Продукт бачить, що пройдене біля фінішу?"}
+    a1 --&gt;|так| a2("Дорога, стан: поруч із фінішем")
+    a2 --&gt; a3{"На питання «схоже, ти дійшла?» відповіла «так»?"}
+    a3 --&gt;|так| b1
+    a3 --&gt;|ні| a4{"Фінал змінився?"}
+    a4 --&gt;|так| a5["Дорога: фініш"]
+    a5 --&gt; x1(["Вихід: дорога триває з новим фіналом, flow J3"])
+    a4 --&gt;|ні| x1
+    a1 --&gt;|ні| a6{"Сама вважає, що дійшла?"}
+    a6 --&gt;|ні| x1
+    a6 --&gt;|так| b1["Дорога: фініш"]
+    b1 --&gt; b2("Чекаємо: зберігаємо")
+    b2 --&gt; b3{"Збережено?"}
+    b3 --&gt;|ні| b4("Збережемо, щойно зможемо")
+    b4 --&gt; b5
+    b3 --&gt;|так| b5("Дорога, стан: пройдена — видно весь шлях від старту до фінішу")
+    b5 --&gt; b6{"У черзі на сьогодні були кроки цієї дороги?"}
+    b6 --&gt;|так| b7("Кроки цієї дороги прибрано з черги")
+    b7 --&gt; b8
+    b6 --&gt;|ні| b8{"Хоче почати наступну дорогу?"}
+    b8 --&gt;|так| x2(["Вихід: нова дорога, flow J3"])
+    b8 --&gt;|ні| ok(["Успіх: дорогу пройдено, пройдене лишається"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a2,b2,b4,b5,b7 state
+    class ok good
+    class x1,x2 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Продукт бачить, що пройдене біля фінішу?</i> Фініш описано на старті; ШІ порівнює з ним пройдене. Продукт лише питає, закриває людина (D31).</li><li><i>Фінал змінився?</i> Людина могла дорогою зрозуміти, що хоче іншого. Тоді вона уточнює фінал, і дорога триває.</li><li><i>Сама вважає, що дійшла?</i> Дія «я дійшла» є завжди, не лише коли продукт спитав.</li></ul>
+<p><b>Стани:</b> поруч із фінішем · зберігаємо · збережемо, щойно зможемо · пройдена · кроки дороги прибрано з черги.</p>
+<p><b>Що стається з пройденою дорогою.</b> Виходить із зони уваги, сповіщення про неї мовчать, на «Тижні» вона серед пройдених; пройдене лишається (D12). Так само роблять Things (Logbook) та Intend (research.md §7.7).</p>
+<p><b>Кінці.</b> Успіх — дорогу пройдено. Два виходи в J3: дорога триває або людина починає нову. Тупиків немає.</p></div></article><article class="flow" id="flow-3"><div class="flow-h"><span class="flow-n">03</span><h3>J4 · Не загубити сьогоднішню дію</h3></div><blockquote class="job">«Коли мій день заповнюють інші справи, я хочу тримати перед очима одну дію для своєї цілі, доки її не зроблю, щоб не загубити її серед решти.»</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Початок дня: відкриває продукт"]) --&gt; a1("Чекаємо: завантаження")
+    a1 --&gt; a2{"Дані завантажились?"}
+    a2 --&gt;|ні| a3("Помилка: видно останній відомий крок")
+    a3 --&gt; a4{"Останній відомий крок є?"}
+    a4 --&gt;|так| c1
+    a4 --&gt;|ні| z1(["Тупик: день починається без кроку перед очима"])
+    a2 --&gt;|так| a5{"Є хоча б одна дорога?"}
+    a5 --&gt;|ні| a6("Сьогодні, порожній стан: жодної дороги")
+    a6 --&gt; x1(["Вихід: спершу потрібна дорога, flow J3"])
+    a5 --&gt;|так| b1{"Крок на сьогодні вже є?"}
+    b1 --&gt;|так| c1
+    b1 --&gt;|ні| b2("Сьогодні, порожній стан: кроку на сьогодні ще немає")
+    b2 --&gt; b3["Сьогодні: наступний крок"]
+    b3 --&gt; b4{"Прийняла пропозицію або записала свій крок?"}
+    b4 --&gt;|ні| x2(["Вихід: сьогодні без кроку, без докору"])
+    b4 --&gt;|так| b5("Чекаємо: зберігаємо")
+    b5 --&gt; b6{"Збережено?"}
+    b6 --&gt;|ні| b7("Збережемо, щойно зможемо: крок уже перед очима")
+    b7 --&gt; c1
+    b6 --&gt;|так| c1["Крок із собою: крок із собою"]
+    c1 --&gt; c2{"Вкладка з продуктом перед очима протягом дня?"}
+    c2 --&gt;|так| d1
+    c2 --&gt;|ні| c3{"Вкладка лишилась відкритою, а вікно поверх програм відкрите?"}
+    c3 --&gt;|так| c4["Крок із собою: вікно поверх інших програм"]
+    c4 --&gt; d1
+    c3 --&gt;|ні| c5{"На телефоні ввімкнено сповіщення?"}
+    c5 --&gt;|так| c6["Крок із собою: сповіщення з кроком"]
+    c6 --&gt; c7{"Помітила сповіщення?"}
+    c7 --&gt;|так| d1
+    c7 --&gt;|ні| z2(["Тупик: вкладку закрито, крок загубився серед інших справ"])
+    c5 --&gt;|ні| c8("Сповіщень немає: продукт запропонує налаштувати, коли вона повернеться")
+    c8 --&gt; z2
+    d1{"Зробила крок?"}
+    d1 --&gt;|так| e1("Чекаємо: зберігаємо зроблений крок")
+    e1 --&gt; e2{"Збережено?"}
+    e2 --&gt;|ні| e3("Збережемо, щойно зможемо: відмітка лишається")
+    e3 --&gt; e4
+    e2 --&gt;|так| e4{"На сьогодні є ще крок з іншої дороги?"}
+    e4 --&gt;|так| c1
+    e4 --&gt;|ні| e5("Сьогодні, стан: усі кроки на сьогодні зроблено")
+    e5 --&gt; ok(["Успіх: дію не загублено, крок став частиною пройденого"])
+    d1 --&gt;|ні| f1{"Хоче змінити цей крок?"}
+    f1 --&gt;|так| f2("Крок замінено, відкладено, прибрано або взято наступний")
+    f2 --&gt; b1
+    f1 --&gt;|ні| g1("Сьогодні, стан: крок переходить на завтра")
+    g1 --&gt; g2{"Крок переходить уже кілька днів?"}
+    g2 --&gt;|ні| c1
+    g2 --&gt;|так| g3{"Погоджується на менший крок?"}
+    g3 --&gt;|так| b3
+    g3 --&gt;|ні| g4("Крок із собою, стан: крок висить кілька днів")
+    g4 --&gt; g5{"Змінила крок?"}
+    g5 --&gt;|так| f2
+    g5 --&gt;|ні| z3(["Тупик: той самий крок висить день у день"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef dead fill:#2B1916,stroke:#E08B7C,color:#F2B7AB
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a1,a3,a6,b2,b5,b7,c8,e1,e3,e5,f2,g1,g4 state
+    class ok good
+    class z1,z2,z3 dead
+    class x1,x2 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Крок на сьогодні вже є?</i> Він є, якщо вчорашній не зроблено або людина вже прийняла крок: прийнятий крок одразу стає кроком на сьогодні.</li><li><i>Вкладка перед очима? Вікно? Сповіщення?</i> Три заслони між кроком і «загубився». Поки вкладку відкрито, крок висить плаваючим елементом на кожному екрані.</li><li><i>Вкладка лишилась відкритою, а вікно поверх програм відкрите?</i> Вікно живе рівно стільки, скільки вкладка продукту: закрита вкладка закриває й вікно (research.md §7.1). Тож вікно рятує, коли вкладка загубилась серед інших, але не коли її закрили.</li><li><i>Помітила сповіщення?</i> На Android у Chrome крок можна відмітити зробленим просто зі сповіщення; на iPhone кнопок у сповіщенні немає (research.md §7.4).</li><li><i>На сьогодні є ще крок з іншої дороги?</i> Перед очима один крок; зроблений змінюється наступним.</li><li><i>Хоче змінити цей крок?</i> П'ять дій: зроблено · взяти наступний · замінити · відкласти · прибрати. Жодна не подається як провал.</li><li><i>Погоджується на менший крок?</i> Продукт пропонує його сам, коли крок висить кілька днів <span class="chip unk" title="припущення">?</span>.</li></ul>
+<p><b>Стани:</b> завантаження · останній відомий крок · «Сьогодні» без доріг · кроку на сьогодні ще немає · зберігаємо · збережемо, щойно зможемо · сповіщень немає · усі кроки на сьогодні зроблено · крок змінено · крок переходить на завтра · крок висить кілька днів.</p>
+<p><b>Кінці.</b></p>
+<ul><li><b>Успіх:</b> дію не загублено.</li><li><b>Вихід: сьогодні без кроку.</b> Не тупик, а стан без докору (E3); секція «наступний крок» лишається під рукою.</li><li><b>Тупик: день без кроку перед очима</b> — дані не завантажились і останнього відомого кроку немає.</li><li><b>Тупик: вкладку закрито, крок загубився.</b> Найважчий: саме від цього рятував аркуш. Лишається там, де не спрацював жоден заслін, — і вікно тут не допоможе, бо закривається з вкладкою. Цільове рішення — застосунки й віджет.</li><li><b>Тупик: крок висить день у день.</b> Людина не змінила його й не погодилась на менший. Доки висить, черга з інших доріг не рухається.</li></ul></div></article><article class="flow" id="flow-4"><div class="flow-h"><span class="flow-n">04</span><h3>J4 · Узяти крок із собою</h3></div><p>Під-flow до J4: як крок потрапляє у вікно поверх інших програм і в сповіщення на телефоні.</p><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Хоче бачити крок і поза вкладкою"]) --&gt; a1["Крок із собою"]
+    a1 --&gt; a2{"Вона за комп'ютером?"}
+    a2 --&gt;|так| b1["Крок із собою: вікно поверх інших програм"]
+    b1 --&gt; b2{"Браузер уміє відкрити вікно?"}
+    b2 --&gt;|так| b3("Вікно, стан: відкрито, доки відкрита вкладка")
+    b3 --&gt; ok1(["Успіх: крок висить поверх інших програм"])
+    b2 --&gt;|ні| b4("Вікно, стан: браузер не підтримує — чесне пояснення")
+    b4 --&gt; c0
+    a2 --&gt;|ні| c0["Крок із собою: на телефоні"]
+    c0 --&gt; c1{"Телефон бачить ті самі дороги?"}
+    c1 --&gt;|ні| c2("На телефоні, стан: поки недоступно")
+    c2 --&gt; z1(["Тупик: поза вкладкою крок не тримає нічого"])
+    c1 --&gt;|так| c3{"Це iPhone?"}
+    c3 --&gt;|так| c4{"Продукт уже на початковому екрані?"}
+    c4 --&gt;|ні| c5("На телефоні, стан: застосунок не встановлено — інструкція")
+    c5 --&gt; c6{"Додала продукт на початковий екран?"}
+    c6 --&gt;|ні| x1(["Вихід: інструкцію відкладено, можна повернутися"])
+    c6 --&gt;|так| d1
+    c4 --&gt;|так| d1
+    c3 --&gt;|ні| d1{"Натиснула «Дозволити сповіщення»?"}
+    d1 --&gt;|ні| x2(["Вихід: без сповіщень, крок лишається в продукті й у вікні"])
+    d1 --&gt;|так| d2("Чекаємо: системний запит дозволу")
+    d2 --&gt; d3{"Дозволила?"}
+    d3 --&gt;|ні| d4("На телефоні, стан: у дозволі відмовлено — друга інструкція")
+    d4 --&gt; d5{"Увімкнула в налаштуваннях телефона?"}
+    d5 --&gt;|ні| x2
+    d5 --&gt;|так| e1
+    d3 --&gt;|так| e1["Крок із собою: коли нагадувати"]
+    e1 --&gt; e2("Чекаємо: зберігаємо й надсилаємо пробне сповіщення")
+    e2 --&gt; e3{"Пробне сповіщення надійшло?"}
+    e3 --&gt;|так| ok2(["Успіх: сповіщення приходить стільки разів на день, скільки вона обрала"])
+    e3 --&gt;|ні| e4("Помилка: пробне сповіщення не надійшло")
+    e4 --&gt; e5{"Повторна спроба допомогла?"}
+    e5 --&gt;|так| ok2
+    e5 --&gt;|ні| x2
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef dead fill:#2B1916,stroke:#E08B7C,color:#F2B7AB
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class b3,b4,c2,c5,d2,d4,e2,e4 state
+    class ok1,ok2 good
+    class z1 dead
+    class x1,x2 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Вона за комп'ютером?</i> Дві гілки: вікно на комп'ютері, сповіщення на телефоні. Одна не виключає іншої.</li><li><i>Браузер уміє відкрити вікно?</i> Chrome, Edge і Opera на комп'ютері, Firefox — з версії 151; Safari — ні, на телефонах — ні. Вікно відкривається лише у відповідь на дію людини й закривається разом із вкладкою (research.md §7.1).</li><li><i>Телефон бачить ті самі дороги?</i> Поки діє рамка <code class="mono">ESTIMATE.md</code> §1 з файлами на комп'ютері — ні, і секцію показуємо як «поки недоступно», замість того щоб вести в інструкцію.</li><li><i>Це iPhone?</i> На iPhone сповіщення працюють лише для продукту, доданого на початковий екран, з iOS 16.4 (research.md §7.5). «Ні» — Android: там встановлювати не обов'язково, але Chrome потрібен системний дозвіл на сповіщення (§7.3).</li><li><i>Увімкнула в налаштуваннях телефона?</i> Після відмови сайт не може спитати вдруге — повернути дозвіл можна лише в налаштуваннях (§7.2). Тому друга інструкція обов'язкова.</li></ul>
+<p><b>Стани:</b> вікно відкрито · браузер не підтримує · поки недоступно · застосунок не встановлено · системний запит · у дозволі відмовлено · пробне сповіщення · пробне не надійшло.</p>
+<p><b>Кінці.</b> Два успіхи — вікно і сповіщення. Два виходи без провалу — людина відклала інструкцію або обійшлася без сповіщень. Один тупик — дані на телефоні недоступні; його знімає лише рішення про сервер.</p></div></article><article class="flow" id="flow-5"><div class="flow-h"><span class="flow-n">05</span><h3>J3 · Зрозуміти, що робити далі</h3></div><blockquote class="job">«Коли я знаю, куди хочу прийти, але не знаю, які дії мене туди приведуть, я хочу зрозуміти, що робити наступним, щоб наблизитися до цілі.»</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Знає, куди хоче прийти, але не знає дій"]) --&gt; a1{"Дорога до цієї цілі вже є?"}
+    a1 --&gt;|так| c0["Дорога: наступний крок"]
+    a1 --&gt;|ні| a2{"Є хоча б одна дорога?"}
+    a2 --&gt;|ні| a3("Сьогодні, порожній стан: жодної дороги")
+    a3 --&gt; b1
+    a2 --&gt;|так| a4["Тиждень"]
+    a4 --&gt; b1["Нова дорога: фінал"]
+    b1 --&gt; b2{"Може описати фінал?"}
+    b2 --&gt;|ні| b3("Нова дорога, стан: порожня")
+    b3 --&gt; z1(["Тупик: фінал не сформульовано, дорогу не почато"])
+    b2 --&gt;|так| b4["Нова дорога: точка старту"]
+    b4 --&gt; b5{"Описує, де вона зараз?"}
+    b5 --&gt;|так| b6["Нова дорога: перший крок"]
+    b5 --&gt;|ні| b6
+    b6 --&gt; c1("Чекаємо: продукт готує пропозицію")
+    c0 --&gt; c1
+    c1 --&gt; c2{"Пропозиція надійшла?"}
+    c2 --&gt;|ні| c3("Помилка чи ліміт ШІ: пропозицію не отримано")
+    c3 --&gt; c4{"Повторна спроба допомогла?"}
+    c4 --&gt;|так| c5
+    c4 --&gt;|ні| d1
+    c2 --&gt;|так| c5{"Пропозиція підходить?"}
+    c5 --&gt;|так| e1
+    c5 --&gt;|ні| c6{"Відкласти її?"}
+    c6 --&gt;|так| c7("Відкладено: точка без лінії на дорозі")
+    c7 --&gt; c8
+    c6 --&gt;|ні| c8{"Уже було дві-три невдалі пропозиції?"}
+    c8 --&gt;|ні| c1
+    c8 --&gt;|так| d1{"Може записати крок сама?"}
+    d1 --&gt;|так| e1
+    d1 --&gt;|ні| d2("Наступний крок: два-три запитання замість пропозиції")
+    d2 --&gt; d3{"Сформулювала крок із запитань?"}
+    d3 --&gt;|так| e1
+    d3 --&gt;|ні| z2(["Тупик: ні пропозиції, ні власного кроку"])
+    e1{"Крок можна зробити за день?"}
+    e1 --&gt;|ні| c1
+    e1 --&gt;|так| e2("Чекаємо: зберігаємо крок")
+    e2 --&gt; e3{"Збережено?"}
+    e3 --&gt;|ні| e4("Збережемо, щойно зможемо: крок лишається")
+    e4 --&gt; e5
+    e3 --&gt;|так| e5{"Це нова дорога?"}
+    e5 --&gt;|так| e6["Нова дорога: коли почати"]
+    e6 --&gt; e7{"Починає зараз і додає в зону уваги?"}
+    e7 --&gt;|так| e8["Сьогодні: крок дня"]
+    e7 --&gt;|ні| x1(["Вихід: дорога запланована, крок чекає її тижня"])
+    e5 --&gt;|ні| e8
+    e8 --&gt; ok(["Успіх: знає наступний крок, обрала його сама, і він уже на сьогодні"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef dead fill:#2B1916,stroke:#E08B7C,color:#F2B7AB
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a3,b3,c1,c3,c7,d2,e2,e4 state
+    class ok good
+    class z1,z2 dead
+    class x1 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Може описати фінал?</i> Фінал — єдине обов'язкове поле нової дороги. Точку старту можна пропустити й дописати на «Дорозі»; недописана дорога зберігається як чернетка.</li><li><i>Пропозиція надійшла?</i> Пропозицію готує ШІ (кандидат — Groq). Помилка й денний ліміт ведуть сюди ж; після невдалого повтору — запасні шляхи.</li><li><i>Відкласти її?</i> Відкладена пропозиція лягає на дорогу точкою без лінії; продукт згадає про неї пізніше.</li><li><i>Уже було дві-три невдалі пропозиції?</i> Лічильник проти безкінечної петлі й проти витрати ліміту ШІ.</li><li><i>Може записати крок сама? Сформулювала крок із запитань?</i> Два запасні шляхи, коли пропозиції немає.</li><li><i>Крок можна зробити за день?</i> Якщо ні — продукт пропонує менший <span class="chip unk" title="припущення">?</span>.</li><li><i>Починає зараз і додає в зону уваги?</i> Наприкінці «Нової дороги» продукт питає, чи додати її в зону уваги цього тижня і коли людина планує почати.</li></ul>
+<p><b>Стани:</b> «Сьогодні» без доріг · нова дорога порожня · чекаємо на пропозицію · помилка чи ліміт ШІ · відкладено · запитання замість пропозиції · зберігаємо · збережемо, щойно зможемо.</p>
+<p><b>Кінці.</b></p>
+<ul><li><b>Успіх:</b> знає наступний крок, обрала його сама, і він уже на сьогодні — прийнятий крок одразу стає кроком дня.</li><li><b>Вихід: дорога запланована.</b> Її крок чекає тижня, коли людина планує почати.</li><li><b>Тупик: фінал не сформульовано.</b> Форма питає про те, чого людина ще не сформулювала. Пом'якшує лише те, що фінал — одне-два речення.</li><li><b>Тупик: ні пропозиції, ні власного кроку, ні відповіді на запитання.</b> Сама ситуація J3, до якої людина повернулась. Став вужчим: між ним і людиною тепер три шляхи.</li></ul></div></article><article class="flow" id="flow-6"><div class="flow-h"><span class="flow-n">06</span><h3>J2 · Зрозуміти, де я зараз</h3></div><blockquote class="job">«Коли я повертаюся до своєї цілі, я хочу розуміти, де я зараз, щоб знати, звідки рухатися далі.»</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Повертається до своєї цілі"]) --&gt; a1["Дорога"]
+    a1 --&gt; a2("Чекаємо: завантаження дороги")
+    a2 --&gt; a3{"Дорога завантажилась?"}
+    a3 --&gt;|ні| a4("Помилка: видно останнє відоме")
+    a4 --&gt; a5
+    a3 --&gt;|так| a5{"Це дорога, до якої вона повертається?"}
+    a5 --&gt;|ні| a6["Тиждень: вибір доріг на тиждень"]
+    a6 --&gt; a1
+    a5 --&gt;|так| b1{"На дорозі є кроки?"}
+    b1 --&gt;|ні| b2("Дорога, порожній стан: без кроків")
+    b2 --&gt; x1(["Вихід: вона на старті, далі flow J3"])
+    b1 --&gt;|так| b3{"Продукт може назвати позицію?"}
+    b3 --&gt;|ні| b4("Дорога, стан: позицію не визначено")
+    b4 --&gt; b5{"Відповіла, де вона зараз?"}
+    b5 --&gt;|так| b6
+    b5 --&gt;|ні| z1(["Тупик: видно пройдене, але не де вона на ньому"])
+    b3 --&gt;|так| b6["Дорога: позиція"]
+    b6 --&gt; b7{"Позиція збігається з тим, як вона це відчуває?"}
+    b7 --&gt;|так| ok(["Успіх: знає, де вона, і звідки рухатися далі"])
+    b7 --&gt;|ні| b8["Дорога: етапи"]
+    b8 --&gt; b9{"Поправила позицію чи етап?"}
+    b9 --&gt;|так| ok
+    b9 --&gt;|ні| z2(["Тупик: продукт і людина бачать позицію по-різному"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef dead fill:#2B1916,stroke:#E08B7C,color:#F2B7AB
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a2,a4,b2,b4 state
+    class ok good
+    class z1,z2 dead
+    class x1 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Продукт може назвати позицію?</i> Позицію виводить продукт (D22): з пройденого, фіналу й етапів. Звідки саме — O12, робочий напрям — ШІ. Коли вивести нема з чого, продукт питає людину.</li><li><i>Позиція збігається з тим, як вона це відчуває?</i> Продукт рекомендує, людина вирішує (D31): вона може поправити позицію чи етап <span class="chip unk" title="припущення">?</span>.</li></ul>
+<p><b>Стани:</b> завантаження дороги · останнє відоме · без кроків · позицію не визначено.</p>
+<p><b>Кінці.</b> Успіх — знає, де вона. Вихід у J3 — вона на старті. Два тупики стоять на O12: продукт не може назвати позицію, а людина не відповіла; або вони бачать її по-різному, і людина не поправила.</p></div></article><article class="flow" id="flow-7"><div class="flow-h"><span class="flow-n">07</span><h3>J5 · Повернутися після паузи</h3></div><blockquote class="job">«Коли я на кілька днів випала з роботи над ціллю, я хочу продовжити з того місця, де зупинилась, щоб не починати спочатку.»</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Кілька днів не було руху"]) --&gt; a1{"Сповіщення ввімкнені?"}
+    a1 --&gt;|так| a2["Крок із собою: сповіщення з кроком"]
+    a2 --&gt; a3{"Відкрила продукт після сповіщення?"}
+    a3 --&gt;|так| b0
+    a3 --&gt;|ні| a4("Далі продукт мовчить, доки вона не повернеться")
+    a4 --&gt; a5
+    a1 --&gt;|ні| a5{"Повернулась сама?"}
+    a5 --&gt;|ні| z1(["Тупик: дорога чекає, продукт мовчить"])
+    a5 --&gt;|так| b0("Чекаємо: завантаження")
+    b0 --&gt; b1["Сьогодні"]
+    b1 --&gt; b2("Сьогодні, стан: після паузи — без лічильників і докору")
+    b2 --&gt; b3{"Висить незроблений крок з до паузи?"}
+    b3 --&gt;|так| b4{"Він досі актуальний?"}
+    b4 --&gt;|так| c1["Крок із собою: крок із собою"]
+    b4 --&gt;|ні| b5["Сьогодні: наступний крок"]
+    b3 --&gt;|ні| b5
+    b5 --&gt; b6{"Прийняла найперший крок для продовження?"}
+    b6 --&gt;|так| c1
+    b6 --&gt;|ні| b7["Дорога"]
+    b7 --&gt; b8("Дорога, стан: на паузі — пройдене й позиція на місці")
+    b8 --&gt; b9{"Продовжує цю дорогу?"}
+    b9 --&gt;|так| b10["Дорога: наступний крок"]
+    b10 --&gt; c1
+    b9 --&gt;|ні| x1(["Вихід: дорогу відкладено на пізніше чи скасовано, пройдене лишається"])
+    c1 --&gt; ok(["Успіх: продовжила з того місця, де зупинилась"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef dead fill:#2B1916,stroke:#E08B7C,color:#F2B7AB
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a4,b0,b2,b8 state
+    class ok good
+    class z1 dead
+    class x1 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Сповіщення ввімкнені?</i> Сповіщення «після паузи» — одне; входить у частоту, яку обрала людина. Далі продукт мовчить (sitemap.md, «Сповіщення»).</li><li><i>Висить незроблений крок з до паузи? Він досі актуальний?</i> Старий крок не зникає сам і не стає докором: людина вирішує, чи лишити його.</li><li><i>Продовжує цю дорогу?</i> Якщо ні — дорогу можна зробити запланованою на пізніше або скасувати; пройдене лишається (D12).</li></ul>
+<p><b>Стани:</b> після сповіщення — тиша · завантаження · «Сьогодні» після паузи · дорога на паузі з пройденим і позицією.</p>
+<p><b>Кінці.</b> Успіх — продовжила з того місця. Вихід — свідомо відклала чи скасувала дорогу. Тупик — людина не повернулась, а продукт після одного сповіщення мовчить. Це свідома ціна: наполегливіші нагадування тиснуть (E4).</p></div></article><article class="flow" id="flow-8"><div class="flow-h"><span class="flow-n">08</span><h3>J1 · Обрати, чому віддати увагу</h3></div><blockquote class="job">«Коли в мене кілька власних проєктів одночасно, я хочу наперед вирішити, яким із них віддам увагу наступного тижня, щоб рухатися в обраних, а не розпорошуватися.»</blockquote><div class="diagram"><pre class="mermaid">flowchart TD
+    a0(["Починається новий тиждень"]) --&gt; a1["Сьогодні"]
+    a1 --&gt; a2("Сьогодні, стан: тиждень почався, вибір не переглянуто")
+    a2 --&gt; a3{"Іде переглянути вибір?"}
+    a3 --&gt;|ні| x1(["Вихід: діє вибір минулого тижня"])
+    a3 --&gt;|так| a4["Тиждень"]
+    a4 --&gt; a5("Чекаємо: завантаження")
+    a5 --&gt; a6{"Дані завантажились?"}
+    a6 --&gt;|ні| a7("Помилка: дороги не завантажились")
+    a7 --&gt; a8{"Повторна спроба допомогла?"}
+    a8 --&gt;|так| a9
+    a8 --&gt;|ні| x1
+    a6 --&gt;|так| a9{"Є хоча б одна дорога?"}
+    a9 --&gt;|ні| a10("Тиждень, порожній стан: жодної дороги")
+    a10 --&gt; x2(["Вихід: спершу почати дорогу, flow J3"])
+    a9 --&gt;|так| b0["Тиждень: що зрушило за тиждень"]
+    b0 --&gt; b1{"Це перший тиждень?"}
+    b1 --&gt;|так| b2("Тиждень, стан: перший тиждень, дивитися ще нема на що")
+    b1 --&gt;|ні| b3{"Минулого тижня був рух?"}
+    b3 --&gt;|ні| b4("Тиждень, стан: тиждень без руху, без докору")
+    b3 --&gt;|так| b5
+    b2 --&gt; b5
+    b4 --&gt; b5["Тиждень: вибір доріг на тиждень"]
+    b5 --&gt; b6{"Потрібна дорога серед доріг у русі й запланованих?"}
+    b6 --&gt;|ні| b7{"Вона серед пройдених чи скасованих?"}
+    b7 --&gt;|так| b8["Тиждень: пройдені й скасовані"]
+    b8 --&gt; b5
+    b7 --&gt;|ні| x3(["Вихід: нова дорога через flow J3, потім назад"])
+    b6 --&gt;|так| c1{"Обрала більше трьох доріг?"}
+    c1 --&gt;|так| c2("Тиждень, стан: продукт питає, чи втримає вона стільки")
+    c2 --&gt; c3{"Відсортувала й лишила дві-три?"}
+    c3 --&gt;|так| c4
+    c3 --&gt;|ні| c4
+    c1 --&gt;|ні| c4("Чекаємо: зберігаємо вибір")
+    c4 --&gt; c5{"Збережено?"}
+    c5 --&gt;|ні| c6("Збережемо, щойно зможемо: вибір лишається")
+    c6 --&gt; c7
+    c5 --&gt;|так| c7{"У зоні уваги не більше трьох доріг?"}
+    c7 --&gt;|так| ok(["Успіх: знає, яким дорогам віддає тиждень"])
+    c7 --&gt;|ні| x4(["Вихід: обрала більше свідомо, продукт попередив"])
+
+    classDef state fill:#232E27,stroke:#7E8D85,color:#E5ECE6
+    classDef good fill:#16271E,stroke:#77C79A,color:#A7E3C0
+    classDef exit fill:#1A211D,stroke:#7E8D85,color:#B2C0B7,stroke-dasharray:4 3
+    class a2,a5,a7,a10,b2,b4,c2,c4,c6 state
+    class ok good
+    class x1,x2,x3,x4 exit
+</pre></div><div class="flow-notes"><p><b>Рішення.</b></p>
+<ul><li><i>Іде переглянути вибір?</i> Якщо ні — діє вибір минулого тижня; у найперший тиждень — усі дороги в русі. Тупика «тиждень без вибору» більше немає.</li><li><i>Це перший тиждень? Минулого тижня був рух?</i> Секція «що зрушило» має порожній стан і стан без руху — обидва без докору (E3).</li><li><i>Потрібна дорога серед доріг у русі й запланованих?</i> «Усі дороги» влились у «Тиждень»: вибір — з одного місця, без переходів.</li><li><i>Обрала більше трьох доріг?</i> Межі немає; продукт питає, чи втримає людина стільки, і пропонує відсортувати. Відмова — теж відповідь.</li></ul>
+<p><b>Стани:</b> тиждень почався · завантаження · помилка · жодної дороги · перший тиждень · тиждень без руху · продукт питає · зберігаємо · збережемо, щойно зможемо.</p>
+<p><b>Змінити вибір можна будь-коли:</b> той самий flow з будь-якого дня тижня; «вибір зроблено» — не кінцевий стан.</p>
+<p><b>Кінці.</b> Успіх — вибір щось відсіяв. Чотири виходи без провалу: діє минулий вибір; спершу почати дорогу; нова дорога через J3; свідомо широкий вибір. Тупиків немає.</p></div></article>
+  <h3>Що видно з восьми flows</h3>
+  <ul><li><b>Тупиків лишилось одинадцять, і жоден не виникає через дірку в діаграмі.</b><ul><li>Чотири стоять на відкритих питаннях: крок загубився поза вкладкою (D29 і цільові застосунки), телефон не бачить даних (рамка <code class="mono">ESTIMATE.md</code> §1), двічі — позиція (O12).</li><li>Чотири — на межі того, що продукт може зробити за людину: фінал не сформульовано; ні пропозиції, ні власного кроку; крок висить, і людина його не змінює; день без кроку перед очима, коли даних немає взагалі.</li><li>Три — на свідомих рішеннях: рух замалий, щоб відчути (H1); продукт мовчить після одного сповіщення (E4); без зв'язку не видно свіжого руху.</li></ul></li><li><b>Помилки збереження більше не зациклені.</b> Скрізь — «збережемо, щойно зможемо».</li><li><b>Прийнятий крок одразу стає кроком дня</b> — розрив між «що робити далі» і «не загубити дію» закрито.</li><li><b>У flow J1 і «Дійти до цілі» тупиків немає зовсім.</b></li></ul>
+</section>
+
+<section id="trace">
+  <div class="sec-h"><span class="sec-n">06</span><h2>Трасування</h2></div><div class="sec-rule"></div>
+  <p class="sub">Рядки — jobs, колонки — екрани. ✓ — екран справді бере участь у закритті job; прохідні екрани й екрани, де лише вводять дані, ✓ не отримують.</p>
+  <div class="mx-legend"><span class="o">сирота: рядок чи колонка без жодної ✓</span><span class="t">тримається на одній ✓</span></div>
+  <h3>Поточна матриця</h3>
+  <div class="tw"><table class="matrix"><thead><tr><th>Job</th><th class=c>Сьогодні</th><th class=c>Крок із собою</th><th class=c>Дорога</th><th class=c>Нова дорога</th><th class=c>Тиждень</th><th class=c>Екранів</th></tr></thead><tbody><tr class="thin"><td><b>J0</b> Бачити свій рух</td><td class="c"></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c">1</td></tr><tr><td><b>J1</b> Обрати, чому віддати увагу</td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c">2</td></tr><tr class="thin"><td><b>J2</b> Зрозуміти, де я зараз</td><td class="c"></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c">1</td></tr><tr><td><b>J3</b> Зрозуміти, що робити далі</td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c">3</td></tr><tr><td><b>J4</b> Не загубити сьогоднішню дію</td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c">2</td></tr><tr><td><b>J5</b> Повернутися після паузи</td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c">2</td></tr><tr><td><b>E1</b> Відчувати рух</td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c">2</td></tr><tr><td><b>E2</b> Лишатися тією, хто вирішує</td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c">4</td></tr><tr><td><b>E3</b> Не почуватися винною за порожній день</td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c">2</td></tr><tr class="thin"><td><b>E4</b> Рухатися з власного бажання</td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c">1</td></tr><tr class="tot"><td><b>Jobs на екран</b></td><td class="c">6</td><td class="c">3</td><td class="c">6</td><td class="c">3</td><td class="c">2</td><td class="c"></td></tr></tbody></table></div>
+  <p class="sub">Порожніх рядків і колонок немає. Жовтим — jobs, які закриває лише один екран: main job J0 і J2 тримаються тільки на «Дорозі».</p>
+  <h3>До рішень 2026-09-30 — із сиротами</h3>
+  <div class="tw"><table class="matrix"><thead><tr><th>Job</th><th class=c>Сьогодні</th><th class=c>Крок із собою</th><th class=c>Дорога</th><th class=c>Нова дорога</th><th class=c>Тиждень</th><th class=c>Усі дороги</th><th class=c>Прогулянка: запис</th><th class=c>Екранів</th></tr></thead><tbody><tr class="thin"><td><b>J0</b> Бачити свій рух</td><td class="c"></td><td class="c thin-col"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">1</td></tr><tr><td><b>J1</b> Обрати, чому віддати увагу</td><td class="c"></td><td class="c thin-col"></td><td class="c"></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"><span class="tick">✓</span></td><td class="c orphan-col"></td><td class="c">2</td></tr><tr class="thin"><td><b>J2</b> Зрозуміти, де я зараз</td><td class="c"></td><td class="c thin-col"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">1</td></tr><tr><td><b>J3</b> Зрозуміти, що робити далі</td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"></td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">3</td></tr><tr><td><b>J4</b> Не загубити сьогоднішню дію</td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">2</td></tr><tr><td><b>J5</b> Повернутися після паузи</td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">2</td></tr><tr><td><b>E1</b> Відчувати рух</td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">2</td></tr><tr><td><b>E2</b> Лишатися тією, хто вирішує</td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"></td><td class="c"><span class="tick">✓</span></td><td class="c"><span class="tick">✓</span></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">3</td></tr><tr><td><b>E3</b> Не почуватися винною за порожній день</td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"></td><td class="c"></td><td class="c"></td><td class="c"><span class="tick">✓</span></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">2</td></tr><tr class="orphan"><td><b>E4</b> Рухатися з власного бажання</td><td class="c"></td><td class="c thin-col"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">0</td></tr><tr class="orphan"><td><b>H5</b> Мати що показати іншим — гіпотеза</td><td class="c"></td><td class="c thin-col"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c thin-col"></td><td class="c orphan-col"></td><td class="c">0</td></tr><tr class="tot"><td><b>Jobs на екран</b></td><td class="c">6</td><td class="c thin-col">1</td><td class="c">6</td><td class="c">2</td><td class="c">2</td><td class="c thin-col">1</td><td class="c orphan-col">0</td><td class="c"></td></tr></tbody></table></div>
+  <div class="tw"><table class=""><thead><tr><th>Сирота</th><th>Тип</th><th>Що сталося</th></tr></thead><tbody><tr><td>Прогулянка: запис</td><td>екран без job</td><td>Став видом запису заднім числом; окремого екрана немає</td></tr><tr><td>Усі дороги</td><td>екран з однією ✓</td><td>Влився в «Тиждень»</td></tr><tr><td>E4 · Рухатися з власного бажання</td><td>job без екрана</td><td>Прив'язано до «Кроку із собою», секція «коли нагадувати»</td></tr><tr><td>H5 · Мати що показати іншим</td><td>job-гіпотеза без екрана</td><td>У backlog</td></tr></tbody></table></div>
+  <h3>Що показує матриця</h3>
+  <ul><li><b>Main job тримається на одному екрані.</b> J0 і J2 закриває лише «Дорога». Це й найдорожчий рядок оцінки — шлях-граф, 8–22 дні (<code class="mono">ESTIMATE.md</code> §4).</li><li><b>«Сьогодні» й «Дорога» несуть по шість jobs.</b> На вайрфреймах їх перевіряти першими.</li><li><b>E4 прив'язано до екрана, який водночас тисне:</b> до трьох сповіщень на день із кількістю незроблених.</li><li><b>E1 на «Сьогодні» стоїть на <span class="chip unk" title="припущення">?</span></b> — секція «зроблено сьогодні» залежить від O18.</li></ul>
+</section>
+
+<section id="rishennia">
+  <div class="sec-h"><span class="sec-n">07</span><h2>Рішення виконавця</h2></div><div class="sec-rule"></div>
+  <p>Ухвалені 2026-09-30. Із замовником не узгоджено; у <code class="mono">CLAUDE.md</code> §7 не внесено.</p>
+<div class="tw"><table class=""><thead><tr><th>#</th><th>Рішення</th><th>Що відкинуто</th><th>Ціна</th></tr></thead><tbody><tr><td>1</td><td>Перший екран — «Сьогодні»</td><td>Відкриватися позицією на дорозі (research.md 3.1)</td><td>Main job — за один тап</td></tr><tr><td>2</td><td>Один пункт «Дорога» з перемикачем доріг тижня</td><td>Кожна дорога тижня — окремим пунктом</td><td>До іншої дороги тижня — 2 тапи</td></tr><tr><td>3</td><td>Крок дня висить плаваючим елементом на кожному екрані</td><td>Крок лише на «Сьогодні»</td><td>На «Сьогодні» крок видно двічі, якщо не розв'язати</td></tr><tr><td>4</td><td>Крок поза вкладкою: вікно поверх програм і PWA з пушами — <b>тимчасово</b>; цільово — застосунки й віджет</td><td>Лишити крок лише в продукті (D29)</td><td>Суперечить D16 і D29; пуші потребують сервера</td></tr><tr><td>5</td><td>Небажання списків стосується кроків, а не доріг</td><td>Уникати будь-якого переліку</td><td>Прочитання D7 і D27 виконавцем</td></tr><tr><td>6</td><td>Жорсткої межі зони уваги немає; понад три — продукт питає й пропонує відсортувати</td><td>Жорстка межа в три</td><td>Запитання легко пропустити; робоча відповідь на O14</td></tr><tr><td>7</td><td>«Крок із собою» — плаваючий екран з одним кроком і чергою</td><td>Кілька кроків одночасно; окрема сторінка налаштувань</td><td>Завислий крок блокує чергу — знято рішенням 12</td></tr><tr><td>8</td><td>Сповіщення: раз, двічі або тричі на день; час — від частоти; у сповіщенні — кількість незроблених</td><td>Одне на день без вибору</td><td>Кількість незроблених — залишок, який бриф обіцяв не показувати (§1)</td></tr><tr><td>9</td><td>Наступний крок пропонує ШІ, вбудований у продукт; кандидат — Groq; MVP — на одну людину</td><td>Claude в сусідньому вікні; лише запитання; лише власна історія</td><td>Ключу потрібен сервер або скрипт; якість українською не перевірено</td></tr><tr><td>10</td><td>Прийнятий або записаний крок одразу стає кроком на сьогодні</td><td>Окремий вибір доріг на день</td><td>—</td></tr><tr><td>11</td><td>П'ять дій над кроком: зроблено · взяти наступний · замінити · відкласти · прибрати</td><td>Лише «зроблено» й «нести далі»</td><td>Відкладене створює запас кроків</td></tr><tr><td>12</td><td>Відкладений крок — точка без лінії на дорозі, поруч із кроком, що його замістив</td><td>Спільний беклог; відкладення на дату</td><td>Де точка, якщо відкладено без заміни, — <span class="chip unk" title="припущення">?</span></td></tr><tr><td>13</td><td>Зроблене можна записати заднім числом, одним рядком, звідусіль</td><td>Рух — лише кроки, обрані наперед</td><td>—</td></tr><tr><td>14</td><td>Перед стартом продукт питає про фінал; на шляху — точка «фініш»; дорогу закриває людина</td><td>Продукт закриває сам; дорога без фіналу</td><td>Ще одне запитання на старті</td></tr><tr><td>15</td><td>Щоб почати дорогу, обов'язковий лише фінал; решта — пізніше, недописане — чернетка</td><td>Обов'язкові фінал і точка старту</td><td>—</td></tr><tr><td>16</td><td>Без вибору на тиждень діє минулий; у перший тиждень — усі дороги в русі</td><td>Порожня зона; вибір продуктом</td><td>—</td></tr><tr><td>17</td><td>Наприкінці «Нової дороги» — «додати в зону уваги?» і «коли почнеш?»</td><td>Автоматично в зону; ніколи до наступного тижня</td><td>З'являється стан «запланована»</td></tr><tr><td>18</td><td>«Усі дороги» влито в «Тиждень»</td><td>Окремий екран</td><td>На «Тижні» стає більше</td></tr><tr><td>19</td><td>Прогулянка — вид запису заднім числом, не екран</td><td>Окремий екран за D24; backlog</td><td>Відходить від формулювання D24 («анкета або нотатка»)</td></tr><tr><td>20</td><td>Ресурси й дедлайн лишаються; вигляд «список або дошка», стрік, тип дороги, зв'язок доріг, перемикач мови — у backlog</td><td>Лишити все у v1</td><td>Чотири з п'яти зачіпають рішення замовника</td></tr><tr><td>21</td><td>E4 прив'язано до «Кроку із собою»; H5 — у backlog</td><td>—</td><td>—</td></tr></tbody></table></div>
+</section>
+
+<section id="open">
+  <div class="sec-h"><span class="sec-n">08</span><h2>Відкрите</h2></div><div class="sec-rule"></div>
+  <p><b>Питання до замовника</b> (за D26 рішення ухвалюють двоє):</p>
+<ol><li>Перший екран — «Сьогодні», а не позиція на дорозі.</li><li>Перегляд D16 і D29 заради вікна й PWA з пушами.</li><li>Backlog: стрік (D13), вигляд «список або дошка» (D27), перемикач мови (D15); прогулянка як вид запису (D24).</li><li>Межа зони уваги (O14): робоча відповідь — без межі, з запитанням.</li></ol>
+<p><b>Відкриті питання продукту:</b></p>
+<ol><li>Чи є день об'єктом (O18).</li><li>Що намальовано попереду кроку (O15) — частково: фініш і відкладені точки.</li><li>Якість пропозицій ШІ українською; жива перевірка Groq і місце для ключа відкладено (<span class="ref"><code class="mono">research/groq.md</code></span>).</li><li>Варіанти відповіді на «коли почнеш» <span class="chip unk" title="припущення">?</span>.</li><li>Де стоїть відкладена точка, якщо крок відклали без заміни <span class="chip unk" title="припущення">?</span>.</li><li>У якому порядку кроки черги змінюють один одного — за порядком важливості доріг <span class="chip unk" title="припущення">?</span>.</li><li>Плаваючий крок на екрані «Сьогодні»: дублювати чи ховати.</li><li>Точні години сповіщень; скільки днів — «після паузи» і «крок висить».</li><li>Хто й коли ділить дорогу на етапи; мікрокрок — об'єкт чи вкладений крок.</li></ol>
+<p><b>Технічні:</b></p>
+<ol><li>Звідки телефон бере дані й хто надсилає пуш — поки діє рамка <code class="mono">ESTIMATE.md</code> §1, нізвідки й ніхто.</li><li>Чи працюють сповіщення на iPhone для сайту без маніфесту, доданого на початковий екран в iOS 26 — невідомо (research.md §7.5).</li></ol>
+</section>
+
+<footer>
+  WAY · структура й сценарії, 2026-09-30 · джерело правди — <code class="mono">wireframes/sitemap.md</code> і <code class="mono">wireframes/flows.md</code> · критика — <code class="mono">wireframes/audit.md</code> · технічні факти — <code class="mono">research/research.md</code> §7
+</footer>
+</main>
+</div>
+
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+  startOnLoad: false,
+  theme: "dark",
+  securityLevel: "strict",
+  themeVariables: {
+    background: "#151C18", primaryColor: "#1F2B24", primaryTextColor: "#E5ECE6",
+    primaryBorderColor: "#3E7A5B", lineColor: "#7E8D85", secondaryColor: "#1C2520",
+    tertiaryColor: "#151C18", edgeLabelBackground: "#151C18",
+    fontFamily: "Commissioner, Helvetica Neue, Arial, sans-serif", fontSize: "14px"
+  },
+  flowchart: { htmlLabels: true, curve: "basis", useMaxWidth: true, nodeSpacing: 28, rankSpacing: 38 }
+});
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
+</body>
+</html>
