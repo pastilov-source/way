@@ -293,6 +293,7 @@ flow_toc = "".join(f'<li><a class="fl" href="#flow-{i + 1}">{inline(t)}</a></li>
 
 CSS_IA = """
 /* ================= ia.html: додано до стилів personas.html ================= */
+main{min-width:0}
 code.mono{font-size:.86em;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
 .chip.unk{background:var(--signal-soft);color:var(--signal);border:1px solid rgba(224,164,92,.38)}
 .chip.feed{background:transparent;color:var(--muted);border:1px dashed var(--line-2)}
