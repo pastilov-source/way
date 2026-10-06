@@ -1,0 +1,296 @@
+/* WAY — спільні стилі каркасів. Правила: _conventions.md.
+   Лише структура, ієрархія й зони. Палітра — темні нейтральні тони сайту way-tau,
+   без акцентного зеленого й бурштинового. Шрифти way-tau, іконки Lucide, без тіней. */
+
+:root {
+  --ground: #0D120F;
+  --surface: #151C18;
+  --surface-2: #1C2520;
+  --surface-3: #232E27;
+  --ink: #E5ECE6;
+  --ink-2: #B2C0B7;
+  --muted: #7E8D85;
+  --line: #232E27;
+  --line-2: #314037;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --gutter: 32px;
+  --float: 340px;
+  --tree: 288px;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 16px/1.55 "Commissioner", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: grid;
+  grid-template-columns: var(--tree) minmax(0, 1fr);
+  min-height: 100vh;
+}
+a { color: inherit; text-underline-offset: 3px; }
+h1, h2, h3 { margin: 0; line-height: 1.2; }
+h1 { font-family: "Unbounded", sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
+h2 { font-size: 20px; font-weight: 600; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* ---------- зони: межа й службова мітка «зона · головна дія» ---------- */
+[data-section] {
+  border: 1px dashed var(--line-2);
+  background: var(--surface);
+  padding: 20px;
+}
+[data-section]::before {
+  content: "зона: " attr(data-section) "   ·   головна дія: " attr(data-action);
+  display: block;
+  margin: -20px -20px 16px;
+  padding: 6px 12px;
+  border-bottom: 1px dashed var(--line-2);
+  font: 12px/1.4 var(--mono);
+  color: var(--muted);
+}
+/* місце елемента в головному flow */
+[data-flow]::after {
+  content: "J0 · " attr(data-flow);
+  display: block;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  font: 12px/1.4 var(--mono);
+  color: var(--muted);
+}
+
+/* ---------- макет екрана: праворуч від дерева ---------- */
+.mock {
+  display: grid;
+  grid-template-columns: minmax(0, 640px) var(--float);
+  column-gap: 40px;
+  align-content: start;
+  padding: var(--gutter);
+  min-width: 0;
+}
+.mock > header, .mock > .wf-states { grid-column: 1 / -1; }
+.mock > main { grid-column: 1; margin-bottom: 48px; }
+.mock > footer.wf { grid-column: 1; }
+
+header[data-section] {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 32px;
+  margin: 0 0 32px;
+}
+header[data-section]::before { grid-column: 1 / -1; }
+.brand { font-weight: 700; letter-spacing: .12em; }
+header nav ul { display: flex; gap: 24px; }
+header nav a { text-decoration: none; color: var(--ink-2); padding: 4px 0; }
+header nav a[aria-current="page"] { color: var(--ink); font-weight: 600; border-bottom: 2px solid var(--ink); }
+
+main { display: grid; gap: 24px; }
+.screen-head { display: grid; gap: 4px; }
+.screen-head p { color: var(--ink-2); }
+section h2 { margin-bottom: 12px; }
+
+/* ---------- елементи ---------- */
+button, input[type="text"] {
+  font: inherit; color: inherit;
+  border: 1px solid var(--line-2);
+  background: var(--surface-3);
+  border-radius: 4px;
+  padding: 8px 14px;
+}
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+a.button {
+  display: inline-block; text-decoration: none;
+  border: 1px solid var(--line-2); background: var(--surface-3);
+  border-radius: 4px; padding: 8px 14px;
+}
+a.button.main-action { background: var(--ink-2); color: var(--ground); border-color: var(--ink-2); }
+input[type="radio"], input[type="checkbox"] { accent-color: var(--ink-2); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.main-action { background: var(--ink-2); color: var(--ground); border-color: var(--ink-2); font-weight: 600; }
+a.main-action { background: none; color: var(--ink); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.meta { color: var(--ink-2); font-size: 14px; }
+
+form { display: grid; gap: 14px; }
+input[type="text"] { width: 100%; }
+fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+legend { padding: 0; margin-bottom: 8px; color: var(--ink-2); font-size: 14px; }
+.choice { border: 1px solid var(--line-2); border-radius: 4px; padding: 6px 12px; display: inline-flex; gap: 8px; align-items: center; }
+.check { display: inline-flex; gap: 8px; align-items: center; color: var(--ink-2); }
+form button[type="submit"] { justify-self: start; }
+
+section article { display: grid; gap: 6px; }
+.done li + li { margin-top: 12px; }
+.done article { display: grid; gap: 4px; }
+
+/* ---------- плаваючий крок дня ---------- */
+aside.float {
+  grid-column: 2; grid-row: 3 / span 2;
+  align-self: end;
+  position: sticky; bottom: var(--gutter);
+  background: var(--surface-2);
+  display: grid; gap: 14px;
+}
+aside.float::before { margin-bottom: 0; }
+.bridge {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  border: 1px solid var(--line-2); border-radius: 4px;
+  padding: 10px 12px;
+}
+.bridge a { font-weight: 600; }
+.bridge button { padding: 2px 10px; }
+.step { display: grid; gap: 8px; }
+.step .actions { align-items: center; margin-top: 4px; }
+
+/* ---------- службова смуга: не продукт ---------- */
+footer.wf {
+  padding: 16px 0 0;
+  border-top: 1px dashed var(--line-2);
+  font: 13px/1.6 var(--mono);
+  color: var(--muted);
+  display: grid; gap: 10px;
+}
+footer.wf b { color: var(--ink-2); font-weight: 600; }
+footer.wf ol { list-style: decimal; padding-left: 22px; }
+footer.wf .here { color: var(--ink-2); }
+footer.wf [aria-current] { color: var(--ink); font-weight: 600; }
+
+/* ---------- іконки Lucide: лише поруч зі словом або замість очевидного слова ---------- */
+[class^="icon-"], [class*=" icon-"] { font-size: 1.1em; line-height: 1; vertical-align: -0.15em; }
+button [class^="icon-"], a [class^="icon-"] { margin-right: 6px; }
+.icon-only [class^="icon-"] { margin: 0; }
+.bridge a [class^="icon-"] { margin: 0 0 0 6px; }
+
+/* ---------- дерево каркасів: розділ → екран → стани. Не продукт ---------- */
+.wf-tree {
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column; min-height: 0;
+  border-right: 1px solid var(--line-2);
+  background: var(--surface);
+}
+.wf-brand { padding: 26px 26px 18px; border-bottom: 1px solid var(--line-2); }
+.wf-brand-mark { font-family: "Unbounded", sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .16em; color: var(--ink); }
+.wf-brand-sub { font: 10.5px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.wf-tree > ul { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 14px 18px; }
+.wf-tree ul ul { margin-left: 14px; padding-left: 10px; border-left: 1px solid var(--line-2); }
+.t-section {
+  display: block; padding: 14px 12px 6px;
+  font-family: "Unbounded", sans-serif; font-size: 9.5px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+}
+.t-node {
+  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px;
+  padding: 7px 12px; border-radius: 6px;
+  text-decoration: none; font-size: 14px; color: var(--ink-2); line-height: 1.35;
+}
+a.t-node:hover { background: var(--surface-2); }
+.t-screen { font-weight: 600; font-size: 14.5px; }
+.t-lbl { font: 10.5px/1.3 var(--mono); color: var(--muted); white-space: nowrap; margin-left: auto; }
+.t-off { color: var(--muted); }
+.t-open > .t-node { color: var(--ink); }
+.t-node[aria-current="page"] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--ink-2); color: var(--ink); font-weight: 600; }
+.wf-tree-foot { padding: 14px 26px 20px; border-top: 1px solid var(--line-2); font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+/* ---------- стани екрана ---------- */
+.screen-status {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;
+  border: 1px solid var(--line-2); border-radius: 4px;
+  padding: 12px 16px; color: var(--ink-2);
+}
+.screen-status form { display: block; }
+.skel { display: block; height: 12px; width: 72%; margin: 10px 0; background: var(--surface-3); border-radius: 3px; }
+.skel-short { width: 44%; }
+.skel-chip { display: inline-block; width: 112px; height: 34px; margin: 0; }
+fieldset .meta { flex-basis: 100%; }
+
+/* ---------- перемикач станів зверху: не продукт ---------- */
+.wf-states {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px;
+  margin: 0 0 20px; padding: 0 0 12px;
+  border-bottom: 1px dashed var(--line-2);
+  font: 12.5px/1.5 var(--mono); color: var(--muted);
+}
+.wf-states ul { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.wf-states a { color: var(--ink-2); text-decoration: none; }
+.wf-states a:hover { text-decoration: underline; }
+.wf-states a[aria-current="page"] { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; }
+
+/* ---------- плаваючий екран «Крок із собою»: dialog поверх «Сьогодні» ---------- */
+.under { opacity: .35; }
+.screen-title { font-family: "Unbounded", sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+dialog.expanded {
+  position: fixed; inset: var(--gutter) var(--gutter) var(--gutter) auto;
+  width: 440px; max-width: calc(100vw - var(--tree) - 2 * var(--gutter));
+  height: auto; max-height: none; margin: 0;
+  padding: 0 16px 16px; overflow-y: auto;
+  background: var(--ground); color: var(--ink);
+  border: 1px solid var(--line-2); border-radius: 6px;
+  display: grid; gap: 16px; align-content: start;
+}
+.dialog-head { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 4px 0; }
+.dialog-head h1 { font-size: 24px; }
+dialog .screen-status, dialog .bridge { margin-bottom: 14px; }
+dialog section > h3 { margin-top: 18px; }
+
+/* ---------- «Дорога» ---------- */
+.road-switch ul { display: flex; flex-wrap: wrap; gap: 8px; }
+.road-switch a { display: inline-block; padding: 6px 12px; border: 1px solid var(--line-2); border-radius: 4px; text-decoration: none; color: var(--ink-2); }
+.road-switch a[aria-current="page"] { color: var(--ink); background: var(--surface-3); font-weight: 600; }
+.road-figure { margin: 0; }
+.road-figure svg { display: block; width: 100%; height: auto; }
+.road-figure figcaption { margin-top: 10px; }
+.path-done { stroke: var(--ink-2); stroke-width: 2; }
+.stage { stroke: var(--line-2); stroke-width: 2; fill: none; }
+.stage-label { fill: var(--muted); font: 11px var(--mono); }
+.pt-done { fill: var(--ink-2); }
+.pt-now { fill: var(--ink); }
+.pt-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.pt-start, .pt-finish { fill: var(--surface); stroke: var(--ink-2); stroke-width: 2; }
+.pt-label { fill: var(--ink-2); font: 13px "Commissioner", sans-serif; }
+.pt-strong { fill: var(--ink); font-weight: 600; }
+.pt-sub { fill: var(--muted); font: 11.5px "Commissioner", sans-serif; }
+.wf-note { fill: var(--muted); font: 11px var(--mono); }
+.skel-graph { height: 320px; width: 100%; }
+.stages li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.stages li[aria-current] b { text-decoration: underline; text-underline-offset: 4px; }
+summary { cursor: pointer; }
+summary h2 { display: inline; margin: 0; }
+details[open] summary { margin-bottom: 12px; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0 0 12px; }
+dt { color: var(--ink-2); }
+dd { margin: 0; }
+.res li { padding: 4px 0; }
+code { font-family: var(--mono); font-size: .9em; }
+
+/* ---------- заглушка стану, якого немає в таблиці ---------- */
+.stub { border: 1px dashed var(--line-2); padding: 20px; display: grid; gap: 12px; }
+.stub-exits { display: grid; gap: 6px; }
+p.screen-status { justify-content: flex-start; gap: 8px; }
+
+/* ---------- переходи: дії-кнопки у формах, заглушки без href ---------- */
+.actions form { display: contents; }
+a[aria-disabled="true"] { color: var(--muted); cursor: not-allowed; text-decoration: none; }
+a.button[aria-disabled="true"] { background: var(--surface-3); color: var(--muted); border-color: var(--line-2); }
+.wf-next ul { display: grid; gap: 4px; }
+.wf-next li::before { content: "→ "; color: var(--muted); }
+.wf-next a { color: var(--ink); }
+
+/* ---------- позиція в іншому flow, не J0: назву flow дає data-flow-id ---------- */
+[data-flow][data-flow-id]::after { content: attr(data-flow-id) " · " attr(data-flow); }
+
+/* ---------- шлях-граф: розпочатий крок — пунктир (D25) ---------- */
+.path-started { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 6 6; }
+
+/* ---------- чуже вікно схемою: вікно поверх програм, сповіщення ---------- */
+.preview { margin: 0; display: grid; gap: 8px; }
+.preview > :not(figcaption) { border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface-2); padding: 12px 14px; }
+
+/* ---------- інструкція по кроках ---------- */
+.howto { list-style: decimal; padding-left: 22px; display: grid; gap: 6px; margin: 4px 0 12px; }
+
+/* ---------- «Тиждень»: список доріг у fieldset — на всю ширину ---------- */
+fieldset > ol, fieldset > ul { flex-basis: 100%; }

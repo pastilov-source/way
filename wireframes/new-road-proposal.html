@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WAY · Нова дорога — пропозиція є</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Commissioner:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@1.49.0/font/lucide.css">
+  <link rel="stylesheet" href="_wireframe.css">
+</head>
+<body>
+
+  <!-- Дерево каркасів: однакове на кожній сторінці, переїжджає лише aria-current і t-open -->
+  <nav class="wf-tree" aria-label="Каркаси: розділи, екрани й стани">
+    <div class="wf-brand">
+      <p class="wf-brand-mark">WAY</p>
+      <p class="wf-brand-sub">каркаси · усі flows</p>
+    </div>
+    <ul>
+      <li>
+        <span class="t-section">Сьогодні · що я роблю сьогодні</span>
+        <ul>
+          <li>
+            <a class="t-node t-screen" href="today.html">Сьогодні <span class="t-lbl">екран</span></a>
+            <ul>
+              <li><a class="t-node" href="today-empty.html">порожній <span class="t-lbl">-empty</span></a></li>
+              <li>
+                <a class="t-node" href="today-error.html">помилка <span class="t-lbl">-error</span></a>
+                <ul>
+                  <li><a class="t-node" href="today-error-offline.html">немає зв'язку <span class="t-lbl">-offline</span></a></li>
+                  <li><a class="t-node" href="today-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="t-node" href="today-loading.html">завантаження <span class="t-lbl">-loading</span></a>
+                <ul>
+                  <li><a class="t-node" href="today-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li><a class="t-node" href="today.html">успіх <span class="t-lbl">базова</span></a></li>
+              <li><a class="t-node" href="today-nostep.html">кроку ще немає <span class="t-lbl">-nostep</span></a></li>
+              <li><a class="t-node" href="today-skip.html">сьогодні без кроку <span class="t-lbl">-skip</span></a></li>
+              <li><a class="t-node" href="today-alldone.html">усі кроки зроблено <span class="t-lbl">-alldone</span></a></li>
+              <li><a class="t-node" href="today-carry.html">крок переходить на завтра <span class="t-lbl">-carry</span></a></li>
+              <li><a class="t-node" href="today-afterpause.html">після паузи <span class="t-lbl">-afterpause</span></a></li>
+              <li><a class="t-node" href="today-weekstart.html">тиждень почався <span class="t-lbl">-weekstart</span></a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="t-node t-screen" href="step.html">Крок із собою <span class="t-lbl">екран</span></a>
+            <ul>
+              <li><a class="t-node" href="step-empty.html">порожній <span class="t-lbl">заглушка</span></a></li>
+              <li><a class="t-node" href="step-error.html">помилка <span class="t-lbl">-error</span></a></li>
+              <li><a class="t-node" href="step-loading.html">завантаження <span class="t-lbl">-loading</span></a></li>
+              <li><a class="t-node" href="step.html">успіх <span class="t-lbl">базова</span></a></li>
+              <li><a class="t-node" href="step-stuck.html">крок висить кілька днів <span class="t-lbl">-stuck</span></a></li>
+              <li>
+                <a class="t-node" href="step-pip.html">вікно поверх програм <span class="t-lbl">-pip</span></a>
+                <ul>
+                  <li><a class="t-node" href="step-pip-unsupported.html">браузер не підтримує <span class="t-lbl">-unsupported</span></a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="t-node" href="step-phone.html">на телефоні <span class="t-lbl">-phone</span></a>
+                <ul>
+                  <li><a class="t-node" href="step-phone-install.html">застосунок не встановлено <span class="t-lbl">-install</span></a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="t-node" href="step-push.html">сповіщення увімкнено <span class="t-lbl">-push</span></a>
+                <ul>
+                  <li><a class="t-node" href="step-push-asking.html">системний запит <span class="t-lbl">-asking</span></a></li>
+                  <li><a class="t-node" href="step-push-denied.html">у дозволі відмовлено <span class="t-lbl">-denied</span></a></li>
+                  <li><a class="t-node" href="step-push-sending.html">надсилаємо пробне <span class="t-lbl">-sending</span></a></li>
+                  <li><a class="t-node" href="step-push-failed.html">пробне не надійшло <span class="t-lbl">-failed</span></a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="t-section">Дорога · де я і що далі</span>
+        <ul>
+          <li>
+            <a class="t-node t-screen" href="road.html">Дорога <span class="t-lbl">екран</span></a>
+            <ul>
+              <li><a class="t-node" href="road-empty.html">порожній: без кроків <span class="t-lbl">-empty</span></a></li>
+              <li>
+                <a class="t-node" href="road-error.html">помилка <span class="t-lbl">-error</span></a>
+                <ul>
+                  <li><a class="t-node" href="road-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="t-node" href="road-loading.html">завантаження <span class="t-lbl">-loading</span></a>
+                <ul>
+                  <li><a class="t-node" href="road-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li><a class="t-node" href="road.html">успіх <span class="t-lbl">базова</span></a></li>
+              <li><a class="t-node" href="road-noposition.html">позицію не визначено <span class="t-lbl">-noposition</span></a></li>
+              <li><a class="t-node" href="road-paused.html">на паузі <span class="t-lbl">-paused</span></a></li>
+              <li><a class="t-node" href="road-nearfinish.html">поруч із фінішем <span class="t-lbl">-nearfinish</span></a></li>
+              <li><a class="t-node" href="road-done.html">пройдена <span class="t-lbl">-done</span></a></li>
+              <li><a class="t-node" href="road-cancelled.html">скасована <span class="t-lbl">-cancelled</span></a></li>
+              <li><a class="t-node" href="road-draft.html">чернетка <span class="t-lbl">-draft</span></a></li>
+              <li><a class="t-node" href="road-planned.html">запланована <span class="t-lbl">-planned</span></a></li>
+            </ul>
+          </li>
+          <li class="t-open">
+            <a class="t-node t-screen" href="new-road.html">Нова дорога <span class="t-lbl">екран</span></a>
+            <ul>
+              <li><a class="t-node" href="new-road-empty.html">порожній <span class="t-lbl">-empty</span></a></li>
+              <li>
+                <a class="t-node" href="new-road-error.html">помилка <span class="t-lbl">-error</span></a>
+                <ul>
+                  <li><a class="t-node" href="new-road-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="t-node" href="new-road-loading.html">завантаження <span class="t-lbl">-loading</span></a>
+                <ul>
+                  <li><a class="t-node" href="new-road-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li><a class="t-node" href="new-road.html">успіх <span class="t-lbl">базова</span></a></li>
+              <li><a class="t-node" href="new-road-proposal.html" aria-current="page">пропозиція є <span class="t-lbl">-proposal</span></a></li>
+              <li><a class="t-node" href="new-road-questions.html">запитання замість пропозиції <span class="t-lbl">-questions</span></a></li>
+              <li><a class="t-node" href="new-road-draft.html">чернетка збережена <span class="t-lbl">-draft</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="t-section">Тиждень · чому я віддаю увагу</span>
+        <ul>
+          <li>
+            <a class="t-node t-screen" href="week.html">Тиждень <span class="t-lbl">екран</span></a>
+            <ul>
+              <li><a class="t-node" href="week-empty.html">порожній <span class="t-lbl">-empty</span></a></li>
+              <li>
+                <a class="t-node" href="week-error.html">помилка <span class="t-lbl">-error</span></a>
+                <ul>
+                  <li><a class="t-node" href="week-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="t-node" href="week-loading.html">завантаження <span class="t-lbl">-loading</span></a>
+                <ul>
+                  <li><a class="t-node" href="week-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
+                </ul>
+              </li>
+              <li><a class="t-node" href="week.html">успіх <span class="t-lbl">базова</span></a></li>
+              <li><a class="t-node" href="week-first.html">перший тиждень <span class="t-lbl">-first</span></a></li>
+              <li><a class="t-node" href="week-lastweek.html">діє вибір минулого тижня <span class="t-lbl">-lastweek</span></a></li>
+              <li><a class="t-node" href="week-toomany.html">більше трьох: продукт питає <span class="t-lbl">-toomany</span></a></li>
+              <li><a class="t-node" href="week-quiet.html">тиждень без руху <span class="t-lbl">-quiet</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p class="wf-tree-foot">Розділи й екрани — з дерева sitemap.md, стани — з таблиці станів sitemap.md, _screens.md і flows.md.</p>
+  </nav>
+
+  <div class="mock">
+
+    <nav class="wf-states" aria-label="Стани екрана «Нова дорога»">
+      <p>Стани екрана «Нова дорога»:</p>
+      <ul>
+        <li><a href="new-road-empty.html">порожній</a></li>
+        <li><a href="new-road-error.html">помилка</a></li>
+        <li><a href="new-road-loading.html">завантаження</a></li>
+        <li><a href="new-road.html">успіх</a></li>
+      </ul>
+    </nav>
+
+    <header data-section="глобальна навігація" data-action="«Дорога» — дорога поточного кроку">
+      <p class="brand">WAY</p>
+      <nav aria-label="Основна навігація">
+        <ul>
+          <li><a href="today.html">Сьогодні</a></li>
+          <li><a href="road.html" class="main-action" aria-current="page">Дорога</a></li>
+          <li><a href="week.html">Тиждень</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <hgroup class="screen-head">
+        <h1>Нова дорога</h1>
+        <p>Виступ на мітапі</p>
+      </hgroup>
+
+      <section data-section="фінал · J3 · єдине обов'язкове поле" data-action="Змінити" aria-labelledby="fin-h">
+        <h2 id="fin-h">Фінал</h2>
+        <p><b>Десятихвилинний виступ про власний процес на дизайн-мітапі</b></p>
+        <p class="meta">Дорога «Виступ на мітапі»</p>
+        <p class="actions"><button type="button">Змінити</button></p>
+      </section>
+
+      <section data-section="точка старту · → J2 · можна пропустити" data-action="Змінити" aria-labelledby="start-h">
+        <h2 id="start-h">Точка старту</h2>
+        <p>Публічних виступів ще не було</p>
+        <p class="actions"><button type="button">Змінити</button></p>
+      </section>
+
+      <section data-section="перший крок: пропозиція й відповідь · J3, E2" data-action="Взяти першим кроком"
+               data-flow-id="J3" data-flow="«Пропозиція надійшла?» так → «Пропозиція підходить?»"
+               aria-labelledby="step-h">
+        <h2 id="step-h">Перший крок</h2>
+        <article>
+          <p class="meta">Виступ на мітапі · пропозиція</p>
+          <h3>Виписати на одну сторінку етапи свого процесу</h3>
+          <p class="meta">Пропоную, бо виступ про процес починається з того, з чого цей процес складається.</p>
+          <div class="actions" role="group" aria-label="Відповідь на пропозицію">
+            <form action="new-road-loading-save.html" method="get"><button type="submit" class="main-action">Взяти першим кроком</button></form>
+            <form action="new-road-loading.html" method="get"><button type="submit">Інша пропозиція</button></form>
+            <form action="new-road-loading.html" method="get"><button type="submit">Відкласти</button></form>
+          </div>
+          <p class="meta">Відкладена пропозиція ляже на дорогу точкою без лінії — до неї можна повернутися.</p>
+        </article>
+      </section>
+
+      <section data-section="коли почати · J1 · і чи додати в зону уваги цього тижня" data-action="немає: спершу перший крок; далі — «Взяти першим кроком»"
+               aria-labelledby="when-h">
+        <h2 id="when-h">Коли почати</h2>
+        <p class="meta">Після першого кроку — коли почнеш і чи додати дорогу в зону уваги цього тижня.</p>
+        <p class="meta next-hint">Далі: <a href="#step-h">«Взяти першим кроком»</a></p>
+      </section>
+    </main>
+
+    <aside class="float" aria-label="Крок дня"
+           data-section="крок дня — плаваючий, розгортається в «Крок із собою» · J4" data-action="Зроблено">
+      <article class="step">
+        <p class="meta">Портфоліо · крок на сьогодні</p>
+        <h2>Дописати вступ до кейсу про застосунок для бігу</h2>
+        <div class="actions">
+          <form action="step-loading.html" method="get"><button type="submit" class="main-action"><span class="icon-check" aria-hidden="true"></span>Зроблено</button></form>
+          <a href="step.html">Розгорнути</a>
+        </div>
+      </article>
+    </aside>
+
+    <footer class="wf">
+      <p><b>Екран:</b> Нова дорога · <b>Стан:</b> пропозиція є — відповіді ще немає · <b>Файл:</b> new-road-proposal.html</p>
+      <p><b>Job екрана:</b> J3 «Зрозуміти, що робити далі» — «Коли я знаю, куди хочу прийти, але не знаю, які дії мене туди приведуть, я хочу зрозуміти, що робити наступним, щоб наблизитися до цілі.» Ще E2 «Лишатися тією, хто вирішує» і J1 «Обрати, чому віддати увагу» — за матрицею трасування sitemap.md.</p>
+      <p><b>Дані:</b> «Виступ на мітапі», пропозиція — «Виписати на одну сторінку етапи свого процесу»; як на new-road.html, тільки ще не прийнята.</p>
+      <p><b>Чому окремий стан:</b> без нього шлях J3 перескакував із «готуємо пропозицію» одразу до «крок прийнято», і людина ніде не бачила вибору (критика, _critique.md).</p>
+      <nav class="wf-next" aria-label="Куди далі за flow J3">
+        <p><b>Куди далі за flow J3:</b></p>
+        <ul>
+          <li>«Пропозиція підходить?» так → «Взяти першим кроком» → «Крок можна зробити за день?» так → «Чекаємо: зберігаємо крок» → <a href="new-road-loading-save.html">Нова дорога — зберігаємо</a></li>
+          <li>ні → «Відкласти її?» так → «Відкладено: точка без лінії на дорозі» → нова пропозиція → <a href="new-road-loading.html">Нова дорога — готуємо пропозицію</a></li>
+          <li>ні, уже дві-три невдалі → «Може записати крок сама?» так → <a href="new-road-error.html#step-h">свій крок</a>; ні → <a href="new-road-questions.html">Нова дорога — запитання</a></li>
+        </ul>
+      </nav>
+      <ol>
+        <li>«Нова дорога: перший крок» → «Чекаємо: продукт готує пропозицію»</li>
+        <li class="here" aria-current="step">«Пропозиція надійшла?» так → «Пропозиція підходить?» — цей стан</li>
+        <li>«Крок можна зробити за день?» → «Чекаємо: зберігаємо крок»</li>
+      </ol>
+      <p><b>Джерела:</b> flows.md, J3 · sitemap.md, стани секції «наступний крок» («пропозиція є») · рішення 9, 12</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>
