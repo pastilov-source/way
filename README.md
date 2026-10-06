@@ -55,7 +55,7 @@
 npx vercel@latest deploy --prod
 ```
 
-На сайт потрапляють лише `index.html`, `research/research.html`, `research/personas.html`, `wireframes/ia.html` і скріни — цей список задає `.vercelignore`. Документи, PDF і робочі теки лишаються тільки в репозиторії.
+На сайт потрапляють лише `index.html`, `research/research.html`, `research/personas.html`, `wireframes/ia.html`, сторінки каркасів `wireframes/*.html` зі стилями `_wireframe.css` і скріни — цей список задає `.vercelignore`. Документи, PDF і робочі теки лишаються тільки в репозиторії.
 
 ## Час на проєкт
 
@@ -95,7 +95,7 @@ python3 tools/timecount.py
 | [`_critique.md`](wireframes/_critique.md) | Критика 2026-10-06: глухі кути, відсутні стани, зони без дії — що знайдено й полагоджено, що відкрито |
 | [`_wireframe.css`](wireframes/_wireframe.css) | Спільні стилі: темні нейтральні тони й шрифти сайту way-tau, мітки зон |
 
-Це сірі каркаси: лише структура, ієрархія й зони, без кольору й готового UI. На сайт поки не публікуються.
+Це сірі каркаси: лише структура, ієрархія й зони, без кольору й готового UI. На сайті — крок 04: [way-tau.vercel.app/#04](https://way-tau.vercel.app/#04).
 
 ## Робочі теки
 

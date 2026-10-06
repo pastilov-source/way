@@ -9,3 +9,5 @@
 !/wireframes
 /wireframes/*
 !/wireframes/ia.html
+!/wireframes/*.html
+!/wireframes/_wireframe.css
