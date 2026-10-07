@@ -7,9 +7,11 @@
   python3 tools/wf_tree.py --list     — перелік файлів
   python3 tools/wf_tree.py --table    — таблиця «екран · файл · стан · flow» для _conventions.md, розділ 4
 
+Дерево каркасів (ліва панель) — лише розділи й екрани. Стани екрана — зверху макета:
+рядок чотирьох основних станів і під ним вкладки з особливими станами й варіантами.
 Сторінка отримує дерево на місці <!-- WF-TREE --> або наявного <nav class="wf-tree">…</nav>,
-перемикач — на місці <!-- WF-STATES --> або наявного <nav class="wf-states">…</nav>.
-Нова сторінка чи стан додаються в SECTIONS нижче — і тоді вони з'являються в дереві всіх сторінок.
+перемикач станів — на місці <!-- WF-STATES --> або наявного <nav class="wf-states">…</nav>.
+Нова сторінка чи стан додаються в SECTIONS нижче — і тоді з'являються на всіх сторінках свого екрана.
 """
 import re
 import sys
@@ -106,10 +108,19 @@ FILE2SCREEN = {st[0]: slug for slug, (_, states) in SCREENS.items() for st in st
 ALL_FILES = list(FILE2SCREEN)
 
 
+def plural(n):
+    """1 стан, 2 стани, 5 станів"""
+    if n % 10 == 1 and n % 100 != 11:
+        return str(n) + " стан"
+    if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
+        return str(n) + " стани"
+    return str(n) + " станів"
+
+
 def tree(cur):
-    """Дерево каркасів для сторінки cur: поточний стан — aria-current, його екран — t-open."""
+    """Дерево каркасів для сторінки cur: розділи й екрани; екран поточної сторінки — aria-current і t-open."""
     out = ['  <!-- Дерево каркасів: однакове на кожній сторінці, переїжджає лише aria-current і t-open -->',
-           '  <nav class="wf-tree" aria-label="Каркаси: розділи, екрани й стани">',
+           '  <nav class="wf-tree" aria-label="Каркаси: розділи й екрани">',
            '    <div class="wf-brand">',
            '      <p class="wf-brand-mark">WAY</p>',
            '      <p class="wf-brand-sub">каркаси · усі flows</p>',
@@ -118,33 +129,14 @@ def tree(cur):
     for sec, screens in SECTIONS:
         out += ['      <li>', '        <span class="t-section">' + sec + '</span>', '        <ul>']
         for slug, name, states in screens:
-            opn = ' class="t-open"' if FILE2SCREEN.get(cur) == slug else ""
-            out += ['          <li' + opn + '>',
-                    '            <a class="t-node t-screen" href="' + slug + '.html">' + name + ' <span class="t-lbl">екран</span></a>',
-                    '            <ul>']
-            i = 0
-            while i < len(states):
-                f, label, lbl, _lvl, _flow = states[i]
-                mark = ' aria-current="page"' if f == cur else ""
-                link = '<a class="t-node" href="' + f + '"' + mark + '>' + label + ' <span class="t-lbl">' + lbl + '</span></a>'
-                variants = []
-                j = i + 1
-                while j < len(states) and states[j][3] == 1:
-                    vf, vlabel, vlbl = states[j][:3]
-                    vm = ' aria-current="page"' if vf == cur else ""
-                    variants.append('                  <li><a class="t-node" href="' + vf + '"' + vm + '>' + vlabel
-                                    + ' <span class="t-lbl">' + vlbl + '</span></a></li>')
-                    j += 1
-                if variants:
-                    out += ['              <li>', '                ' + link, '                <ul>', *variants,
-                            '                </ul>', '              </li>']
-                else:
-                    out.append('              <li>' + link + '</li>')
-                i = j
-            out += ['            </ul>', '          </li>']
+            here = FILE2SCREEN.get(cur) == slug
+            opn = ' class="t-open"' if here else ""
+            mark = ' aria-current="true"' if here else ""
+            out.append('          <li' + opn + '><a class="t-node t-screen" href="' + slug + '.html"' + mark + '>'
+                       + name + ' <span class="t-lbl">' + plural(len(states)) + '</span></a></li>')
         out += ['        </ul>', '      </li>']
     out += ['    </ul>',
-            '    <p class="wf-tree-foot">Розділи й екрани — з дерева sitemap.md, стани — з таблиці станів sitemap.md, _screens.md і flows.md.</p>',
+            '    <p class="wf-tree-foot">Розділи й екрани — з дерева sitemap.md. Стани екрана — зверху макета: основні й особливі вкладками.</p>',
             '  </nav>']
     return "\n".join(out)
 
@@ -152,18 +144,44 @@ def tree(cur):
 MAIN4 = [("-empty", "порожній"), ("-error", "помилка"), ("-loading", "завантаження"), ("", "успіх")]
 
 
+# короткі назви особливих станів, що мають варіанти: префікс на вкладці варіанта
+SHORT = {"step-pip.html": "вікно", "step-phone.html": "телефон", "step-push.html": "сповіщення"}
+
+
 def states_bar(cur):
-    """Перемикач чотирьох основних станів екрана зверху макета."""
+    """Стани екрана зверху макета: рядок чотирьох основних і під ним вкладки особливих станів та варіантів.
+    Варіант підписано назвою свого стану («помилка · немає зв'язку»); стан поточного варіанта підсвічено."""
     slug = FILE2SCREEN[cur]
-    name = SCREENS[slug][0]
-    items = []
-    for suf, lbl in MAIN4:
-        f = slug + suf + ".html"
-        mark = ' aria-current="page"' if f == cur else ""
-        items.append('        <li><a href="' + f + '"' + mark + '>' + lbl + '</a></li>')
+    name, states = SCREENS[slug]
+    main_label = dict((slug + suf + ".html", lbl) for suf, lbl in MAIN4)
+    parent_of, last = {}, None
+    for f, _label, _lbl, lvl, _flow in states:
+        if lvl == 0:
+            last = f
+        else:
+            parent_of[f] = last
+    parent = parent_of.get(cur)
+
+    def attr(f):
+        if f == cur:
+            return ' aria-current="page"'
+        return ' class="wf-parent"' if f == parent else ""
+
+    items = ['          <li><a href="' + f + '"' + attr(f) + '>' + lbl + '</a></li>' for f, lbl in main_label.items()]
+    tabs = []
+    for f, label, _lbl, lvl, _flow in states:
+        if f in main_label:
+            continue
+        p = parent_of.get(f)
+        pre = main_label.get(p) or SHORT.get(p) if lvl == 1 else None
+        text = ('<span class="wf-tab-of">' + pre + ' ·</span> ' if pre else "") + label
+        tabs.append('        <li><a href="' + f + '"' + attr(f) + '>' + text + '</a></li>')
     return ('    <nav class="wf-states" aria-label="Стани екрана «' + name + '»">\n'
-            '      <p>Стани екрана «' + name + '»:</p>\n'
-            '      <ul>\n' + "\n".join(items) + '\n      </ul>\n'
+            '      <div class="wf-states-main">\n'
+            '        <p>Стани екрана «' + name + '»:</p>\n'
+            '        <ul>\n' + "\n".join(items) + '\n        </ul>\n'
+            '      </div>\n'
+            '      <ul class="wf-tabs" aria-label="Особливі стани й варіанти">\n' + "\n".join(tabs) + '\n      </ul>\n'
             '    </nav>')
 
 

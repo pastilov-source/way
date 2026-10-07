@@ -13,7 +13,7 @@
 <body>
 
   <!-- Дерево каркасів: однакове на кожній сторінці, переїжджає лише aria-current і t-open -->
-  <nav class="wf-tree" aria-label="Каркаси: розділи, екрани й стани">
+  <nav class="wf-tree" aria-label="Каркаси: розділи й екрани">
     <div class="wf-brand">
       <p class="wf-brand-mark">WAY</p>
       <p class="wf-brand-sub">каркаси · усі flows</p>
@@ -22,159 +22,49 @@
       <li>
         <span class="t-section">Сьогодні · що я роблю сьогодні</span>
         <ul>
-          <li class="t-open">
-            <a class="t-node t-screen" href="today.html">Сьогодні <span class="t-lbl">екран</span></a>
-            <ul>
-              <li><a class="t-node" href="today-empty.html">порожній <span class="t-lbl">-empty</span></a></li>
-              <li>
-                <a class="t-node" href="today-error.html" aria-current="page">помилка <span class="t-lbl">-error</span></a>
-                <ul>
-                  <li><a class="t-node" href="today-error-offline.html">немає зв'язку <span class="t-lbl">-offline</span></a></li>
-                  <li><a class="t-node" href="today-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="t-node" href="today-loading.html">завантаження <span class="t-lbl">-loading</span></a>
-                <ul>
-                  <li><a class="t-node" href="today-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li><a class="t-node" href="today.html">успіх <span class="t-lbl">базова</span></a></li>
-              <li><a class="t-node" href="today-nostep.html">кроку ще немає <span class="t-lbl">-nostep</span></a></li>
-              <li><a class="t-node" href="today-skip.html">сьогодні без кроку <span class="t-lbl">-skip</span></a></li>
-              <li><a class="t-node" href="today-alldone.html">усі кроки зроблено <span class="t-lbl">-alldone</span></a></li>
-              <li><a class="t-node" href="today-carry.html">крок переходить на завтра <span class="t-lbl">-carry</span></a></li>
-              <li><a class="t-node" href="today-afterpause.html">після паузи <span class="t-lbl">-afterpause</span></a></li>
-              <li><a class="t-node" href="today-weekstart.html">тиждень почався <span class="t-lbl">-weekstart</span></a></li>
-            </ul>
-          </li>
-          <li>
-            <a class="t-node t-screen" href="step.html">Крок із собою <span class="t-lbl">екран</span></a>
-            <ul>
-              <li><a class="t-node" href="step-empty.html">порожній <span class="t-lbl">заглушка</span></a></li>
-              <li><a class="t-node" href="step-error.html">помилка <span class="t-lbl">-error</span></a></li>
-              <li><a class="t-node" href="step-loading.html">завантаження <span class="t-lbl">-loading</span></a></li>
-              <li><a class="t-node" href="step.html">успіх <span class="t-lbl">базова</span></a></li>
-              <li><a class="t-node" href="step-stuck.html">крок висить кілька днів <span class="t-lbl">-stuck</span></a></li>
-              <li>
-                <a class="t-node" href="step-pip.html">вікно поверх програм <span class="t-lbl">-pip</span></a>
-                <ul>
-                  <li><a class="t-node" href="step-pip-unsupported.html">браузер не підтримує <span class="t-lbl">-unsupported</span></a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="t-node" href="step-phone.html">на телефоні <span class="t-lbl">-phone</span></a>
-                <ul>
-                  <li><a class="t-node" href="step-phone-install.html">застосунок не встановлено <span class="t-lbl">-install</span></a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="t-node" href="step-push.html">сповіщення увімкнено <span class="t-lbl">-push</span></a>
-                <ul>
-                  <li><a class="t-node" href="step-push-asking.html">системний запит <span class="t-lbl">-asking</span></a></li>
-                  <li><a class="t-node" href="step-push-denied.html">у дозволі відмовлено <span class="t-lbl">-denied</span></a></li>
-                  <li><a class="t-node" href="step-push-sending.html">надсилаємо пробне <span class="t-lbl">-sending</span></a></li>
-                  <li><a class="t-node" href="step-push-failed.html">пробне не надійшло <span class="t-lbl">-failed</span></a></li>
-                </ul>
-              </li>
-            </ul>
-          </li>
+          <li class="t-open"><a class="t-node t-screen" href="today.html" aria-current="true">Сьогодні <span class="t-lbl">13 станів</span></a></li>
+          <li><a class="t-node t-screen" href="step.html">Крок із собою <span class="t-lbl">14 станів</span></a></li>
         </ul>
       </li>
       <li>
         <span class="t-section">Дорога · де я і що далі</span>
         <ul>
-          <li>
-            <a class="t-node t-screen" href="road.html">Дорога <span class="t-lbl">екран</span></a>
-            <ul>
-              <li><a class="t-node" href="road-empty.html">порожній: без кроків <span class="t-lbl">-empty</span></a></li>
-              <li>
-                <a class="t-node" href="road-error.html">помилка <span class="t-lbl">-error</span></a>
-                <ul>
-                  <li><a class="t-node" href="road-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="t-node" href="road-loading.html">завантаження <span class="t-lbl">-loading</span></a>
-                <ul>
-                  <li><a class="t-node" href="road-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li><a class="t-node" href="road.html">успіх <span class="t-lbl">базова</span></a></li>
-              <li><a class="t-node" href="road-noposition.html">позицію не визначено <span class="t-lbl">-noposition</span></a></li>
-              <li><a class="t-node" href="road-paused.html">на паузі <span class="t-lbl">-paused</span></a></li>
-              <li><a class="t-node" href="road-nearfinish.html">поруч із фінішем <span class="t-lbl">-nearfinish</span></a></li>
-              <li><a class="t-node" href="road-done.html">пройдена <span class="t-lbl">-done</span></a></li>
-              <li><a class="t-node" href="road-cancelled.html">скасована <span class="t-lbl">-cancelled</span></a></li>
-              <li><a class="t-node" href="road-draft.html">чернетка <span class="t-lbl">-draft</span></a></li>
-              <li><a class="t-node" href="road-planned.html">запланована <span class="t-lbl">-planned</span></a></li>
-            </ul>
-          </li>
-          <li>
-            <a class="t-node t-screen" href="new-road.html">Нова дорога <span class="t-lbl">екран</span></a>
-            <ul>
-              <li><a class="t-node" href="new-road-empty.html">порожній <span class="t-lbl">-empty</span></a></li>
-              <li>
-                <a class="t-node" href="new-road-error.html">помилка <span class="t-lbl">-error</span></a>
-                <ul>
-                  <li><a class="t-node" href="new-road-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="t-node" href="new-road-loading.html">завантаження <span class="t-lbl">-loading</span></a>
-                <ul>
-                  <li><a class="t-node" href="new-road-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li><a class="t-node" href="new-road.html">успіх <span class="t-lbl">базова</span></a></li>
-              <li><a class="t-node" href="new-road-proposal.html">пропозиція є <span class="t-lbl">-proposal</span></a></li>
-              <li><a class="t-node" href="new-road-questions.html">запитання замість пропозиції <span class="t-lbl">-questions</span></a></li>
-              <li><a class="t-node" href="new-road-draft.html">чернетка збережена <span class="t-lbl">-draft</span></a></li>
-            </ul>
-          </li>
+          <li><a class="t-node t-screen" href="road.html">Дорога <span class="t-lbl">13 станів</span></a></li>
+          <li><a class="t-node t-screen" href="new-road.html">Нова дорога <span class="t-lbl">9 станів</span></a></li>
         </ul>
       </li>
       <li>
         <span class="t-section">Тиждень · чому я віддаю увагу</span>
         <ul>
-          <li>
-            <a class="t-node t-screen" href="week.html">Тиждень <span class="t-lbl">екран</span></a>
-            <ul>
-              <li><a class="t-node" href="week-empty.html">порожній <span class="t-lbl">-empty</span></a></li>
-              <li>
-                <a class="t-node" href="week-error.html">помилка <span class="t-lbl">-error</span></a>
-                <ul>
-                  <li><a class="t-node" href="week-error-save.html">збережемо, щойно зможемо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="t-node" href="week-loading.html">завантаження <span class="t-lbl">-loading</span></a>
-                <ul>
-                  <li><a class="t-node" href="week-loading-save.html">зберігаємо <span class="t-lbl">-save</span></a></li>
-                </ul>
-              </li>
-              <li><a class="t-node" href="week.html">успіх <span class="t-lbl">базова</span></a></li>
-              <li><a class="t-node" href="week-first.html">перший тиждень <span class="t-lbl">-first</span></a></li>
-              <li><a class="t-node" href="week-lastweek.html">діє вибір минулого тижня <span class="t-lbl">-lastweek</span></a></li>
-              <li><a class="t-node" href="week-toomany.html">більше трьох: продукт питає <span class="t-lbl">-toomany</span></a></li>
-              <li><a class="t-node" href="week-quiet.html">тиждень без руху <span class="t-lbl">-quiet</span></a></li>
-            </ul>
-          </li>
+          <li><a class="t-node t-screen" href="week.html">Тиждень <span class="t-lbl">10 станів</span></a></li>
         </ul>
       </li>
     </ul>
-    <p class="wf-tree-foot">Розділи й екрани — з дерева sitemap.md, стани — з таблиці станів sitemap.md, _screens.md і flows.md.</p>
+    <p class="wf-tree-foot">Розділи й екрани — з дерева sitemap.md. Стани екрана — зверху макета: основні й особливі вкладками.</p>
   </nav>
 
   <div class="mock">
 
     <nav class="wf-states" aria-label="Стани екрана «Сьогодні»">
-      <p>Стани екрана «Сьогодні»:</p>
-      <ul>
-        <li><a href="today-empty.html">порожній</a></li>
-        <li><a href="today-error.html" aria-current="page">помилка</a></li>
-        <li><a href="today-loading.html">завантаження</a></li>
-        <li><a href="today.html">успіх</a></li>
+      <div class="wf-states-main">
+        <p>Стани екрана «Сьогодні»:</p>
+        <ul>
+          <li><a href="today-empty.html">порожній</a></li>
+          <li><a href="today-error.html" aria-current="page">помилка</a></li>
+          <li><a href="today-loading.html">завантаження</a></li>
+          <li><a href="today.html">успіх</a></li>
+        </ul>
+      </div>
+      <ul class="wf-tabs" aria-label="Особливі стани й варіанти">
+        <li><a href="today-error-offline.html"><span class="wf-tab-of">помилка ·</span> немає зв'язку</a></li>
+        <li><a href="today-error-save.html"><span class="wf-tab-of">помилка ·</span> збережемо, щойно зможемо</a></li>
+        <li><a href="today-loading-save.html"><span class="wf-tab-of">завантаження ·</span> зберігаємо</a></li>
+        <li><a href="today-nostep.html">кроку ще немає</a></li>
+        <li><a href="today-skip.html">сьогодні без кроку</a></li>
+        <li><a href="today-alldone.html">усі кроки зроблено</a></li>
+        <li><a href="today-carry.html">крок переходить на завтра</a></li>
+        <li><a href="today-afterpause.html">після паузи</a></li>
+        <li><a href="today-weekstart.html">тиждень почався</a></li>
       </ul>
     </nav>
 

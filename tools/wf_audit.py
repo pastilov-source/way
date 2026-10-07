@@ -6,7 +6,7 @@
 
 Перевіряє кожну сторінку з переліку tools/wf_tree.py:
 - head: шрифти way-tau, Lucide, _wireframe.css; немає <script>, <style>, style="";
-- дерево каркасів і перемикач станів — точно такі, як генерує wf_tree.py, поточну сторінку позначено;
+- дерево каркасів (розділи й екрани) і стани зверху — точно такі, як генерує wf_tree.py; у дереві позначено екран, у станах — поточну сторінку;
 - <title> «WAY · <Екран> — <стан>», один h1, шапка продукту, службова смуга, «Куди далі за flow»;
 - зони (data-section) — лише секції з дерева sitemap.md для свого екрана;
 - кожне посилання й form action веде на наявний файл;
@@ -88,7 +88,7 @@ class Links(HTMLParser):
 
 def norm_tree(html):
     m = re.search(r'<nav class="wf-tree".*?</nav>', html, re.S)
-    return m.group(0).replace(' aria-current="page"', "").replace(' class="t-open"', "") if m else None
+    return m.group(0).replace(' aria-current="true"', "").replace(' class="t-open"', "") if m else None
 
 
 def main():
@@ -112,8 +112,10 @@ def main():
             problems.append((f, "лишився плейсхолдер — запустити tools/wf_tree.py"))
         if norm_tree(html) != ref:
             problems.append((f, "дерево каркасів відрізняється — запустити tools/wf_tree.py"))
-        if '<a class="t-node" href="' + f + '" aria-current="page">' not in html:
-            problems.append((f, "у дереві не позначено поточну сторінку"))
+        if '<a class="t-node t-screen" href="' + slug + '.html" aria-current="true">' not in html:
+            problems.append((f, "у дереві не позначено екран поточної сторінки"))
+        if '<a href="' + f + '" aria-current="page">' not in html:
+            problems.append((f, "у станах зверху не позначено поточну сторінку"))
         if states_bar(f).strip() not in html:
             problems.append((f, "перемикач станів відрізняється"))
         m = re.search(r"<title>(.*?)</title>", html)

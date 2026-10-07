@@ -192,7 +192,7 @@ a.t-node:hover { background: var(--surface-2); }
 .t-lbl { font: 10.5px/1.3 var(--mono); color: var(--muted); white-space: nowrap; margin-left: auto; }
 .t-off { color: var(--muted); }
 .t-open > .t-node { color: var(--ink); }
-.t-node[aria-current="page"] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--ink-2); color: var(--ink); font-weight: 600; }
+.t-node[aria-current="page"], .t-node[aria-current="true"] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--ink-2); color: var(--ink); font-weight: 600; }
 .wf-tree-foot { padding: 14px 26px 20px; border-top: 1px solid var(--line-2); font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 
 /* ---------- стани екрана ---------- */
@@ -207,20 +207,37 @@ a.t-node:hover { background: var(--surface-2); }
 .skel-chip { display: inline-block; width: 112px; height: 34px; margin: 0; }
 fieldset .meta { flex-basis: 100%; }
 
-/* ---------- перемикач станів зверху: не продукт ---------- */
+/* ---------- стани екрана зверху: основні рядком, особливі вкладками. Не продукт ---------- */
 .wf-states {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px;
-  margin: 0 0 20px; padding: 0 0 12px;
-  border-bottom: 1px dashed var(--line-2);
+  display: grid; gap: 12px;
+  margin: 0 0 24px;
   font: 12.5px/1.5 var(--mono); color: var(--muted);
 }
-.wf-states ul { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.wf-states-main { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.wf-states-main ul { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .wf-states a { color: var(--ink-2); text-decoration: none; }
-.wf-states a:hover { text-decoration: underline; }
-.wf-states a[aria-current="page"] { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; }
+.wf-states a:hover { color: var(--ink); }
+.wf-states-main a[aria-current="page"] { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.wf-states-main a.wf-parent { color: var(--ink); text-decoration: underline dotted; text-underline-offset: 4px; }
+.wf-tabs {
+  display: flex; flex-wrap: wrap; gap: 4px 2px;
+  border-bottom: 1px solid var(--line-2);
+}
+.wf-tabs a {
+  display: block; margin-bottom: -1px;
+  padding: 7px 12px 8px;
+  border: 1px solid transparent; border-radius: 6px 6px 0 0;
+  font-size: 12px; line-height: 1.35;
+}
+.wf-tabs a:hover { background: var(--surface); }
+.wf-tabs a[aria-current="page"] { color: var(--ink); font-weight: 600; background: var(--surface); border-color: var(--line-2); border-bottom-color: var(--surface); }
+.wf-tabs a.wf-parent { color: var(--ink); border-bottom: 1px dotted var(--ink-2); }
+.wf-tab-of { color: var(--muted); font-weight: 400; }
 
 /* ---------- плаваючий екран «Крок із собою»: dialog поверх «Сьогодні» ---------- */
 .under { opacity: .35; }
+/* поки відкрито «Крок із собою», макет і стани зверху живуть ліворуч від вікна — вкладки не ховаються під ним */
+.mock:has(> dialog.expanded) { grid-template-columns: minmax(0, 1fr); padding-right: calc(440px + 2 * var(--gutter)); }
 .screen-title { font-family: "Unbounded", sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
 dialog.expanded {
   position: fixed; inset: var(--gutter) var(--gutter) var(--gutter) auto;
