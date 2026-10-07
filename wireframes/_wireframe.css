@@ -207,9 +207,9 @@ a.t-node:hover { background: var(--surface-2); }
 .skel-chip { display: inline-block; width: 112px; height: 34px; margin: 0; }
 fieldset .meta { flex-basis: 100%; }
 
-/* ---------- стани екрана зверху: основні рядком, особливі вкладками. Не продукт ---------- */
+/* ---------- стани екрана зверху: до трьох рівнів, кожен — діти вибраного вище. Не продукт ---------- */
 .wf-states {
-  display: grid; gap: 12px;
+  display: grid; gap: 10px;
   margin: 0 0 24px;
   font: 12.5px/1.5 var(--mono); color: var(--muted);
 }
@@ -217,8 +217,10 @@ fieldset .meta { flex-basis: 100%; }
 .wf-states-main ul { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .wf-states a { color: var(--ink-2); text-decoration: none; }
 .wf-states a:hover { color: var(--ink); }
-.wf-states-main a[aria-current="page"] { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
-.wf-states-main a.wf-parent { color: var(--ink); text-decoration: underline dotted; text-underline-offset: 4px; }
+.wf-states-main a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.wf-states-main a[aria-current="page"] { font-weight: 600; }
+.wf-states-main a.wf-special { padding-left: 16px; border-left: 1px solid var(--line-2); }
+.wf-count { margin-left: 4px; font-size: 10.5px; color: var(--muted); }
 .wf-tabs {
   display: flex; flex-wrap: wrap; gap: 4px 2px;
   border-bottom: 1px solid var(--line-2);
@@ -230,9 +232,13 @@ fieldset .meta { flex-basis: 100%; }
   font-size: 12px; line-height: 1.35;
 }
 .wf-tabs a:hover { background: var(--surface); }
-.wf-tabs a[aria-current="page"] { color: var(--ink); font-weight: 600; background: var(--surface); border-color: var(--line-2); border-bottom-color: var(--surface); }
-.wf-tabs a.wf-parent { color: var(--ink); border-bottom: 1px dotted var(--ink-2); }
-.wf-tab-of { color: var(--muted); font-weight: 400; }
+.wf-tabs a[aria-current] { color: var(--ink); background: var(--surface); border-color: var(--line-2); border-bottom-color: var(--surface); }
+.wf-tabs a[aria-current="page"] { font-weight: 600; }
+.wf-subtabs { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 12px; }
+.wf-subtabs::before { content: "↳"; color: var(--muted); align-self: center; margin-right: 2px; }
+.wf-subtabs a { display: block; padding: 4px 10px; border: 1px solid var(--line-2); border-radius: 999px; font-size: 12px; }
+.wf-subtabs a:hover { background: var(--surface); }
+.wf-subtabs a[aria-current="page"] { color: var(--ink); font-weight: 600; background: var(--surface-2); border-color: var(--ink-2); }
 
 /* ---------- плаваючий екран «Крок із собою»: dialog поверх «Сьогодні» ---------- */
 .under { opacity: .35; }

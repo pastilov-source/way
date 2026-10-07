@@ -50,21 +50,15 @@
         <p>Стани екрана «Сьогодні»:</p>
         <ul>
           <li><a href="today-empty.html">порожній</a></li>
-          <li><a href="today-error.html" class="wf-parent">помилка</a></li>
-          <li><a href="today-loading.html">завантаження</a></li>
+          <li><a href="today-error.html" aria-current="true">помилка <span class="wf-count">2</span></a></li>
+          <li><a href="today-loading.html">завантаження <span class="wf-count">1</span></a></li>
           <li><a href="today.html">успіх</a></li>
+          <li><a href="today-nostep.html" class="wf-special">особливі стани <span class="wf-count">6</span></a></li>
         </ul>
       </div>
-      <ul class="wf-tabs" aria-label="Особливі стани й варіанти">
-        <li><a href="today-error-offline.html" aria-current="page"><span class="wf-tab-of">помилка ·</span> немає зв'язку</a></li>
-        <li><a href="today-error-save.html"><span class="wf-tab-of">помилка ·</span> збережемо, щойно зможемо</a></li>
-        <li><a href="today-loading-save.html"><span class="wf-tab-of">завантаження ·</span> зберігаємо</a></li>
-        <li><a href="today-nostep.html">кроку ще немає</a></li>
-        <li><a href="today-skip.html">сьогодні без кроку</a></li>
-        <li><a href="today-alldone.html">усі кроки зроблено</a></li>
-        <li><a href="today-carry.html">крок переходить на завтра</a></li>
-        <li><a href="today-afterpause.html">після паузи</a></li>
-        <li><a href="today-weekstart.html">тиждень почався</a></li>
+      <ul class="wf-tabs" aria-label="Варіанти стану «помилка»">
+        <li><a href="today-error-offline.html" aria-current="page">немає зв'язку</a></li>
+        <li><a href="today-error-save.html">збережемо, щойно зможемо</a></li>
       </ul>
     </nav>
 

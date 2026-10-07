@@ -7,8 +7,9 @@
   python3 tools/wf_tree.py --list     — перелік файлів
   python3 tools/wf_tree.py --table    — таблиця «екран · файл · стан · flow» для _conventions.md, розділ 4
 
-Дерево каркасів (ліва панель) — лише розділи й екрани. Стани екрана — зверху макета:
-рядок чотирьох основних станів і під ним вкладки з особливими станами й варіантами.
+Дерево каркасів (ліва панель) — лише розділи й екрани. Стани екрана — зверху макета, до трьох рівнів:
+основні стани й «особливі стани» → варіанти вибраного основного або перелік особливих → варіанти вибраного особливого.
+Кожен рівень показує лише дітей вибраного вище.
 Сторінка отримує дерево на місці <!-- WF-TREE --> або наявного <nav class="wf-tree">…</nav>,
 перемикач станів — на місці <!-- WF-STATES --> або наявного <nav class="wf-states">…</nav>.
 Нова сторінка чи стан додаються в SECTIONS нижче — і тоді з'являються на всіх сторінках свого екрана.
@@ -144,45 +145,74 @@ def tree(cur):
 MAIN4 = [("-empty", "порожній"), ("-error", "помилка"), ("-loading", "завантаження"), ("", "успіх")]
 
 
-# короткі назви особливих станів, що мають варіанти: префікс на вкладці варіанта
-SHORT = {"step-pip.html": "вікно", "step-phone.html": "телефон", "step-push.html": "сповіщення"}
+SPECIAL = "особливі стани"
+
+
+def groups(slug):
+    """Стани екрана деревом: основні чотири й особливі; у кожного — його варіанти.
+    Повертає (main, special): main — [(файл, назва, [варіанти])], special — [(файл, назва, [варіанти])];
+    варіант — (файл, назва)."""
+    main_label = dict((slug + suf + ".html", lbl) for suf, lbl in MAIN4)
+    main, special, last = [], [], None
+    for f, label, _lbl, lvl, _flow in SCREENS[slug][1]:
+        if lvl == 0:
+            last = (f, main_label.get(f, label), [])
+            (main if f in main_label else special).append(last)
+        elif last:
+            last[2].append((f, label))
+    main.sort(key=lambda g: list(main_label).index(g[0]))
+    return main, special
 
 
 def states_bar(cur):
-    """Стани екрана зверху макета: рядок чотирьох основних і під ним вкладки особливих станів та варіантів.
-    Варіант підписано назвою свого стану («помилка · немає зв'язку»); стан поточного варіанта підсвічено."""
+    """Стани екрана зверху макета, трьома рівнями; кожен показує лише дітей вибраного вище.
+    1 — порожній · помилка · завантаження · успіх · особливі стани;
+    2 — варіанти вибраного основного стану або перелік особливих станів;
+    3 — варіанти вибраного особливого стану."""
     slug = FILE2SCREEN[cur]
-    name, states = SCREENS[slug]
-    main_label = dict((slug + suf + ".html", lbl) for suf, lbl in MAIN4)
-    parent_of, last = {}, None
-    for f, _label, _lbl, lvl, _flow in states:
-        if lvl == 0:
-            last = f
-        else:
-            parent_of[f] = last
-    parent = parent_of.get(cur)
+    name = SCREENS[slug][0]
+    main, special = groups(slug)
 
-    def attr(f):
+    def find(groups_):
+        for g in groups_:
+            if g[0] == cur or cur in [v[0] for v in g[2]]:
+                return g
+        return None
+
+    sel_main, sel_special = find(main), find(special)
+
+    def link(f, text, count=0, selected=False, cls=""):
         if f == cur:
-            return ' aria-current="page"'
-        return ' class="wf-parent"' if f == parent else ""
+            a = ' aria-current="page"'
+        elif selected:
+            a = ' aria-current="true"'
+        else:
+            a = ""
+        c = ' class="' + cls + '"' if cls else ""
+        n = ' <span class="wf-count">' + str(count) + '</span>' if count else ""
+        return '<a href="' + f + '"' + a + c + '>' + text + n + '</a>'
 
-    items = ['          <li><a href="' + f + '"' + attr(f) + '>' + lbl + '</a></li>' for f, lbl in main_label.items()]
-    tabs = []
-    for f, label, _lbl, lvl, _flow in states:
-        if f in main_label:
-            continue
-        p = parent_of.get(f)
-        pre = main_label.get(p) or SHORT.get(p) if lvl == 1 else None
-        text = ('<span class="wf-tab-of">' + pre + ' ·</span> ' if pre else "") + label
-        tabs.append('        <li><a href="' + f + '"' + attr(f) + '>' + text + '</a></li>')
+    lvl1 = [link(f, lbl, len(vs), g is sel_main) for g in main for f, lbl, vs in [g]]
+    if special:
+        total = sum(1 + len(vs) for _, _, vs in special)
+        lvl1.append(link(special[0][0], SPECIAL, total, bool(sel_special), "wf-special"))
+
+    rows = ['      <div class="wf-states-main">',
+            '        <p>Стани екрана «' + name + '»:</p>',
+            '        <ul>'] + ['          <li>' + x + '</li>' for x in lvl1] + ['        </ul>', '      </div>']
+
+    def row(cls, label, items):
+        return (['      <ul class="' + cls + '" aria-label="' + label + '">']
+                + ['        <li>' + x + '</li>' for x in items] + ['      </ul>'])
+
+    if sel_main and sel_main[2]:
+        rows += row("wf-tabs", "Варіанти стану «" + sel_main[1] + "»", [link(f, lbl) for f, lbl in sel_main[2]])
+    if sel_special:
+        rows += row("wf-tabs", "Особливі стани", [link(f, lbl, len(vs), g is sel_special) for g in special for f, lbl, vs in [g]])
+        if sel_special[2]:
+            rows += row("wf-subtabs", "Варіанти стану «" + sel_special[1] + "»", [link(f, lbl) for f, lbl in sel_special[2]])
     return ('    <nav class="wf-states" aria-label="Стани екрана «' + name + '»">\n'
-            '      <div class="wf-states-main">\n'
-            '        <p>Стани екрана «' + name + '»:</p>\n'
-            '        <ul>\n' + "\n".join(items) + '\n        </ul>\n'
-            '      </div>\n'
-            '      <ul class="wf-tabs" aria-label="Особливі стани й варіанти">\n' + "\n".join(tabs) + '\n      </ul>\n'
-            '    </nav>')
+            + "\n".join(rows) + '\n    </nav>')
 
 
 def table():
