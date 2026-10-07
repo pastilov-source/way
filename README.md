@@ -12,11 +12,11 @@
 
 | | |
 |---|---|
-| **Стадія** | Ресерч, персони, структура й каркаси готові — пройдено 4 кроки з 12 |
-| **Останнє оновлення** | 2026-10-06 |
+| **Стадія** | Ресерч, персони, структура, каркаси й концепт готові — пройдено 5 кроків з 12, «Голос і тексти» пропущено |
+| **Останнє оновлення** | 2026-10-07 |
 | **Ухвалених рішень** | 31 у брифі + 25 рішень виконавця щодо структури, із замовником не узгоджені |
 | **Відкритих питань** | 8 |
-| **Наступний крок** | Голос і тексти |
+| **Наступний крок** | Інтерфейс і візуал |
 
 ---
 
@@ -55,7 +55,7 @@
 npx vercel@latest deploy --prod
 ```
 
-На сайт потрапляють лише `index.html`, `research/research.html`, `research/personas.html`, `wireframes/ia.html`, сторінки каркасів `wireframes/*.html` зі стилями `_wireframe.css` і скріни — цей список задає `.vercelignore`. Документи, PDF і робочі теки лишаються тільки в репозиторії.
+На сайт потрапляють лише `index.html`, `research/research.html`, `research/personas.html`, `wireframes/ia.html`, сторінки каркасів `wireframes/*.html` зі стилями `_wireframe.css`, скріни і концепт: `concept/directions.html`, `concept/today.html`, `concept/tokens.css` — цей список задає `.vercelignore`. Документи, PDF і робочі теки лишаються тільки в репозиторії.
 
 ## Час на проєкт
 
@@ -99,6 +99,26 @@ python3 tools/timecount.py
 
 Це сірі каркаси: лише структура, ієрархія й зони, без кольору й готового UI. На сайті — крок 04: [way-tau.vercel.app/#04](https://way-tau.vercel.app/#04).
 
+## Concept
+
+Обраний стиль — **«Партитура з графом»**: темний графіт без жодного кольору, час іде знизу вгору, шлях — граф, як в Obsidian. Один шрифт Golos Text, іконки Solar Linear, компоненти — як у Things і Notion, без табів. Крок «Голос і тексти» пропущено: концепт зібрано на тексті каркасів.
+
+| Файл | Що це |
+|---|---|
+| [`concept/concept.md`](concept/concept.md) | **Правила.** Атрибути, колір, шрифт, форма, іконки, граф, компоненти, доступність |
+| [`concept/tokens.css`](concept/tokens.css) | Усі значення: колір, шрифт, радіуси, відступи, тіні, рух; таблиця контрасту WCAG AA |
+| [`concept/directions.html`](concept/directions.html) | Версія 4 (обрана) угорі, три відкинуті напрями нижче |
+| [`concept/today.html`](concept/today.html) | Екран «Сьогодні» в обраному стилі |
+| [`concept/references.md`](concept/references.md) | Things, Notion і схожі стилі з Refero: прийоми й хвилювання |
+
+`directions.html` збирається, руками не редагується:
+
+```bash
+python3 concept/directions/_build_v4.py && python3 concept/directions/_build.py
+```
+
+На сайті — крок 06: [way-tau.vercel.app/#06](https://way-tau.vercel.app/#06).
+
 ## Робочі теки
 
 Порядок роботи: **research → concept → wireframes → tokens + components → design-system → handoff.** Стадії перекриваються, ресерч не пропускаємо.
@@ -106,7 +126,7 @@ python3 tools/timecount.py
 | Тека | Що там | Стан |
 |---|---|---|
 | [research/](research/) | Кабінетний ресерч: [`research.md`](research/research.md), персони, jobs, оцінка Groq + [`screens/`](research/screens/) зі скриншотами референсів | ✅ готова |
-| [concept/](concept/) | Модель об'єктів, ключові механіки, розв'язання суперечностей | ⚪ чекає на ресерч |
+| [concept/](concept/) | Візуальний концепт: правила, токени, напрями стилю, екран «Сьогодні» — див. «Concept» вище | ✅ концепт стилю |
 | [wireframes/](wireframes/) | IA, флоу, вайрфрейми — див. «Структура» й «Wireframes» вище | ✅ готова |
 | [tokens/](tokens/) | Дизайн-токени: колір, типографіка, простір, motion | ⚪ чекає |
 | [components/](components/) | Специфікації компонентів: анатомія, варіанти, стани, доступність | ⚪ чекає |

@@ -1,0 +1,160 @@
+/*
+  WAY · токени концепту
+  Напрям: «Партитура з графом», версія 4 (concept/directions/score-graph.html).
+  Стан: чернетка концепту, 2026-10-07. Правила — concept/concept.md.
+  Тема одна — темна. Світлої в концепті немає.
+
+  Контраст — WCAG 2.1 AA: звичайний текст ≥ 4.5:1, великий (≥ 24px або ≥ 19px жирний) ≥ 3:1.
+  Кожна пара «текст — фон», яку дозволяє цей файл, перелічена в таблиці внизу з виміряним значенням.
+  Правило, яке тримає AA: третій рівень тексту (--way-text-3) стоїть лише на базових поверхнях.
+  На підсвітці при наведенні й на вибраному рядку він піднімається до --way-text-2.
+*/
+
+:root {
+  color-scheme: dark;
+
+  /* ---------- Колір: поверхні ---------- */
+  --way-bg:              #15161A;   /* сторінка, полотно графа */
+  --way-bg-sidebar:      #1A1B1F;   /* бічна панель */
+  --way-bg-raised:       #202227;   /* callout «Де я зараз», картка кроку дня */
+  --way-bg-now:          #1F2228;   /* смуга «тут зараз» через етап на графі */
+  --way-bg-hover:        rgba(236, 232, 225, 0.06);  /* рядок, ghost-кнопка при наведенні */
+  --way-bg-selected:     rgba(236, 232, 225, 0.10);  /* поточний пункт навігації, натиснута ghost-кнопка */
+
+  /* ---------- Колір: текст ---------- */
+  --way-text-1:          #ECE8E1;   /* основний текст, заголовки */
+  --way-text-2:          #A3A39E;   /* другорядний: пояснення, підписи під кроком */
+  --way-text-3:          #8C8B86;   /* службовий: дні, лічильники, мітки етапів; лише на базових поверхнях */
+  --way-text-on-accent:  #15161A;   /* текст на головній кнопці */
+  --way-text-disabled:   #B0AFA9;   /* текст недоступної кнопки */
+
+  /* ---------- Колір: дія ---------- */
+  --way-accent:          #ECE8E1;   /* головна кнопка, заповнений чекбокс; кольору-акценту немає свідомо */
+  --way-accent-hover:    #FFFFFF;   /* найсвітліша точка інтерфейсу: натиснута дія світлішає від кістки до білого; пояснення — concept.md §4 */
+  --way-accent-active:   #D8D4CC;
+  --way-bg-disabled:     #3A3C42;   /* недоступна головна кнопка */
+  --way-focus:           #ECE8E1;   /* кільце фокусу */
+
+  /* ---------- Колір: лінії й граф ---------- */
+  --way-line:            #2C2F36;   /* роздільники, межа бічної панелі, межі етапів на графі */
+  --way-line-strong:     #43464E;   /* обведення ghost-кнопки «Зроблено», зв'язки ресурсів на графі */
+  --way-control-border:  #8C8B86;   /* обведення порожнього чекбокса */
+  --way-underline:       rgba(236, 232, 225, 0.28);  /* підкреслення посилань на ресурси */
+  --way-chip-edge:       rgba(236, 232, 225, 0.14);  /* межа кольорових плашок у зразку */
+
+  --way-graph-path:      #ECE8E1;   /* пройдене й у роботі; суцільна чи пунктир — див. --way-dash-going */
+  --way-graph-node-done: #ECE8E1;   /* крок зроблено */
+  --way-graph-node-retro:#A3A39E;   /* крок записано заднім числом */
+  --way-graph-node-start:#A3A39E;   /* обведення старту */
+  --way-graph-satellite: #6F7076;   /* ресурс, зв'язаний із кроком (не текст, контраст для тексту не потрібен) */
+  --way-graph-side-edge: #8C8B86;   /* зв'язок кроку, записаного заднім числом */
+  --way-graph-halo:      #FFFFFF;   /* кільце «щойно»: єдиний білий на графі — щойно зроблене найяскравіше (concept.md §4) */
+  --way-halo-opacity:    0.5;
+  --way-dim-opacity:     0.32;      /* решта графа, коли наведено на одну точку */
+  --way-dash-going:      3 5;       /* stroke-dasharray лінії до кроку в роботі */
+  --way-dash-node:       2.5 2.5;   /* stroke-dasharray обведення кроку в роботі */
+
+  /* ---------- Шрифт: один — Golos Text ---------- */
+  --way-font: "Golos Text", system-ui, sans-serif;
+  --way-font-numeric: tabular-nums;           /* font-variant-numeric для всього інтерфейсу */
+
+  --way-weight-regular:  400;
+  --way-weight-medium:   500;
+  --way-weight-semibold: 600;
+
+  /* розмір / інтерліньяж / трекінг */
+  --way-text-title-size:    30px;  --way-text-title-lh:    1.2;  --way-text-title-track:   -0.02em;  /* назва дороги */
+  --way-text-heading-size:  17px;  --way-text-heading-lh:  1.3;  --way-text-heading-track: -0.01em;  /* «Наступний крок», «Етапи» */
+  --way-text-body-size:     15px;  --way-text-body-lh:     1.5;  /* основний текст, рядок кроку */
+  --way-text-ui-size:       14px;  --way-text-ui-lh:       1.4;  /* навігація, кнопки, рядок стану */
+  --way-text-graph-size:    13.5px;--way-text-graph-lh:    1.3;  /* підпис кроку на графі */
+  --way-text-small-size:    13px;  --way-text-small-lh:    1.45; /* пояснення, хлібні крихти */
+  --way-text-caption-size:  12px;  --way-text-caption-lh:  1.35; /* підписи під кроком, дедлайн, легенда */
+  --way-text-micro-size:    11px;  --way-text-micro-lh:    1.3;  /* дні на графі */
+  --way-text-label-size:    11px;  --way-text-label-track: 0.06em; /* мітки етапів на графі: 600, великі літери */
+  --way-text-mark-size:     15px;  --way-text-mark-track:  0.06em; /* словесний знак WAY: 600 */
+
+  /* ---------- Радіуси ---------- */
+  --way-radius-check:  4px;   /* чекбокс-квадрат */
+  --way-radius-sm:     6px;   /* рядки, кнопки, callout, іконкові кнопки, плашки зразка */
+  --way-radius-card:  10px;   /* плаваюча картка кроку дня */
+  --way-radius-round: 50%;    /* точки графа, точки доріг у бічній панелі */
+
+  /* ---------- Відступи: крок 2px до 12, далі 4px і 8px ---------- */
+  --way-space-1:   2px;
+  --way-space-2:   4px;
+  --way-space-3:   6px;
+  --way-space-4:   8px;
+  --way-space-5:  10px;
+  --way-space-6:  12px;
+  --way-space-7:  16px;
+  --way-space-8:  20px;
+  --way-space-9:  24px;
+  --way-space-10: 28px;
+  --way-space-11: 32px;
+  --way-space-12: 40px;
+  --way-space-13: 48px;
+
+  /* ---------- Розміри ---------- */
+  --way-sidebar-width:   232px;
+  --way-topbar-height:    44px;
+  --way-row-height:       30px;   /* пункт навігації, посилання на ресурс */
+  --way-button-height:    32px;
+  --way-iconbutton-size:  28px;
+  --way-check-size:       16px;
+  --way-check-stroke:     1.5px;
+  --way-icon-size:        18px;   /* Solar Linear: навігація, рядки, callout */
+  --way-icon-sm:          16px;   /* іконка в кнопці, рядок стану під назвою */
+  --way-icon-xs:          14px;   /* хлібні крихти, знак дедлайну */
+  --way-touch-min:        44px;   /* мінімальна ціль дотику на телефоні (≤ 760px) */
+  --way-frame-width:     960px;   /* рамка екрана в концепті directions.html */
+  --way-content-width:   728px;   /* колонка сторінки з полями */
+  --way-page-gutter:      48px;   /* поля сторінки на десктопі; 20px на телефоні */
+  --way-graph-day:        17px;   /* одиниця часу на графі: один день по вертикалі */
+
+  /* ---------- Тіні ---------- */
+  --way-shadow-card:
+    0 0 0 1px rgba(236, 232, 225, 0.08),
+    0 10px 28px rgba(0, 0, 0, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.3);             /* плаваюча картка кроку дня — єдина тінь у продукті */
+  --way-ring-current: 0 0 0 3px rgba(236, 232, 225, 0.16);  /* точка поточної дороги в бічній панелі */
+  --way-focus-ring: 2px solid var(--way-focus);             /* outline; outline-offset 2px */
+  --way-focus-offset: 2px;
+
+  /* ---------- Рух ---------- */
+  --way-ease-out:       ease-out;
+  --way-ease-settle:    cubic-bezier(0.16, 1, 0.3, 1);
+  --way-dur-hover:      120ms;   /* підсвітка рядків і кнопок */
+  --way-dur-dim:        160ms;   /* решта графа відступає при наведенні */
+  --way-dur-settle:     1600ms;  /* кільце «щойно» сідає на точку; вимикається за prefers-reduced-motion */
+}
+
+/*
+  Виміряний контраст (WCAG 2.1, відносна яскравість). Напівпрозорі фони пораховано
+  поверх тієї поверхні, де вони стоять у продукті.
+
+  Текст              Фон                                  Контраст  AA
+  --way-text-1       --way-bg            #15161A           14.80     так
+  --way-text-1       --way-bg-sidebar    #1A1B1F           14.09     так
+  --way-text-1       --way-bg-raised     #202227           13.03     так
+  --way-text-1       --way-bg-now        #1F2228           13.05     так
+  --way-text-1       hover на сторінці   #222326           12.87     так
+  --way-text-1       hover у панелі      #27272B           12.18     так
+  --way-text-1       selected у панелі   #2F3032           10.82     так
+  --way-text-2       --way-bg            #15161A            7.14     так
+  --way-text-2       --way-bg-sidebar    #1A1B1F            6.79     так
+  --way-text-2       --way-bg-raised     #202227            6.28     так
+  --way-text-2       --way-bg-now        #1F2228            6.29     так
+  --way-text-2       hover на сторінці   #222326            6.20     так
+  --way-text-2       hover у панелі      #27272B            5.87     так
+  --way-text-2       selected у панелі   #2F3032            5.21     так
+  --way-text-3       --way-bg            #15161A            5.30     так
+  --way-text-3       --way-bg-sidebar    #1A1B1F            5.04     так
+  --way-text-3       --way-bg-raised     #202227            4.66     так
+  --way-text-3       --way-bg-now        #1F2228            4.67     так
+  --way-text-3       hover / selected    —                  4.36 / 3.87  НІ → тут ставимо --way-text-2
+  --way-text-on-accent  --way-accent        #ECE8E1        14.80     так
+  --way-text-on-accent  --way-accent-hover  #FFFFFF        18.08     так
+  --way-text-on-accent  --way-accent-active #D8D4CC        12.23     так
+  --way-text-disabled   --way-bg-disabled   #3A3C42         5.01     так
+*/

@@ -11,3 +11,8 @@
 !/wireframes/ia.html
 !/wireframes/*.html
 !/wireframes/_wireframe.css
+!/concept
+/concept/*
+!/concept/directions.html
+!/concept/today.html
+!/concept/tokens.css

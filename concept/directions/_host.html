@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAY · напрями стилю</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{FONTS}}">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  :root {
+    --h-ground: #D9D9D5;
+    --h-ink: #1E1F22;
+    --h-ink-2: #4A4C52;
+    --h-line: #B9BAB5;
+    --h-card: #ECECE9;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--h-ground);
+    color: var(--h-ink);
+    font: 400 15px/1.5 "Golos Text", system-ui, sans-serif;
+  }
+  ::selection { background: #1E1F22; color: #ECECE9; }
+  .h-top {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 40px;
+    align-items: start;
+  }
+  .h-top h1 {
+    margin: 0 0 12px;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .h-top p { margin: 0 0 10px; color: var(--h-ink-2); max-width: 60ch; }
+  .h-top strong { color: var(--h-ink); font-weight: 600; }
+  .h-axes { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .h-axes th, .h-axes td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--h-line); vertical-align: top; }
+  .h-axes thead th { font-weight: 600; color: var(--h-ink); }
+  .h-axes tbody th { font-weight: 500; color: var(--h-ink-2); white-space: nowrap; }
+  .h-note { margin-top: 14px; font-size: 13px; color: var(--h-ink-2); }
+  .h-cols {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 8px 24px 64px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+  .h-col { width: 440px; max-width: 100%; flex: 0 0 auto; }
+  .h-meta { padding: 0 2px 16px; min-height: 196px; }
+  .h-meta h3 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .h-meta .h-thesis { margin: 0 0 12px; color: var(--h-ink-2); }
+  .h-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+  .h-tags li { font-size: 12.5px; padding: 3px 8px; border: 1px solid var(--h-line); border-radius: 999px; background: var(--h-card); }
+  .h-check { margin: 0; font-size: 13px; color: var(--h-ink-2); }
+  .h-check b { color: var(--h-ink); font-weight: 600; }
+  .h-frame { box-shadow: 0 1px 2px rgba(20,20,24,.08), 0 12px 32px rgba(20,20,24,.12); }
+  .h-v4 { max-width: 1440px; margin: 0 auto; padding: 0 24px 56px; display: grid; grid-template-columns: minmax(0, 1fr) 960px; gap: 40px; align-items: start; }
+  .h-v4__meta { position: sticky; top: 24px; }
+  .h-v4__meta h2 { margin: 0 0 8px; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .h-list { margin: 12px 0 0; padding: 0 0 0 18px; color: var(--h-ink-2); display: grid; gap: 8px; }
+  .h-list b { color: var(--h-ink); font-weight: 600; }
+  .h-sub { max-width: 1440px; margin: 0 auto; padding: 0 24px 16px; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  @media (max-width: 1400px) {
+    .h-v4 { grid-template-columns: minmax(0, 1fr); }
+    .h-v4__meta { position: static; max-width: 72ch; }
+    .h-v4__frame { justify-self: center; width: 100%; max-width: 960px; min-width: 0; }
+    .h-cols { justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; }
+    .h-col { scroll-snap-align: start; }
+  }
+  @media (max-width: 900px) {
+    .h-v4, .h-sub { padding-left: 16px; padding-right: 16px; }
+    .h-top { grid-template-columns: 1fr; gap: 24px; padding: 32px 16px 24px; }
+    .h-cols { flex-direction: column; align-items: center; overflow: visible; padding: 8px 16px 48px; gap: 48px; }
+    .h-meta { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="h-top">
+  <div>
+    <h1>Напрями стилю для WAY на екрані «Дорога»</h1>
+    <p>Той самий екран, ті самі дані — дорога «Портфоліо» з каркаса <strong>wireframes/road.html</strong>. Різниться лише світ: шрифти, колір, форма, кнопка, позначка перевірки й іконки Solar.</p>
+    <p>Обери один і напиши, який. Можна сказати, що взяти з іншого, але один світ має лишитися головним.</p>
+  </div>
+  <div>
+    <table class="h-axes">
+      <thead><tr><th scope="col"></th><th scope="col">Різограф</th><th scope="col">Зошит у клітинку</th><th scope="col">Партитура</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Світлий чи темний</th><td>світлий, папір</td><td>світлий, білий</td><td>темний, графіт</td></tr>
+        <tr><th scope="row">Скільки кольору</th><td>багато: дві фарби займають цілі зони</td><td>мало: лише фіолетове чорнило</td><td>нуль: жодного відтінку</td></tr>
+        <tr><th scope="row">Характер шрифту</th><td>важкий гротеск + геометричний</td><td>гуманістичний + рукопис</td><td>вузький гротеск + книжкова антиква</td></tr>
+        <tr><th scope="row">Форма</th><td>гострі кути, суцільні плашки</td><td>тонкі лінії, малі скруглення</td><td>прямокутні блоки різної довжини</td></tr>
+        <tr><th scope="row">Іконки Solar</th><td>Bold</td><td>Linear</td><td>Bold Duotone</td></tr>
+      </tbody>
+    </table>
+    <p class="h-note">Відсіяно перевіркою «чи вгадати палітру з теми»: <b>топографічна карта</b> (дорога → карта → зелене й коричневе — вгадується відразу) і <b>схема метро</b> (шлях-граф як лінія метро — найбуквальніше прочитання). Їх замінено, а не перефарбовано.</p>
+  </div>
+</header>
+<section class="h-v4" aria-labelledby="h-v4">
+  <div class="h-v4__meta">
+    <h2 id="h-v4">Версія 4 · Партитура з графом</h2>
+    <p class="h-thesis">Обрано Партитуру: темний графіт без жодного відтінку, час іде знизу вгору, «тут зараз» — смуга через усю дорогу. Що змінено після відгуку:</p>
+    <ul class="h-list">
+      <li><b>Один шрифт — Golos Text.</b> Ієрархію тримають розмір, вага й світлота, без пари шрифтів.</li>
+      <li><b>Без табів.</b> Навігація й дороги тижня — у бічній панелі, як у Things і Notion.</li>
+      <li><b>Компоненти Things і Notion:</b> чекбокс-квадрат із заокругленням 4px, рядки з підсвіткою при наведенні, callout «Де я зараз», ghost-кнопки, посилання на ресурси, крок дня — плаваюча картка.</li>
+      <li><b>Граф обсидіанового типу.</b> Кроки — точки, зв'язки — тонкі лінії; ресурси — сірі супутники, зв'язані з кроками. Від Партитури лишилося: більша точка — довший крок, відстань по вертикалі — дні. Наведи на точку — решта графа відступить.</li>
+    </ul>
+  </div>
+  <div class="h-frame h-v4__frame">
+{{V4}}
+  </div>
+</section>
+<h2 class="h-sub">Перші три варіанти</h2>
+<main class="h-cols">
+{{COLUMNS}}
+</main>
+</body>
+</html>

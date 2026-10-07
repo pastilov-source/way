@@ -1,0 +1,520 @@
+<style>
+.d-score {
+  --g: #15161A;          /* ground, graphite */
+  --s: #1D1F24;          /* raised surface */
+  --now: #262931;        /* current-stage band */
+  --ink: #ECE8E1;        /* bone: primary text, done blocks */
+  --ink-2: #A3A39E;      /* secondary text */
+  --ink-off: #8A8984;    /* inactive text */
+  --rule: #3A3D45;       /* staff hairlines */
+  --rule-2: #2C2F36;     /* dividers */
+  --lit: #FFFFFF;        /* the «щойно» edge */
+  --u: 20px;             /* one day on the staff */
+  --b: 92px;             /* height of the start area under day 0 */
+  --cond: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif;
+  --read: "Literata", Georgia, serif;
+
+  width: 440px;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--g);
+  color: var(--ink);
+  font-family: var(--read);
+  font-size: 15px;
+  line-height: 1.5;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  scrollbar-color: var(--rule) var(--g);
+  caret-color: var(--ink);
+}
+.d-score *, .d-score *::before, .d-score *::after { box-sizing: border-box; }
+.d-score ::selection { background: var(--ink); color: var(--g); }
+.d-score h1, .d-score h2, .d-score h3, .d-score p, .d-score ol, .d-score ul, .d-score figure, .d-score dl, .d-score dd { margin: 0; padding: 0; }
+.d-score ol, .d-score ul { list-style: none; }
+.d-score svg.d-score__i { width: 18px; height: 18px; flex: none; display: block; }
+.d-score a { color: inherit; }
+.d-score :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 1px; }
+.d-score .d-score__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* apparatus type */
+.d-score .d-score__cap {
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--ink-2);
+}
+
+/* ---------- screen ---------- */
+.d-score .d-score__screen { position: relative; }
+.d-score .d-score__top {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; padding: 0 20px;
+  border-bottom: 1px solid var(--rule-2);
+}
+.d-score .d-score__mark {
+  font-family: var(--cond); font-weight: 800; font-size: 24px; letter-spacing: 0.08em;
+  color: var(--ink); text-decoration: none; line-height: 1;
+}
+.d-score .d-score__nav ul { display: flex; gap: 20px; }
+.d-score .d-score__nav a {
+  display: block; padding: 18px 0 16px;
+  font-family: var(--cond); font-weight: 600; font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--ink-2); text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.d-score .d-score__nav a:hover { color: var(--ink); }
+.d-score .d-score__nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
+
+.d-score .d-score__roads { padding: 16px 20px 0; }
+.d-score .d-score__roads ul { display: flex; }
+.d-score .d-score__roads li + li a { border-left: 0; }
+.d-score .d-score__roads a {
+  display: block; padding: 7px 12px 6px;
+  border: 1px solid var(--rule);
+  font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: 0.03em;
+  color: var(--ink-2); text-decoration: none;
+}
+.d-score .d-score__roads a:hover { color: var(--ink); background: var(--s); }
+.d-score .d-score__roads a[aria-current="page"] { color: var(--ink); background: var(--now); border-color: var(--ink); position: relative; z-index: 1; }
+
+.d-score .d-score__head { padding: 28px 20px 4px; }
+.d-score .d-score__head h1 { font-family: var(--read); font-weight: 600; font-size: 32px; line-height: 1.1; letter-spacing: -0.015em; }
+.d-score .d-score__state { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.d-score .d-score__state svg.d-score__i { width: 16px; height: 16px; color: var(--ink); }
+
+/* ---------- the score ---------- */
+.d-score .d-score__fig { padding: 8px 20px 0; }
+.d-score .d-score__staff {
+  position: relative;
+  height: calc(var(--b) + 14 * var(--u) + 170px + 88px);
+}
+/* outer staff lines: the whole length, start to finish */
+.d-score .d-score__staff::before, .d-score .d-score__staff::after {
+  content: ""; position: absolute; width: 1px; background: var(--rule);
+  bottom: var(--b); height: calc(14 * var(--u) + 170px);
+}
+.d-score .d-score__staff::before { left: calc(50% - 36px); }
+.d-score .d-score__staff::after { left: calc(50% + 35px); }
+/* day count ticks along the left staff line, only where the road was walked */
+.d-score .d-score__ticks {
+  position: absolute; left: calc(50% - 35px); width: 4px;
+  bottom: var(--b); height: calc(14 * var(--u));
+  background: repeating-linear-gradient(to top, var(--rule) 0 1px, transparent 1px var(--u));
+}
+/* current stage: the pale band across the staff */
+.d-score .d-score__band {
+  position: absolute; left: -20px; right: -20px;
+  bottom: calc(var(--b) + 2 * var(--u));
+  height: calc(12.8 * var(--u));
+  background: var(--now);
+}
+/* the centre line: drawn only where the person has moved (D25) */
+.d-score .d-score__walked, .d-score .d-score__going {
+  position: absolute; left: calc(50% - 1px); width: 2px;
+}
+.d-score .d-score__walked { bottom: var(--b); height: calc(13 * var(--u)); background: var(--ink); }
+.d-score .d-score__going {
+  bottom: calc(var(--b) + 13 * var(--u)); height: var(--u);
+  background: repeating-linear-gradient(to top, var(--ink) 0 4px, transparent 4px 7px);
+}
+/* bar lines */
+.d-score .d-score__bar {
+  position: absolute; left: calc(50% - 48px); width: 96px; height: 1px; background: var(--ink-2);
+  bottom: calc(var(--b) + var(--d) * var(--u));
+}
+.d-score .d-score__bar--start { height: 4px; background: var(--ink); box-shadow: 0 -4px 0 -3px var(--g), 0 -5px 0 -4px var(--ink); }
+.d-score .d-score__bar--start::after { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 1px; background: var(--ink); }
+.d-score .d-score__bar--finish { bottom: calc(var(--b) + 14 * var(--u) + 170px); height: 1px; background: var(--ink); }
+.d-score .d-score__bar--finish::after { content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 4px; background: var(--ink); }
+
+.d-score .d-score__stage {
+  position: absolute; right: 0; text-align: right;
+  bottom: calc(var(--b) + var(--d) * var(--u) + 6px);
+}
+.d-score .d-score__stage b { font-weight: 700; color: var(--ink); font-size: 14px; }
+
+/* steps as blocks */
+.d-score .d-score__step { position: absolute; inset: 0; pointer-events: none; }
+.d-score .d-score__blk {
+  position: absolute; width: 26px;
+  bottom: calc(var(--b) + var(--d) * var(--u));
+  height: calc(var(--n) * var(--u) - 2px);
+  border-radius: 1px;
+}
+.d-score .d-score__step--main .d-score__blk { left: calc(50% - 30px); }
+.d-score .d-score__step--side .d-score__blk { left: calc(50% + 4px); }
+.d-score .d-score__step--done .d-score__blk { background: var(--ink); }
+.d-score .d-score__step--retro .d-score__blk {
+  border: 1px solid var(--ink);
+  background: repeating-linear-gradient(135deg, var(--ink) 0 1.5px, transparent 1.5px 5px);
+}
+.d-score .d-score__step--going .d-score__blk { border: 1px dashed var(--ink); background: transparent; }
+.d-score .d-score__step--now .d-score__blk::before {
+  content: ""; position: absolute; left: -4px; right: -4px; top: -1px; height: 3px; background: var(--lit);
+  animation: d-score-settle 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes d-score-settle {
+  from { left: -14px; right: -14px; opacity: 0.55; }
+  to   { left: -4px;  right: -4px;  opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .d-score .d-score__step--now .d-score__blk::before { animation: none; }
+}
+.d-score .d-score__num {
+  position: absolute; width: 16px;
+  bottom: calc(var(--b) + var(--d) * var(--u) + 1px);
+  font-family: var(--cond); font-weight: 700; font-size: 13px; line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums; color: var(--ink-2);
+}
+.d-score .d-score__step--main .d-score__num { right: calc(50% + 40px); text-align: right; }
+.d-score .d-score__step--side .d-score__num { left: calc(50% + 40px); }
+.d-score .d-score__lbl {
+  position: absolute;
+  bottom: calc(var(--b) + var(--d) * var(--u) - 3px);
+  font-size: 13.5px; line-height: 1.3; color: var(--ink);
+  text-wrap: balance;
+}
+.d-score .d-score__step--main .d-score__lbl { right: calc(50% + 60px); left: 0; text-align: right; }
+.d-score .d-score__step--side .d-score__lbl { left: calc(50% + 60px); right: 0; }
+.d-score .d-score__lbl .d-score__cap { display: block; margin-top: 3px; font-size: 12px; }
+.d-score .d-score__step--now .d-score__lbl { font-weight: 600; }
+.d-score .d-score__step--now .d-score__lbl .d-score__cap { color: var(--ink); }
+
+/* start & finish */
+.d-score .d-score__end {
+  position: absolute; left: 50%; transform: translateX(-50%); width: 300px; max-width: 100%;
+  text-align: center;
+}
+.d-score .d-score__end .d-score__cap { display: inline-flex; align-items: center; gap: 5px; color: var(--ink); font-weight: 700; }
+.d-score .d-score__end .d-score__cap svg.d-score__i { width: 15px; height: 15px; }
+.d-score .d-score__end p:last-child { margin-top: 4px; font-size: 14px; line-height: 1.4; }
+.d-score .d-score__end--start { bottom: 0; height: calc(var(--b) - 16px); }
+.d-score .d-score__end--start p:last-child { color: var(--ink-2); }
+.d-score .d-score__end--finish { top: 0; }
+.d-score .d-score__sign {
+  position: absolute; left: calc(50% + 54px);
+  bottom: calc(var(--b) + 14 * var(--u) + 170px - 7px);
+  display: flex; align-items: center; gap: 4px; font-size: 11px;
+}
+.d-score .d-score__sign svg.d-score__i { width: 13px; height: 13px; }
+
+.d-score .d-score__legend {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 18px; padding-top: 12px;
+  border-top: 1px solid var(--rule-2);
+}
+.d-score .d-score__legend li { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.d-score .d-score__sw { width: 9px; height: 16px; flex: none; border-radius: 1px; }
+.d-score .d-score__sw--done { background: var(--ink); }
+.d-score .d-score__sw--going { border: 1px dashed var(--ink); }
+.d-score .d-score__sw--retro { border: 1px solid var(--ink); background: repeating-linear-gradient(135deg, var(--ink) 0 1.5px, transparent 1.5px 5px); }
+.d-score .d-score__sw--walk { border: 1px dotted var(--ink); background: radial-gradient(var(--ink) 0.9px, transparent 1.2px) 0 0 / 4px 4px; }
+
+/* ---------- sections ---------- */
+.d-score .d-score__sec { padding: 28px 20px; border-top: 1px solid var(--rule-2); }
+.d-score .d-score__fig + .d-score__sec { margin-top: 24px; }
+.d-score .d-score__sec h2 {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--read); font-weight: 600; font-size: 19px; line-height: 1.25; letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+.d-score .d-score__sec h2 svg.d-score__i { color: var(--ink); }
+.d-score .d-score__sec > p { max-width: 60ch; }
+.d-score .d-score__note { margin-top: 8px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); }
+.d-score .d-score__link {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; padding: 4px 0;
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--cond); font-weight: 700; font-size: 15px; letter-spacing: 0.03em; color: var(--ink);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: var(--ink-2);
+}
+.d-score .d-score__link:hover { text-decoration-color: var(--ink); }
+.d-score .d-score__link svg.d-score__i { width: 15px; height: 15px; }
+
+.d-score .d-score__prop { font-size: 19px; line-height: 1.35; letter-spacing: -0.005em; }
+.d-score .d-score__why { margin-top: 8px; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+.d-score .d-score__acts { margin-top: 20px; display: grid; gap: 10px; }
+.d-score .d-score__row2 { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* buttons */
+.d-score .d-score__btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 18px;
+  border-radius: 2px; border: 1px solid transparent; cursor: pointer;
+  font-family: var(--cond); font-weight: 700; font-size: 17px; letter-spacing: 0.03em; line-height: 1;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1), border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.d-score .d-score__btn svg.d-score__i { width: 18px; height: 18px; }
+.d-score .d-score__btn--primary { background: var(--ink); color: var(--g); width: 100%; }
+.d-score .d-score__btn--primary:hover, .d-score .d-score__btn--primary.is-hover { background: var(--lit); outline: 1px solid var(--g); outline-offset: -4px; }
+.d-score .d-score__btn--primary:focus-visible, .d-score .d-score__btn--primary.is-focus { outline: 2px solid var(--ink); outline-offset: 3px; }
+.d-score .d-score__btn--primary:disabled, .d-score .d-score__btn--primary.is-disabled {
+  background: transparent; color: var(--ink-off); border-color: rgba(236, 232, 225, 0.4); outline: 0; cursor: not-allowed;
+}
+.d-score .d-score__btn--ghost { background: transparent; color: var(--ink); border-color: var(--rule); font-size: 15px; min-height: 40px; padding: 0 12px; }
+.d-score .d-score__btn--ghost:hover, .d-score .d-score__btn--ghost.is-hover { border-color: var(--ink); background: var(--s); }
+.d-score .d-score__btn--ghost svg.d-score__i { width: 16px; height: 16px; }
+
+/* stages */
+.d-score .d-score__stages li {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 48px; padding: 0 20px; margin: 0 -20px;
+  border-bottom: 1px solid var(--rule-2);
+}
+.d-score .d-score__stages li:first-child { border-top: 1px solid var(--rule-2); }
+.d-score .d-score__stages li[aria-current="step"] { background: var(--now); }
+.d-score .d-score__stages b { font-weight: 600; font-size: 15px; flex: 1; }
+.d-score .d-score__stages .d-score__cap { text-align: right; }
+.d-score .d-score__stages li[aria-current="step"] .d-score__cap { color: var(--ink); }
+
+/* the check cell */
+.d-score .d-score__cell {
+  position: relative; width: 16px; height: 16px; flex: none;
+  border: 1px solid var(--ink); border-radius: 1px; background: transparent;
+}
+.d-score .d-score__cell--half { background: linear-gradient(to top, var(--ink) 50%, transparent 50%); }
+.d-score .d-score__cell--full { background: var(--ink); }
+.d-score .d-score__cell svg { position: absolute; inset: 1px; width: 12px; height: 12px; display: block; }
+
+/* floating step of the day */
+.d-score .d-score__float {
+  position: sticky; bottom: 0; z-index: 2;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px 16px;
+  background: var(--s);
+  border-top: 1px solid var(--rule);
+  box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.45);
+}
+.d-score .d-score__float > div { flex: 1; min-width: 0; }
+.d-score .d-score__float h2 { font-family: var(--read); font-weight: 600; font-size: 16px; line-height: 1.3; margin-top: 3px; }
+.d-score .d-score__check {
+  display: inline-flex; align-items: center; gap: 10px; flex: none;
+  min-height: 44px; padding: 0 14px;
+  background: transparent; color: var(--ink); cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 2px;
+  font-family: var(--cond); font-weight: 700; font-size: 16px; letter-spacing: 0.03em;
+}
+.d-score .d-score__check:hover { border-color: var(--ink); }
+.d-score .d-score__check:hover .d-score__cell { background: linear-gradient(to top, var(--ink) 50%, transparent 50%); }
+
+/* ---------- specimen strip ---------- */
+.d-score .d-score__spec { padding: 32px 20px 36px; border-top: 1px solid var(--rule); background: var(--g); }
+.d-score .d-score__spec > div + div { margin-top: 28px; }
+.d-score .d-score__spec h3 {
+  font-family: var(--cond); font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 12px;
+}
+.d-score .d-score__face + .d-score__face { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule-2); }
+.d-score .d-score__face p:first-child { display: flex; justify-content: space-between; gap: 12px; }
+.d-score .d-score__face p:first-child span:last-child { text-transform: none; letter-spacing: 0.02em; }
+.d-score .d-score__face-cond { margin-top: 6px; font-family: var(--cond); font-weight: 700; font-size: 26px; line-height: 1.1; letter-spacing: 0.02em; }
+.d-score .d-score__face-read { margin-top: 6px; font-family: var(--read); font-weight: 400; font-size: 19px; line-height: 1.35; }
+.d-score .d-score__btns { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
+.d-score .d-score__btns figure { display: grid; gap: 7px; }
+.d-score .d-score__btns figcaption { font-size: 12px; }
+.d-score .d-score__btns .d-score__btn { width: 100%; }
+.d-score .d-score__checks { display: flex; gap: 24px; }
+.d-score .d-score__checks li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.d-score .d-score__icons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.d-score .d-score__icons li { display: flex; align-items: center; gap: 8px; font-size: 12px; text-transform: none; letter-spacing: 0.02em; min-width: 0; }
+.d-score .d-score__icons svg.d-score__i { width: 22px; height: 22px; color: var(--ink); }
+.d-score .d-score__chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.d-score .d-score__chips li { display: flex; align-items: center; gap: 10px; }
+.d-score .d-score__chip { width: 28px; height: 28px; flex: none; border-radius: 1px; border: 1px solid var(--rule); }
+.d-score .d-score__chips b { display: block; font-family: var(--cond); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+.d-score .d-score__chips .d-score__cap { font-size: 11px; text-transform: none; letter-spacing: 0.02em; }
+</style>
+
+<section class="d-score" aria-label="Напрям «Партитура»: екран «Дорога»">
+  <div class="d-score__screen">
+    <header class="d-score__top">
+      <a class="d-score__mark" href="#">WAY</a>
+      <nav class="d-score__nav" aria-label="Розділи">
+        <ul>
+          <li><a href="#">Сьогодні</a></li>
+          <li><a href="#" aria-current="page">Дорога</a></li>
+          <li><a href="#">Тиждень</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <nav class="d-score__roads" aria-label="Дороги тижня">
+      <ul>
+        <li><a href="#" aria-current="page">Портфоліо</a></li>
+        <li><a href="#">Англійська</a></li>
+        <li><a href="#">Моушн-дизайн</a></li>
+      </ul>
+    </nav>
+
+    <div class="d-score__head">
+      <h1>Портфоліо</h1>
+      <p class="d-score__state d-score__cap"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><g fill-rule="evenodd" clip-rule="evenodd" opacity=".5"><path d="M18.5 14C16.567 14 15 15.4584 15 17.2573C15 19.0422 16.1171 21.125 17.86 21.8698C18.2663 22.0434 18.7337 22.0434 19.14 21.8698C20.8829 21.125 22 19.0422 22 17.2573C22 15.4584 20.433 14 18.5 14Z"/><path d="M5.5 2C3.567 2 2 3.45835 2 5.25732C2 7.04219 3.11708 9.12497 4.85997 9.86978C5.26626 10.0434 5.73374 10.0434 6.14003 9.86978C7.88292 9.12497 9 7.04219 9 5.25732C9 3.45835 7.433 2 5.5 2Z"/></g><path d="M16.1318 4.25C18.8831 4.25 19.9295 7.84324 17.6084 9.32031L7.19727 15.9453C6.14222 16.6167 6.61765 18.25 7.86816 18.25H10.1895L9.96973 18.0303C9.6769 17.7374 9.6769 17.2626 9.96973 16.9697C10.2626 16.6768 10.7374 16.6769 11.0303 16.9697L12.5303 18.4697C12.8232 18.7626 12.8232 19.2374 12.5303 19.5303L11.0303 21.0303C10.7374 21.3231 10.2626 21.3231 9.96973 21.0303C9.6769 20.7374 9.6769 20.2626 9.96973 19.9697L10.1895 19.75H7.86816C5.11698 19.75 4.07057 16.1568 6.3916 14.6797L16.8027 8.05469C17.8578 7.38329 17.3824 5.75 16.1318 5.75H12C11.5858 5.74995 11.25 5.41418 11.25 5C11.25 4.58582 11.5858 4.25005 12 4.25H16.1318Z"/><path d="M18.5 16.5C19.0523 16.5 19.5 16.9477 19.5 17.5C19.5 18.0523 19.0523 18.5 18.5 18.5C17.9477 18.5 17.5 18.0523 17.5 17.5C17.5 16.9477 17.9477 16.5 18.5 16.5Z"/><path d="M5.5 4.5C6.05228 4.5 6.5 4.94772 6.5 5.5C6.5 6.05228 6.05228 6.5 5.5 6.5C4.94772 6.5 4.5 6.05228 4.5 5.5C4.5 4.94772 4.94772 4.5 5.5 4.5Z"/></g></svg>Дорога · у русі</p>
+    </div>
+
+    <figure class="d-score__fig" aria-labelledby="d-score-cap">
+      <figcaption id="d-score-cap" class="d-score__sr">Дорога «Портфоліо» як партитура, читається знизу вгору: від старту пройдено чотири кроки за 13 днів, п'ятий — «Дописати вступ до кейсу про застосунок для бігу» — у роботі, щойно. Етап «Кейси» — тут зараз. Попереду до фінішу нічого не намальовано.</figcaption>
+      <div class="d-score__staff">
+        <div class="d-score__band" aria-hidden="true"></div>
+        <div class="d-score__ticks" aria-hidden="true"></div>
+        <div class="d-score__walked" aria-hidden="true"></div>
+        <div class="d-score__going" aria-hidden="true"></div>
+
+        <div class="d-score__end d-score__end--finish">
+          <p class="d-score__cap"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path fill-rule="evenodd" d="M6.5 1.75C6.5 1.33579 6.16421 1 5.75 1C5.33579 1 5 1.33579 5 1.75V21.75C5 22.1642 5.33579 22.5 5.75 22.5C6.16421 22.5 6.5 22.1642 6.5 21.75V13.6V3.6V1.75Z" clip-rule="evenodd" opacity=".5"/><path d="M13.5582 3.87333L13.1449 3.70801C11.5821 3.08288 9.8712 2.9258 8.22067 3.25591L6.5 3.60004V13.6L8.22067 13.2559C9.8712 12.9258 11.5821 13.0829 13.1449 13.708C14.8385 14.3854 16.7024 14.5119 18.472 14.0695L18.5721 14.0445C19.1582 13.898 19.4361 13.2269 19.1253 12.7089L17.5647 10.1078C17.2232 9.53867 17.0524 9.25409 17.0119 8.94455C16.9951 8.81543 16.9951 8.68466 17.0119 8.55553C17.0524 8.24599 17.2232 7.96141 17.5647 7.39225L18.8432 5.26136C19.1778 4.70364 18.6711 4.01976 18.0401 4.17751C16.5513 4.54971 14.9831 4.44328 13.5582 3.87333Z"/></g></svg>Фініш</p>
+          <p>Три кейси на сайті, з якими не соромно йти на співбесіду</p>
+        </div>
+        <div class="d-score__bar d-score__bar--finish" aria-hidden="true"></div>
+        <p class="d-score__sign d-score__cap"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M7 16C7.55228 16 8 16.4477 8 17C8 17.5523 7.55228 18 7 18C6.44772 18 6 17.5523 6 17C6 16.4477 6.44772 16 7 16Z"/><path d="M12 16C12.5523 16 13 16.4477 13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16Z"/><path d="M17 16C17.5523 16 18 16.4477 18 17C18 17.5523 17.5523 18 17 18C16.4477 18 16 17.5523 16 17C16 16.4477 16.4477 16 17 16Z"/><path d="M7 12C7.55228 12 8 12.4477 8 13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13C6 12.4477 6.44772 12 7 12Z"/><path d="M12 12C12.5523 12 13 12.4477 13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12Z"/><path d="M17 12C17.5523 12 18 12.4477 18 13C18 13.5523 17.5523 14 17 14C16.4477 14 16 13.5523 16 13C16 12.4477 16.4477 12 17 12Z"/><path d="M16.9805 2C17.3961 2.00025 17.7334 2.32483 17.7334 2.72461V4.24902C19.1781 4.36032 20.1264 4.63361 20.8232 5.30371C21.5201 5.97389 21.8042 6.88597 21.9199 8.27539L22 9H2V8.27539C2.11574 6.88599 2.39984 5.97389 3.09668 5.30371C3.79363 4.63345 4.74245 4.3603 6.1875 4.24902V2.72461C6.1875 2.32468 6.52457 2 6.94043 2C7.35622 2.00008 7.69336 2.32473 7.69336 2.72461V4.18457C8.36123 4.17212 9.10985 4.17285 9.95215 4.17285H13.9678C14.8099 4.17285 15.5588 4.17212 16.2266 4.18457V2.72461C16.2266 2.32468 16.5646 2 16.9805 2Z"/><path d="M21.9995 14.0001V12.0001C21.9995 11.161 21.9963 9.66527 21.9834 9H2.00917C1.99626 9.66527 1.99953 11.161 1.99953 12.0001V14.0001C1.99953 17.7713 1.99953 19.6569 3.1711 20.8285C4.34267 22.0001 6.22829 22.0001 9.99953 22.0001H13.9995C17.7708 22.0001 19.6564 22.0001 20.828 20.8285C21.9995 19.6569 21.9995 17.7713 21.9995 14.0001Z" opacity=".5"/></g></svg>Дедлайн: не задано</p>
+
+        <p class="d-score__stage d-score__cap" style="--d:2"><b>Кейси</b> · тут зараз</p>
+        <div class="d-score__bar" style="--d:2" aria-hidden="true"></div>
+        <p class="d-score__stage d-score__cap" style="--d:0"><b>Відбір проєктів</b> · пройдено</p>
+
+        <ol class="d-score__steps" reversed>
+          <li class="d-score__step d-score__step--main d-score__step--going d-score__step--now" style="--d:13;--n:1">
+            <span class="d-score__blk" aria-hidden="true"></span>
+            <span class="d-score__num" aria-hidden="true">1</span>
+            <p class="d-score__lbl">Дописати вступ до кейсу про застосунок для бігу<span class="d-score__cap">щойно · у роботі</span></p>
+          </li>
+          <li class="d-score__step d-score__step--side d-score__step--retro" style="--d:12;--n:1">
+            <span class="d-score__blk" aria-hidden="true"></span>
+            <span class="d-score__num" aria-hidden="true">1</span>
+            <p class="d-score__lbl">Структура другого кейсу<span class="d-score__cap">записано заднім числом, сьогодні</span></p>
+          </li>
+          <li class="d-score__step d-score__step--main d-score__step--done" style="--d:6;--n:6">
+            <span class="d-score__blk" aria-hidden="true"></span>
+            <span class="d-score__num" aria-hidden="true">6</span>
+            <p class="d-score__lbl">Перший кейс на сайті<span class="d-score__sr"> — 6 днів</span></p>
+          </li>
+          <li class="d-score__step d-score__step--main d-score__step--done" style="--d:2;--n:4">
+            <span class="d-score__blk" aria-hidden="true"></span>
+            <span class="d-score__num" aria-hidden="true">4</span>
+            <p class="d-score__lbl">Зібрати матеріали першого кейсу<span class="d-score__sr"> — 4 дні</span></p>
+          </li>
+          <li class="d-score__step d-score__step--main d-score__step--done" style="--d:0;--n:2">
+            <span class="d-score__blk" aria-hidden="true"></span>
+            <span class="d-score__num" aria-hidden="true">2</span>
+            <p class="d-score__lbl">Обрати три проєкти для кейсів<span class="d-score__sr"> — 2 дні</span></p>
+          </li>
+        </ol>
+
+        <div class="d-score__bar d-score__bar--start" style="--d:0" aria-hidden="true"></div>
+        <div class="d-score__end d-score__end--start">
+          <p class="d-score__cap">Старт</p>
+          <p>Кейсів немає, є лише старий Behance</p>
+        </div>
+      </div>
+
+      <ul class="d-score__legend d-score__cap" aria-label="Як читати">
+        <li><span class="d-score__sw d-score__sw--done" aria-hidden="true"></span>зроблено</li>
+        <li><span class="d-score__sw d-score__sw--going" aria-hidden="true"></span>у роботі</li>
+        <li><span class="d-score__sw d-score__sw--retro" aria-hidden="true"></span>записано заднім числом</li>
+        <li><span class="d-score__sw d-score__sw--walk" aria-hidden="true"></span>прогулянка</li>
+        <li>висота блоку = дні</li>
+      </ul>
+    </figure>
+
+    <section class="d-score__sec" aria-labelledby="d-score-where">
+      <h2 id="d-score-where"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12 2C7.58172 2 4 6.00258 4 10.5C4 14.9622 6.55332 19.8124 10.5371 21.6744C11.4657 22.1085 12.5343 22.1085 13.4629 21.6744C17.4467 19.8124 20 14.9622 20 10.5C20 6.00258 16.4183 2 12 2Z" opacity=".5"/><path d="M12 12.5C13.3807 12.5 14.5 11.3807 14.5 10C14.5 8.61929 13.3807 7.5 12 7.5C10.6193 7.5 9.5 8.61929 9.5 10C9.5 11.3807 10.6193 12.5 12 12.5Z"/></g></svg>Де я зараз</h2>
+      <p>Етап «Кейси»: перший кейс уже на сайті, у другого є структура й вступ.</p>
+      <p class="d-score__note">Позицію визначає продукт — за пройденим і фінішем. Якщо не збігається з відчуттям, поправ.</p>
+      <button type="button" class="d-score__link">Поправити позицію<svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12.4044 8.30273L15.8351 11.6296C16.0549 11.8428 16.0549 12.1573 15.8351 12.3704L9.20467 18.8001C8.79094 19.2013 8 18.9581 8 18.4297V12.7071L12.4044 8.30273Z"/><path d="M8 11.2929L8 5.5703C8 5.04189 8.79094 4.79869 9.20467 5.1999L11.6864 7.60648L8 11.2929Z" opacity=".5"/></g></svg></button>
+    </section>
+
+    <section class="d-score__sec" aria-labelledby="d-score-next">
+      <h2 id="d-score-next">Наступний крок</h2>
+      <p class="d-score__prop">Відібрати 6–8 екранів для кейсу про застосунок для бігу</p>
+      <p class="d-score__why">Пропоную, бо вступ готовий, а без екранів кейс не покажеш.</p>
+      <div class="d-score__acts">
+        <button type="button" class="d-score__btn d-score__btn--primary"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22Z" opacity=".5"/><path d="M16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"/></g></svg>Взяти на сьогодні</button>
+        <div class="d-score__row2">
+          <button type="button" class="d-score__btn d-score__btn--ghost"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M1 12C1 6.81455 1 4.22183 2.61091 2.61091C4.22183 1 6.81455 1 12 1C17.1854 1 19.7782 1 21.3891 2.61091C23 4.22183 23 6.81455 23 12C23 17.1854 23 19.7782 21.3891 21.3891C19.7782 23 17.1854 23 12 23C6.81455 23 4.22183 23 2.61091 21.3891C1 19.7782 1 17.1854 1 12Z" opacity=".5"/><path d="M13.9261 14.3018C14.1711 14.1107 14.3933 13.8885 14.8377 13.4441L20.378 7.90374C20.512 7.7698 20.4507 7.53909 20.2717 7.477C19.6178 7.25011 18.767 6.82414 17.9713 6.02835C17.1755 5.23257 16.7495 4.38186 16.5226 3.72788C16.4605 3.54892 16.2298 3.48761 16.0959 3.62156L10.5555 9.16192C10.1111 9.60634 9.88888 9.82854 9.69778 10.0736C9.47235 10.3626 9.27908 10.6753 9.12139 11.0062C8.98771 11.2867 8.88834 11.5848 8.68959 12.181L8.43278 12.9515L8.02443 14.1765L7.64153 15.3252C7.54373 15.6186 7.6201 15.9421 7.8388 16.1608C8.0575 16.3795 8.38099 16.4559 8.67441 16.3581L9.82308 15.9752L11.0481 15.5668L11.8186 15.31L11.8186 15.31C12.4148 15.1113 12.7129 15.0119 12.9934 14.8782C13.3243 14.7205 13.637 14.5273 13.9261 14.3018Z"/><path d="M22.1127 6.16905C23.2952 4.98656 23.2952 3.06936 22.1127 1.88687C20.9302 0.704377 19.013 0.704377 17.8306 1.88687L17.6524 2.06499C17.4806 2.23687 17.4027 2.47695 17.4456 2.7162C17.4726 2.8667 17.5227 3.08674 17.6138 3.3493C17.796 3.87439 18.14 4.56368 18.788 5.21165C19.4359 5.85961 20.1252 6.20364 20.6503 6.38581C20.9129 6.4769 21.1329 6.52697 21.2834 6.55399C21.5227 6.59693 21.7627 6.51905 21.9346 6.34717L22.1127 6.16905Z"/></g></svg>Записати свій крок</button>
+          <button type="button" class="d-score__btn d-score__btn--ghost"><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path fill-rule="evenodd" d="M6.87348 7.87338C9.01606 5.7308 12.1674 5.20902 14.8007 6.31041L15.9309 5.18019C12.6515 3.53111 8.55119 4.07435 5.81282 6.81272C2.39573 10.2298 2.39573 15.77 5.81282 19.1871C9.2299 22.6042 14.7701 22.6042 18.1872 19.1871C20.1746 17.1997 21.0057 14.4933 20.6819 11.9072C20.6304 11.4962 20.2555 11.2048 19.8445 11.2562C19.4335 11.3077 19.142 11.6826 19.1935 12.0936C19.4622 14.24 18.7727 16.4802 17.1265 18.1264C14.2952 20.9577 9.70478 20.9577 6.87348 18.1264C4.04217 15.2951 4.04217 10.7047 6.87348 7.87338Z" clip-rule="evenodd" opacity=".5"/><path d="M18.7212 4.20119C18.7212 3.89785 18.5384 3.62437 18.2582 3.50828C17.9779 3.3922 17.6553 3.45637 17.4408 3.67086L15.9314 5.18028L14.8012 6.3105L13.1982 7.9135C12.9837 8.128 12.9195 8.45059 13.0356 8.73085C13.1517 9.0111 13.4252 9.19383 13.7285 9.19383H17.9712C18.3854 9.19383 18.7212 8.85805 18.7212 8.44383V4.20119Z"/></g></svg>Інша пропозиція</button>
+          <button type="button" class="d-score__btn d-score__btn--ghost">Відкласти</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="d-score__sec" aria-labelledby="d-score-stages">
+      <h2 id="d-score-stages">Етапи</h2>
+      <ol class="d-score__stages">
+        <li><span class="d-score__cell d-score__cell--full" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><polyline points="2.5,6.4 5,8.8 9.6,3.4" fill="none" stroke="#15161A" stroke-width="2" stroke-linecap="square"/></svg></span><b>Відбір проєктів</b><span class="d-score__cap">пройдено</span></li>
+        <li aria-current="step"><span class="d-score__cell d-score__cell--half" aria-hidden="true"></span><b>Кейси</b><span class="d-score__cap">тут зараз</span></li>
+        <li><span class="d-score__cell" aria-hidden="true"></span><b>Сайт</b><span class="d-score__cap">попереду</span></li>
+      </ol>
+    </section>
+
+    <aside class="d-score__float" aria-label="Крок дня">
+      <div>
+        <p class="d-score__cap">Англійська · крок на сьогодні</p>
+        <h2>20 хвилин розмовного клубу</h2>
+      </div>
+      <button type="button" class="d-score__check"><span class="d-score__cell" aria-hidden="true"></span>Зроблено</button>
+    </aside>
+  </div>
+
+  <div class="d-score__spec">
+    <div>
+      <h3>Шрифти</h3>
+      <div class="d-score__face">
+        <p class="d-score__cap"><span>Sofia Sans Extra Condensed · 500–800</span><span>апарат партитури: мітки, етапи, числа</span></p>
+        <p class="d-score__face-cond">Етап «Кейси» · 13 днів · ґанок, їжак, є</p>
+      </div>
+      <div class="d-score__face">
+        <p class="d-score__cap"><span>Literata · 400/600</span><span>те, що людина читає</span></p>
+        <p class="d-score__face-read">Перший кейс уже на сайті, у другого є структура й вступ. Ґрунт, їжа, єдність.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3>Кнопки</h3>
+      <div class="d-score__btns">
+        <figure><button type="button" class="d-score__btn d-score__btn--primary" tabindex="-1">Взяти на сьогодні</button><figcaption class="d-score__cap">звичайна</figcaption></figure>
+        <figure><button type="button" class="d-score__btn d-score__btn--primary is-hover" tabindex="-1">Взяти на сьогодні</button><figcaption class="d-score__cap">наведення</figcaption></figure>
+        <figure><button type="button" class="d-score__btn d-score__btn--primary is-focus" tabindex="-1">Взяти на сьогодні</button><figcaption class="d-score__cap">фокус з клавіатури</figcaption></figure>
+        <figure><button type="button" class="d-score__btn d-score__btn--primary is-disabled" disabled>Взяти на сьогодні</button><figcaption class="d-score__cap">недоступна</figcaption></figure>
+        <figure><button type="button" class="d-score__btn d-score__btn--ghost" tabindex="-1">Інша пропозиція</button><figcaption class="d-score__cap">вторинна</figcaption></figure>
+        <figure><button type="button" class="d-score__btn d-score__btn--ghost is-hover" tabindex="-1">Інша пропозиція</button><figcaption class="d-score__cap">вторинна, наведення</figcaption></figure>
+      </div>
+    </div>
+
+    <div>
+      <h3>Позначка кроку</h3>
+      <ul class="d-score__checks d-score__cap">
+        <li><span class="d-score__cell" aria-hidden="true"></span>не почато</li>
+        <li><span class="d-score__cell d-score__cell--half" aria-hidden="true"></span>у роботі</li>
+        <li><span class="d-score__cell d-score__cell--full" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true"><polyline points="2.5,6.4 5,8.8 9.6,3.4" fill="none" stroke="#15161A" stroke-width="2" stroke-linecap="square"/></svg></span>зроблено</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Іконки · Solar Bold Duotone</h3>
+      <ul class="d-score__icons d-score__cap">
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><g fill-rule="evenodd" clip-rule="evenodd" opacity=".5"><path d="M18.5 14C16.567 14 15 15.4584 15 17.2573C15 19.0422 16.1171 21.125 17.86 21.8698C18.2663 22.0434 18.7337 22.0434 19.14 21.8698C20.8829 21.125 22 19.0422 22 17.2573C22 15.4584 20.433 14 18.5 14Z"/><path d="M5.5 2C3.567 2 2 3.45835 2 5.25732C2 7.04219 3.11708 9.12497 4.85997 9.86978C5.26626 10.0434 5.73374 10.0434 6.14003 9.86978C7.88292 9.12497 9 7.04219 9 5.25732C9 3.45835 7.433 2 5.5 2Z"/></g><path d="M16.1318 4.25C18.8831 4.25 19.9295 7.84324 17.6084 9.32031L7.19727 15.9453C6.14222 16.6167 6.61765 18.25 7.86816 18.25H10.1895L9.96973 18.0303C9.6769 17.7374 9.6769 17.2626 9.96973 16.9697C10.2626 16.6768 10.7374 16.6769 11.0303 16.9697L12.5303 18.4697C12.8232 18.7626 12.8232 19.2374 12.5303 19.5303L11.0303 21.0303C10.7374 21.3231 10.2626 21.3231 9.96973 21.0303C9.6769 20.7374 9.6769 20.2626 9.96973 19.9697L10.1895 19.75H7.86816C5.11698 19.75 4.07057 16.1568 6.3916 14.6797L16.8027 8.05469C17.8578 7.38329 17.3824 5.75 16.1318 5.75H12C11.5858 5.74995 11.25 5.41418 11.25 5C11.25 4.58582 11.5858 4.25005 12 4.25H16.1318Z"/><path d="M18.5 16.5C19.0523 16.5 19.5 16.9477 19.5 17.5C19.5 18.0523 19.0523 18.5 18.5 18.5C17.9477 18.5 17.5 18.0523 17.5 17.5C17.5 16.9477 17.9477 16.5 18.5 16.5Z"/><path d="M5.5 4.5C6.05228 4.5 6.5 4.94772 6.5 5.5C6.5 6.05228 6.05228 6.5 5.5 6.5C4.94772 6.5 4.5 6.05228 4.5 5.5C4.5 4.94772 4.94772 4.5 5.5 4.5Z"/></g></svg><span>routing-2-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12 2C7.58172 2 4 6.00258 4 10.5C4 14.9622 6.55332 19.8124 10.5371 21.6744C11.4657 22.1085 12.5343 22.1085 13.4629 21.6744C17.4467 19.8124 20 14.9622 20 10.5C20 6.00258 16.4183 2 12 2Z" opacity=".5"/><path d="M12 12.5C13.3807 12.5 14.5 11.3807 14.5 10C14.5 8.61929 13.3807 7.5 12 7.5C10.6193 7.5 9.5 8.61929 9.5 10C9.5 11.3807 10.6193 12.5 12 12.5Z"/></g></svg><span>map-point-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path fill-rule="evenodd" d="M6.5 1.75C6.5 1.33579 6.16421 1 5.75 1C5.33579 1 5 1.33579 5 1.75V21.75C5 22.1642 5.33579 22.5 5.75 22.5C6.16421 22.5 6.5 22.1642 6.5 21.75V13.6V3.6V1.75Z" clip-rule="evenodd" opacity=".5"/><path d="M13.5582 3.87333L13.1449 3.70801C11.5821 3.08288 9.8712 2.9258 8.22067 3.25591L6.5 3.60004V13.6L8.22067 13.2559C9.8712 12.9258 11.5821 13.0829 13.1449 13.708C14.8385 14.3854 16.7024 14.5119 18.472 14.0695L18.5721 14.0445C19.1582 13.898 19.4361 13.2269 19.1253 12.7089L17.5647 10.1078C17.2232 9.53867 17.0524 9.25409 17.0119 8.94455C16.9951 8.81543 16.9951 8.68466 17.0119 8.55553C17.0524 8.24599 17.2232 7.96141 17.5647 7.39225L18.8432 5.26136C19.1778 4.70364 18.6711 4.01976 18.0401 4.17751C16.5513 4.54971 14.9831 4.44328 13.5582 3.87333Z"/></g></svg><span>flag-2-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M7 16C7.55228 16 8 16.4477 8 17C8 17.5523 7.55228 18 7 18C6.44772 18 6 17.5523 6 17C6 16.4477 6.44772 16 7 16Z"/><path d="M12 16C12.5523 16 13 16.4477 13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16Z"/><path d="M17 16C17.5523 16 18 16.4477 18 17C18 17.5523 17.5523 18 17 18C16.4477 18 16 17.5523 16 17C16 16.4477 16.4477 16 17 16Z"/><path d="M7 12C7.55228 12 8 12.4477 8 13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13C6 12.4477 6.44772 12 7 12Z"/><path d="M12 12C12.5523 12 13 12.4477 13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12Z"/><path d="M17 12C17.5523 12 18 12.4477 18 13C18 13.5523 17.5523 14 17 14C16.4477 14 16 13.5523 16 13C16 12.4477 16.4477 12 17 12Z"/><path d="M16.9805 2C17.3961 2.00025 17.7334 2.32483 17.7334 2.72461V4.24902C19.1781 4.36032 20.1264 4.63361 20.8232 5.30371C21.5201 5.97389 21.8042 6.88597 21.9199 8.27539L22 9H2V8.27539C2.11574 6.88599 2.39984 5.97389 3.09668 5.30371C3.79363 4.63345 4.74245 4.3603 6.1875 4.24902V2.72461C6.1875 2.32468 6.52457 2 6.94043 2C7.35622 2.00008 7.69336 2.32473 7.69336 2.72461V4.18457C8.36123 4.17212 9.10985 4.17285 9.95215 4.17285H13.9678C14.8099 4.17285 15.5588 4.17212 16.2266 4.18457V2.72461C16.2266 2.32468 16.5646 2 16.9805 2Z"/><path d="M21.9995 14.0001V12.0001C21.9995 11.161 21.9963 9.66527 21.9834 9H2.00917C1.99626 9.66527 1.99953 11.161 1.99953 12.0001V14.0001C1.99953 17.7713 1.99953 19.6569 3.1711 20.8285C4.34267 22.0001 6.22829 22.0001 9.99953 22.0001H13.9995C17.7708 22.0001 19.6564 22.0001 20.828 20.8285C21.9995 19.6569 21.9995 17.7713 21.9995 14.0001Z" opacity=".5"/></g></svg><span>calendar-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22Z" opacity=".5"/><path d="M16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"/></g></svg><span>check-square-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M1 12C1 6.81455 1 4.22183 2.61091 2.61091C4.22183 1 6.81455 1 12 1C17.1854 1 19.7782 1 21.3891 2.61091C23 4.22183 23 6.81455 23 12C23 17.1854 23 19.7782 21.3891 21.3891C19.7782 23 17.1854 23 12 23C6.81455 23 4.22183 23 2.61091 21.3891C1 19.7782 1 17.1854 1 12Z" opacity=".5"/><path d="M13.9261 14.3018C14.1711 14.1107 14.3933 13.8885 14.8377 13.4441L20.378 7.90374C20.512 7.7698 20.4507 7.53909 20.2717 7.477C19.6178 7.25011 18.767 6.82414 17.9713 6.02835C17.1755 5.23257 16.7495 4.38186 16.5226 3.72788C16.4605 3.54892 16.2298 3.48761 16.0959 3.62156L10.5555 9.16192C10.1111 9.60634 9.88888 9.82854 9.69778 10.0736C9.47235 10.3626 9.27908 10.6753 9.12139 11.0062C8.98771 11.2867 8.88834 11.5848 8.68959 12.181L8.43278 12.9515L8.02443 14.1765L7.64153 15.3252C7.54373 15.6186 7.6201 15.9421 7.8388 16.1608C8.0575 16.3795 8.38099 16.4559 8.67441 16.3581L9.82308 15.9752L11.0481 15.5668L11.8186 15.31L11.8186 15.31C12.4148 15.1113 12.7129 15.0119 12.9934 14.8782C13.3243 14.7205 13.637 14.5273 13.9261 14.3018Z"/><path d="M22.1127 6.16905C23.2952 4.98656 23.2952 3.06936 22.1127 1.88687C20.9302 0.704377 19.013 0.704377 17.8306 1.88687L17.6524 2.06499C17.4806 2.23687 17.4027 2.47695 17.4456 2.7162C17.4726 2.8667 17.5227 3.08674 17.6138 3.3493C17.796 3.87439 18.14 4.56368 18.788 5.21165C19.4359 5.85961 20.1252 6.20364 20.6503 6.38581C20.9129 6.4769 21.1329 6.52697 21.2834 6.55399C21.5227 6.59693 21.7627 6.51905 21.9346 6.34717L22.1127 6.16905Z"/></g></svg><span>pen-new-square-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path fill-rule="evenodd" d="M6.87348 7.87338C9.01606 5.7308 12.1674 5.20902 14.8007 6.31041L15.9309 5.18019C12.6515 3.53111 8.55119 4.07435 5.81282 6.81272C2.39573 10.2298 2.39573 15.77 5.81282 19.1871C9.2299 22.6042 14.7701 22.6042 18.1872 19.1871C20.1746 17.1997 21.0057 14.4933 20.6819 11.9072C20.6304 11.4962 20.2555 11.2048 19.8445 11.2562C19.4335 11.3077 19.142 11.6826 19.1935 12.0936C19.4622 14.24 18.7727 16.4802 17.1265 18.1264C14.2952 20.9577 9.70478 20.9577 6.87348 18.1264C4.04217 15.2951 4.04217 10.7047 6.87348 7.87338Z" clip-rule="evenodd" opacity=".5"/><path d="M18.7212 4.20119C18.7212 3.89785 18.5384 3.62437 18.2582 3.50828C17.9779 3.3922 17.6553 3.45637 17.4408 3.67086L15.9314 5.18028L14.8012 6.3105L13.1982 7.9135C12.9837 8.128 12.9195 8.45059 13.0356 8.73085C13.1517 9.0111 13.4252 9.19383 13.7285 9.19383H17.9712C18.3854 9.19383 18.7212 8.85805 18.7212 8.44383V4.20119Z"/></g></svg><span>restart-bold-duotone</span></li>
+        <li><svg class="d-score__i" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12.4044 8.30273L15.8351 11.6296C16.0549 11.8428 16.0549 12.1573 15.8351 12.3704L9.20467 18.8001C8.79094 19.2013 8 18.9581 8 18.4297V12.7071L12.4044 8.30273Z"/><path d="M8 11.2929L8 5.5703C8 5.04189 8.79094 4.79869 9.20467 5.1999L11.6864 7.60648L8 11.2929Z" opacity=".5"/></g></svg><span>alt-arrow-right-bold-duotone</span></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Палітра</h3>
+      <ul class="d-score__chips">
+        <li><span class="d-score__chip" style="background:#15161A"></span><span><b>#15161A</b><span class="d-score__cap">ґрунт, графіт</span></span></li>
+        <li><span class="d-score__chip" style="background:#1D1F24"></span><span><b>#1D1F24</b><span class="d-score__cap">підняті поверхні</span></span></li>
+        <li><span class="d-score__chip" style="background:#262931"></span><span><b>#262931</b><span class="d-score__cap">смуга «тут зараз»</span></span></li>
+        <li><span class="d-score__chip" style="background:#3A3D45"></span><span><b>#3A3D45</b><span class="d-score__cap">лінії нотного стану</span></span></li>
+        <li><span class="d-score__chip" style="background:#ECE8E1"></span><span><b>#ECE8E1</b><span class="d-score__cap">кістка: текст, зроблене</span></span></li>
+        <li><span class="d-score__chip" style="background:#A3A39E"></span><span><b>#A3A39E</b><span class="d-score__cap">вторинний текст · 7.1:1</span></span></li>
+        <li><span class="d-score__chip" style="background:#8A8984"></span><span><b>#8A8984</b><span class="d-score__cap">неактивне · 5.2:1</span></span></li>
+        <li><span class="d-score__chip" style="background:#FFFFFF"></span><span><b>#FFFFFF</b><span class="d-score__cap">край «щойно», наведення</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>

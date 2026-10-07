@@ -1,0 +1,431 @@
+<style>
+/* Версія 4 · Партитура з графом. Усі значення — з concept/tokens.css; тут лише 0, 1px, 100%, fr і точка перелому. */
+.d-sg {
+  --g: var(--way-bg);
+  --side: var(--way-bg-sidebar);
+  --s: var(--way-bg-raised);
+  --now: var(--way-bg-now);
+  --ink: var(--way-text-1);
+  --ink-2: var(--way-text-2);
+  --ink-3: var(--way-text-3);
+  --rule: var(--way-line);
+  --edge: var(--way-line-strong);
+  --sat: var(--way-graph-satellite);
+  --hov: var(--way-bg-hover);
+  --press: var(--way-bg-selected);
+
+  width: var(--way-frame-width);
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--g);
+  color: var(--ink);
+  font-family: var(--way-font);
+  font-size: var(--way-text-body-size);
+  line-height: var(--way-text-body-lh);
+  font-variant-numeric: var(--way-font-numeric);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  caret-color: var(--ink);
+}
+.d-sg *, .d-sg *::before, .d-sg *::after { box-sizing: border-box; }
+.d-sg ::selection { background: var(--ink); color: var(--g); }
+.d-sg h1, .d-sg h2, .d-sg h3, .d-sg p, .d-sg ul, .d-sg ol, .d-sg figure { margin: 0; padding: 0; }
+.d-sg ul, .d-sg ol { list-style: none; }
+.d-sg a { color: inherit; text-decoration: none; }
+.d-sg button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.d-sg :focus-visible { outline: var(--way-focus-ring); outline-offset: var(--way-focus-offset); border-radius: var(--way-radius-check); }
+.d-sg .ic { width: var(--way-icon-size); height: var(--way-icon-size); flex: none; display: block; }
+.d-sg .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- shell: sidebar + page ---------- */
+.d-sg .app { display: grid; grid-template-columns: var(--way-sidebar-width) minmax(0, 1fr); }
+
+.d-sg .side {
+  background: var(--side);
+  border-right: 1px solid var(--rule);
+  padding: var(--way-space-6) var(--way-space-4) var(--way-space-7);
+  display: flex; flex-direction: column; gap: var(--way-space-8);
+  font-size: var(--way-text-ui-size);
+}
+.d-sg .side__top { display: flex; align-items: center; justify-content: space-between; height: var(--way-button-height); padding: 0 var(--way-space-3) 0 var(--way-space-5); }
+.d-sg .mark { font-weight: var(--way-weight-semibold); font-size: var(--way-text-mark-size); letter-spacing: var(--way-text-mark-track); }
+.d-sg .iconbtn {
+  width: var(--way-iconbutton-size); height: var(--way-iconbutton-size); border-radius: var(--way-radius-sm);
+  display: grid; place-items: center; color: var(--ink-2);
+  transition: background-color var(--way-dur-hover) var(--way-ease-out), color var(--way-dur-hover) var(--way-ease-out);
+}
+.d-sg .iconbtn:hover { background: var(--hov); color: var(--ink); }
+
+.d-sg .rows { display: flex; flex-direction: column; gap: 1px; }
+.d-sg .row {
+  display: flex; align-items: center; gap: var(--way-space-5);
+  height: var(--way-row-height); padding: 0 var(--way-space-5); border-radius: var(--way-radius-sm);
+  color: var(--ink-2);
+  transition: background-color var(--way-dur-hover) var(--way-ease-out), color var(--way-dur-hover) var(--way-ease-out);
+}
+.d-sg .row:hover { background: var(--hov); color: var(--ink); }
+.d-sg .row[aria-current] { background: var(--press); color: var(--ink); font-weight: var(--way-weight-medium); }
+.d-sg .row__n { margin-left: auto; font-size: var(--way-text-caption-size); color: var(--ink-3); }
+.d-sg .row:hover .row__n, .d-sg .row[aria-current] .row__n { color: var(--ink-2); }
+.d-sg .grouplabel { padding: 0 var(--way-space-5) var(--way-space-3); font-size: var(--way-text-caption-size); font-weight: var(--way-weight-medium); color: var(--ink-3); }
+.d-sg .dot { width: var(--way-space-4); height: var(--way-space-4); border-radius: var(--way-radius-round); margin: 0 var(--way-space-3) 0 var(--way-space-2); flex: none; background: var(--ink-3); }
+.d-sg .row[aria-current] .dot { background: var(--ink); box-shadow: var(--way-ring-current); }
+.d-sg .side__foot { margin-top: auto; }
+
+/* ---------- page ---------- */
+.d-sg .page { position: relative; min-width: 0; }
+.d-sg .bar {
+  height: var(--way-topbar-height); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--way-space-6) 0 var(--way-space-8); font-size: var(--way-text-small-size); color: var(--ink-2);
+}
+.d-sg .crumbs { display: flex; align-items: center; gap: var(--way-space-3); }
+.d-sg .crumbs .ic, .d-sg .sign .ic { width: var(--way-icon-xs); height: var(--way-icon-xs); }
+.d-sg .crumbs .ic { color: var(--ink-3); }
+.d-sg .crumbs b { font-weight: var(--way-weight-medium); color: var(--ink); }
+.d-sg .bar__right { display: flex; align-items: center; gap: var(--way-space-2); }
+.d-sg .sign {
+  display: inline-flex; align-items: center; gap: var(--way-space-2); height: var(--way-iconbutton-size); padding: 0 var(--way-space-4); border-radius: var(--way-radius-sm);
+  font-size: var(--way-text-caption-size); color: var(--ink-3);
+}
+.d-sg .sign:hover { background: var(--hov); color: var(--ink-2); }
+
+.d-sg .body { padding: var(--way-space-10) var(--way-page-gutter) calc(2 * var(--way-space-13)); max-width: var(--way-content-width); }
+.d-sg .head h2 { font-size: var(--way-text-title-size); line-height: var(--way-text-title-lh); font-weight: var(--way-weight-semibold); letter-spacing: var(--way-text-title-track); }
+.d-sg .head p { display: flex; align-items: center; gap: var(--way-space-3); margin-top: var(--way-space-4); font-size: var(--way-text-ui-size); line-height: var(--way-text-ui-lh); color: var(--ink-2); }
+.d-sg .head p .ic { width: var(--way-icon-sm); height: var(--way-icon-sm); color: var(--ink); }
+
+.d-sg .sec {
+  font-size: var(--way-text-heading-size); line-height: var(--way-text-heading-lh); font-weight: var(--way-weight-semibold);
+  letter-spacing: var(--way-text-heading-track); margin: var(--way-space-12) 0 var(--way-space-5);
+}
+
+/* ---------- the graph ---------- */
+.d-sg .graph { margin: var(--way-space-8) calc(-1 * var(--way-space-7)) 0; }
+.d-sg .graph svg { display: block; width: 100%; height: auto; overflow: visible; }
+.d-sg .graph text { font-family: var(--way-font); fill: var(--ink); }
+.d-sg .graph .lbl { font-size: var(--way-text-graph-size); }
+.d-sg .graph .lbl--now { font-weight: var(--way-weight-semibold); }
+.d-sg .graph .sub { font-size: var(--way-text-caption-size); fill: var(--ink-2); }
+.d-sg .graph .days { font-size: var(--way-text-micro-size); fill: var(--ink-3); }
+.d-sg .graph .apx { font-size: var(--way-text-label-size); font-weight: var(--way-weight-semibold); letter-spacing: var(--way-text-label-track); text-transform: uppercase; fill: var(--ink-3); }
+.d-sg .graph .apx--now { fill: var(--ink-2); }
+.d-sg .graph .satlbl { font-size: var(--way-text-caption-size); fill: var(--ink-3); }
+.d-sg .graph .band { fill: var(--now); }
+.d-sg .graph .bar-line { stroke: var(--rule); stroke-width: 1; }
+.d-sg .graph .e { fill: none; stroke-linecap: round; transition: opacity var(--way-dur-dim) var(--way-ease-out); }
+.d-sg .graph .e--done { stroke: var(--way-graph-path); stroke-width: var(--way-check-stroke); }
+.d-sg .graph .e--go { stroke: var(--way-graph-path); stroke-width: var(--way-check-stroke); stroke-dasharray: var(--way-dash-going); }
+.d-sg .graph .e--side { stroke: var(--way-graph-side-edge); stroke-width: 1; }
+.d-sg .graph .e--sat { stroke: var(--edge); stroke-width: 1; }
+.d-sg .graph .n { transition: opacity var(--way-dur-dim) var(--way-ease-out); cursor: default; outline: none; }
+.d-sg .graph .n--done .core { fill: var(--way-graph-node-done); }
+.d-sg .graph .n--retro .core { fill: var(--way-graph-node-retro); }
+.d-sg .graph .n--go .core { fill: var(--g); stroke: var(--way-graph-path); stroke-width: var(--way-check-stroke); stroke-dasharray: var(--way-dash-node); }
+.d-sg .graph .n--start .core { fill: var(--g); stroke: var(--way-graph-node-start); stroke-width: var(--way-check-stroke); }
+.d-sg .graph .n--finish .core { fill: none; stroke: var(--way-graph-path); stroke-width: var(--way-check-stroke); }
+.d-sg .graph .n--finish .in { fill: var(--way-graph-path); }
+.d-sg .graph .n--sat .core { fill: var(--sat); }
+.d-sg .graph .ring { fill: none; stroke: var(--way-focus); stroke-width: var(--way-check-stroke); opacity: 0; }
+.d-sg .graph .n:focus-visible .ring { opacity: 1; }
+.d-sg .graph .halo { fill: none; stroke: var(--way-graph-halo); stroke-width: 1; opacity: var(--way-halo-opacity); transform-box: fill-box; transform-origin: center; animation: d-sg-settle var(--way-dur-settle) var(--way-ease-settle) both; }
+@keyframes d-sg-settle { from { transform: scale(2.2); opacity: 0; } to { transform: scale(1); opacity: var(--way-halo-opacity); } }
+@media (prefers-reduced-motion: reduce) { .d-sg .graph .halo { animation: none; } }
+/* Obsidian: наведи або перейди клавішею Tab на точку — решта графа відступає */
+.d-sg .graph svg:has(.n:hover, .n:focus-visible) .n:not(:hover):not(:focus-visible),
+.d-sg .graph svg:has(.n:hover, .n:focus-visible) .e { opacity: var(--way-dim-opacity); }
+.d-sg .legend { display: flex; flex-wrap: wrap; gap: var(--way-space-3) var(--way-space-8); margin: var(--way-space-4) 0 0; font-size: var(--way-text-caption-size); color: var(--ink-2); }
+.d-sg .legend li { display: inline-flex; align-items: center; gap: var(--way-space-4); }
+.d-sg .legend svg { width: var(--way-space-9); height: var(--way-space-6); display: block; overflow: visible; }
+.d-sg .lg-path { stroke: var(--way-graph-path); stroke-width: var(--way-check-stroke); }
+.d-sg .lg-go { stroke: var(--way-graph-path); stroke-width: var(--way-check-stroke); stroke-dasharray: var(--way-dash-going); stroke-linecap: round; }
+.d-sg .lg-node { fill: var(--way-graph-node-done); }
+.d-sg .lg-sat-edge { stroke: var(--edge); stroke-width: 1; }
+.d-sg .lg-sat { fill: var(--sat); }
+
+/* ---------- Notion callout ---------- */
+.d-sg .callout {
+  display: grid; grid-template-columns: var(--way-icon-size) minmax(0, 1fr); gap: var(--way-space-5);
+  margin-top: var(--way-space-11); padding: var(--way-space-6) var(--way-space-7) var(--way-space-6) var(--way-space-6); border-radius: var(--way-radius-sm); background: var(--s);
+}
+.d-sg .callout > .ic { margin-top: var(--way-space-1); }
+.d-sg .callout h3 { font-size: var(--way-text-body-size); line-height: var(--way-text-body-lh); font-weight: var(--way-weight-semibold); }
+.d-sg .callout p { margin-top: var(--way-space-1); }
+.d-sg .callout .note { margin-top: var(--way-space-4); font-size: var(--way-text-small-size); line-height: var(--way-text-small-lh); color: var(--ink-2); }
+
+/* ---------- Things to-do row ---------- */
+.d-sg .todo { display: grid; grid-template-columns: var(--way-icon-size) minmax(0, 1fr); gap: var(--way-space-6); padding: var(--way-space-4) var(--way-space-5); margin: 0 calc(-1 * var(--way-space-5)); border-radius: var(--way-radius-sm); }
+.d-sg .todo:hover { background: var(--hov); }
+.d-sg .t { font-size: var(--way-text-body-size); line-height: var(--way-text-body-lh); }
+.d-sg .todo .sub { margin-top: var(--way-space-1); font-size: var(--way-text-small-size); line-height: var(--way-text-small-lh); color: var(--ink-2); }
+
+/* check: rounded square; done = Solar check-linear */
+.d-sg .chk {
+  position: relative; display: block; width: var(--way-check-size); height: var(--way-check-size); margin-top: var(--way-space-1); flex: none;
+  border-radius: var(--way-radius-check); border: var(--way-check-stroke) solid var(--way-control-border); overflow: hidden;
+}
+.d-sg .chk--go { border-color: var(--way-accent); }
+.d-sg .chk--go::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: var(--way-accent); }
+.d-sg .chk--done { border-color: var(--way-accent); background: var(--way-accent); color: var(--g); }
+.d-sg .chk--done .ic { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---------- buttons ---------- */
+.d-sg .actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--way-space-1); margin: var(--way-space-5) 0 0 var(--way-space-8); }
+.d-sg .actions--flush { margin-left: calc(-1 * var(--way-space-4)); }
+.d-sg .btn {
+  display: inline-flex; align-items: center; gap: var(--way-space-3);
+  height: var(--way-button-height); padding: 0 var(--way-space-6); border-radius: var(--way-radius-sm);
+  font-size: var(--way-text-ui-size); font-weight: var(--way-weight-medium); line-height: 1; white-space: nowrap;
+  transition: background-color var(--way-dur-hover) var(--way-ease-out), color var(--way-dur-hover) var(--way-ease-out);
+}
+.d-sg .btn .ic { width: var(--way-icon-sm); height: var(--way-icon-sm); }
+.d-sg .btn--primary { background: var(--way-accent); color: var(--way-text-on-accent); }
+.d-sg .actions .btn--primary { margin-right: var(--way-space-4); }
+.d-sg .btn--primary:hover, .d-sg .btn--primary.is-hover { background: var(--way-accent-hover); }
+.d-sg .btn--primary:active { background: var(--way-accent-active); }
+.d-sg .btn--primary.is-focus { outline: var(--way-focus-ring); outline-offset: var(--way-focus-offset); }
+.d-sg .btn--primary:disabled { background: var(--way-bg-disabled); color: var(--way-text-disabled); cursor: not-allowed; }
+.d-sg .btn--ghost { color: var(--ink-2); padding: 0 var(--way-space-4); }
+.d-sg .btn--ghost:hover, .d-sg .btn--ghost.is-hover { background: var(--hov); color: var(--ink); }
+.d-sg .btn--ghost:active { background: var(--press); }
+.d-sg .btn--line { box-shadow: inset 0 0 0 1px var(--edge); color: var(--ink); }
+.d-sg .btn--line:hover { background: var(--hov); }
+
+/* ---------- stages: Things rows ---------- */
+.d-sg .stages li {
+  display: grid; grid-template-columns: var(--way-icon-size) minmax(0, 1fr) auto; gap: var(--way-space-6); align-items: start;
+  padding: var(--way-space-4) var(--way-space-5); margin: 0 calc(-1 * var(--way-space-5)); border-radius: var(--way-radius-sm);
+}
+.d-sg .stages li:hover { background: var(--hov); }
+.d-sg .stages .nm { font-size: var(--way-text-body-size); }
+.d-sg .stages .nm small { display: block; font-size: var(--way-text-small-size); color: var(--ink-2); margin-top: 1px; }
+.d-sg .stages .st { font-size: var(--way-text-caption-size); color: var(--ink-3); padding-top: var(--way-space-1); }
+.d-sg .stages li:hover .st, .d-sg .stages .is-now .st { color: var(--ink-2); }
+.d-sg .stages .is-now .nm { font-weight: var(--way-weight-medium); }
+.d-sg .add { display: inline-flex; align-items: center; gap: var(--way-space-3); margin: var(--way-space-2) 0 0 calc(-1 * var(--way-space-1)); height: var(--way-iconbutton-size); padding: 0 var(--way-space-4); border-radius: var(--way-radius-sm); font-size: var(--way-text-small-size); color: var(--ink-3); }
+.d-sg .add:hover { background: var(--hov); color: var(--ink-2); }
+.d-sg .add .ic { width: var(--way-icon-sm); height: var(--way-icon-sm); }
+
+/* ---------- resources: Notion links ---------- */
+.d-sg .res a { display: flex; align-items: center; gap: var(--way-space-4); height: var(--way-row-height); padding: 0 var(--way-space-3); margin: 0 calc(-1 * var(--way-space-3)); border-radius: var(--way-radius-sm); }
+.d-sg .res a:hover { background: var(--hov); }
+.d-sg .res a span { text-decoration: underline; text-decoration-color: var(--way-underline); text-underline-offset: var(--way-space-1); text-decoration-thickness: 1px; }
+.d-sg .res .ic { color: var(--ink-2); }
+
+/* ---------- step of the day: floating Things card ---------- */
+.d-sg .today {
+  position: sticky; bottom: var(--way-space-8); z-index: 2;
+  margin: 0 var(--way-page-gutter); max-width: calc(var(--way-content-width) - 2 * var(--way-page-gutter));
+  display: grid; grid-template-columns: var(--way-icon-size) minmax(0, 1fr) auto; gap: var(--way-space-6); align-items: center;
+  padding: var(--way-space-6) var(--way-space-6) var(--way-space-6) var(--way-space-7); border-radius: var(--way-radius-card);
+  background: var(--s); box-shadow: var(--way-shadow-card);
+}
+.d-sg .today .chk { margin-top: 0; }
+.d-sg .today .t { font-weight: var(--way-weight-medium); line-height: var(--way-text-caption-lh); }
+.d-sg .today .sub { font-size: var(--way-text-caption-size); line-height: var(--way-text-caption-lh); color: var(--ink-2); }
+
+/* ---------- specimen ---------- */
+.d-sg .spec {
+  border-top: 1px solid var(--rule);
+  padding: var(--way-space-11) var(--way-page-gutter) var(--way-space-12);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--way-space-11) var(--way-space-13);
+  font-size: var(--way-text-small-size); color: var(--ink-2);
+}
+.d-sg .spec h2 { font-size: var(--way-text-small-size); font-weight: var(--way-weight-semibold); color: var(--ink); margin-bottom: var(--way-space-6); }
+.d-sg .spec .spec__next { margin-top: var(--way-space-9); }
+.d-sg .scale { display: grid; gap: var(--way-space-3); color: var(--ink); }
+.d-sg .scale span { display: flex; align-items: baseline; gap: var(--way-space-6); }
+.d-sg .scale i { font-style: normal; font-size: var(--way-text-micro-size); color: var(--ink-3); width: calc(var(--way-space-13) + var(--way-space-10)); flex: none; }
+.d-sg .sc-title { font-size: var(--way-text-title-size); font-weight: var(--way-weight-semibold); letter-spacing: var(--way-text-title-track); line-height: var(--way-text-title-lh); }
+.d-sg .sc-heading { font-size: var(--way-text-heading-size); font-weight: var(--way-weight-semibold); }
+.d-sg .sc-strong { font-size: var(--way-text-body-size); font-weight: var(--way-weight-medium); }
+.d-sg .sc-body { font-size: var(--way-text-body-size); }
+.d-sg .sc-small { font-size: var(--way-text-small-size); color: var(--ink-2); }
+.d-sg .sc-label { font-size: var(--way-text-label-size); font-weight: var(--way-weight-semibold); letter-spacing: var(--way-text-label-track); text-transform: uppercase; color: var(--ink-3); }
+.d-sg .states { display: flex; flex-wrap: wrap; gap: var(--way-space-7) var(--way-space-8); align-items: flex-start; }
+.d-sg .states figure { display: grid; gap: var(--way-space-3); justify-items: start; }
+.d-sg .states .btn { margin: 0; }
+.d-sg .states figcaption { font-size: var(--way-text-micro-size); color: var(--ink-3); }
+.d-sg .icons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--way-space-5) var(--way-space-6); }
+.d-sg .icons li { display: flex; align-items: center; gap: var(--way-space-4); font-size: var(--way-text-micro-size); color: var(--ink-3); min-width: 0; }
+.d-sg .icons .ic { color: var(--ink); }
+.d-sg .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--way-space-4) var(--way-space-7); }
+.d-sg .chips li { display: flex; align-items: center; gap: var(--way-space-5); font-size: var(--way-text-caption-size); }
+.d-sg .chips i { width: var(--way-iconbutton-size); height: var(--way-iconbutton-size); border-radius: var(--way-radius-sm); flex: none; box-shadow: inset 0 0 0 1px var(--way-chip-edge); }
+.d-sg .chips b { display: block; font-weight: var(--way-weight-medium); color: var(--ink); }
+
+@media (max-width: 760px) {
+  .d-sg .app { grid-template-columns: minmax(0, 1fr); }
+  .d-sg .side { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .d-sg .body { padding: var(--way-space-8) var(--way-space-8) calc(2 * var(--way-space-13)); }
+  .d-sg .today { margin: 0 var(--way-space-7); }
+  .d-sg .spec { grid-template-columns: minmax(0, 1fr); padding: var(--way-space-10) var(--way-space-8) var(--way-space-11); }
+  /* граф не стискаємо: на вузькому екрані він гортається вбік у власній рамці (O17) */
+  .d-sg .graph { margin: var(--way-space-7) calc(-1 * var(--way-space-8)) 0; overflow-x: auto; padding: 0 var(--way-space-8); }
+  .d-sg .graph svg { width: calc(var(--way-frame-width) - var(--way-sidebar-width) - 2 * var(--way-page-gutter) + 2 * var(--way-space-7)); max-width: none; }
+  .d-sg .icons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* цілі для дотику */
+  .d-sg .row, .d-sg .res a { height: var(--way-touch-min); }
+  .d-sg .btn, .d-sg .add, .d-sg .sign { height: var(--way-touch-min); }
+  .d-sg .iconbtn { width: var(--way-touch-min); height: var(--way-touch-min); }
+}
+</style>
+
+<section class="d-sg" aria-label="Версія 4: Партитура з графом">
+{{SPRITE}}
+<div class="app">
+  <nav class="side" aria-label="Навігація">
+    <div class="side__top">
+      <a class="mark" href="#">WAY</a>
+      <button class="iconbtn" type="button" aria-label="Пошук">{{i:magnifer}}</button>
+    </div>
+    <ul class="rows">
+      <li><a class="row" href="today.html">{{i:sun-2}}Сьогодні</a></li>
+      <li><a class="row" href="#h-v4" aria-current="page">{{i:routing-2}}Дорога</a></li>
+      <li><a class="row" href="#">{{i:calendar}}Тиждень</a></li>
+    </ul>
+    <div>
+      <p class="grouplabel" id="sg-roads">Дороги тижня</p>
+      <ul class="rows" aria-labelledby="sg-roads">
+        <li><a class="row" href="#h-v4" aria-current="true"><span class="dot" aria-hidden="true"></span>Портфоліо<span class="row__n" title="кроків цього тижня">3</span></a></li>
+        <li><a class="row" href="#"><span class="dot" aria-hidden="true"></span>Англійська<span class="row__n" title="кроків цього тижня">4</span></a></li>
+        <li><a class="row" href="#"><span class="dot" aria-hidden="true"></span>Моушн-дизайн<span class="row__n" title="кроків цього тижня">1</span></a></li>
+      </ul>
+    </div>
+    <div class="side__foot">
+      <a class="row" href="#">{{i:add-circle}}Нова дорога</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="bar">
+      <p class="crumbs">Дороги тижня {{i:alt-arrow-right}} <b>Портфоліо</b></p>
+      <div class="bar__right">
+        <a class="sign" href="#">{{i:signpost-2}}Дедлайн не задано</a>
+        <button class="iconbtn" type="button" aria-label="Ще дії з дорогою">{{i:menu-dots}}</button>
+      </div>
+    </div>
+
+    <div class="body">
+      <header class="head">
+        <h2>Портфоліо</h2>
+        <p>{{i:map-point}}У русі · 5 кроків від старту · етап «Кейси»</p>
+      </header>
+
+      <figure class="graph">
+{{GRAPH}}
+        <figcaption>
+          <ul class="legend">
+            <li><svg viewBox="0 0 24 12" aria-hidden="true"><line class="lg-path" x1="0" y1="6" x2="24" y2="6"/></svg>пройдено</li>
+            <li><svg viewBox="0 0 24 12" aria-hidden="true"><line class="lg-go" x1="0" y1="6" x2="24" y2="6"/></svg>у роботі</li>
+            <li><svg viewBox="0 0 24 12" aria-hidden="true"><circle class="lg-node" cx="5" cy="6" r="3"/><circle class="lg-node" cx="17" cy="6" r="5.5"/></svg>більша точка — довший крок</li>
+            <li><svg viewBox="0 0 24 12" aria-hidden="true"><line class="lg-sat-edge" x1="0" y1="6" x2="18" y2="6"/><circle class="lg-sat" cx="20" cy="6" r="3"/></svg>ресурс, зв'язаний із кроком</li>
+          </ul>
+        </figcaption>
+      </figure>
+
+      <section class="callout" aria-labelledby="sg-here">
+        {{i:map-point}}
+        <div>
+          <h3 id="sg-here">Де я зараз</h3>
+          <p>Етап «Кейси»: перший кейс уже на сайті, у другого є структура, вступ пишеться.</p>
+          <p class="note">Позицію визначає продукт — за пройденим і фінішем. Якщо не збігається з відчуттям, поправ.</p>
+          <div class="actions actions--flush">
+            <button class="btn btn--ghost" type="button">{{i:pen-new-square}}Поправити позицію</button>
+          </div>
+        </div>
+      </section>
+
+      <h3 class="sec">Наступний крок</h3>
+      <div class="todo">
+        <span class="chk" aria-hidden="true"></span>
+        <div>
+          <p class="t">Відібрати 6–8 екранів для кейсу про застосунок для бігу</p>
+          <p class="sub">Пропоную, бо вступ готовий, а без екранів кейс не покажеш.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn--primary" type="button">Взяти на сьогодні</button>
+        <button class="btn btn--ghost" type="button">{{i:pen-new-square}}Записати свій крок</button>
+        <button class="btn btn--ghost" type="button">{{i:restart}}Інша пропозиція</button>
+        <button class="btn btn--ghost" type="button">{{i:clock-circle}}Відкласти</button>
+      </div>
+
+      <h3 class="sec">Етапи</h3>
+      <ul class="stages">
+        <li><span class="chk chk--done" aria-hidden="true">{{i:check}}</span><span class="nm">Відбір проєктів</span><span class="st">пройдено</span></li>
+        <li class="is-now"><span class="chk chk--go" aria-hidden="true"></span><span class="nm">Кейси<small>перший кейс на сайті, другий у роботі</small></span><span class="st">тут зараз</span></li>
+        <li><span class="chk" aria-hidden="true"></span><span class="nm">Сайт</span><span class="st">попереду</span></li>
+      </ul>
+      <button class="add" type="button">{{i:pen-new-square}}Поправити етапи</button>
+
+      <h3 class="sec">Ресурси</h3>
+      <ul class="res">
+        <li><a href="#">{{i:document-text}}<span>Що роботодавці дивляться в кейсах</span></a></li>
+        <li><a href="#">{{i:link-round}}<span>Старий Behance</span></a></li>
+      </ul>
+      <button class="add" type="button">{{i:add-circle}}Додати ресурс</button>
+    </div>
+
+    <aside class="today" aria-label="Крок на сьогодні">
+      <span class="chk chk--go" aria-hidden="true"></span>
+      <div>
+        <p class="sub">Англійська · крок на сьогодні</p>
+        <p class="t">20 хвилин розмовного клубу</p>
+      </div>
+      <button class="btn btn--line" type="button">Зроблено</button>
+    </aside>
+  </div>
+</div>
+
+<div class="spec">
+  <div>
+    <h3>Шрифт — один: Golos Text</h3>
+    <div class="scale">
+      <span class="sc-title"><i>30 · 600</i>Портфоліо</span>
+      <span class="sc-heading"><i>17 · 600</i>Наступний крок</span>
+      <span class="sc-strong"><i>15 · 500</i>Ґанок, їжак і є дорога</span>
+      <span class="sc-body"><i>15 · 400</i>Перший кейс уже на сайті</span>
+      <span class="sc-small"><i>13 · 400</i>Пропоную, бо вступ готовий</span>
+      <span class="sc-label"><i>11 · 600</i>Кейси · тут зараз</span>
+    </div>
+  </div>
+  <div>
+    <h3>Кнопки</h3>
+    <div class="states">
+      <figure><button class="btn btn--primary" type="button">Взяти</button><figcaption>звичайна</figcaption></figure>
+      <figure><button class="btn btn--primary is-hover" type="button">Взяти</button><figcaption>наведення</figcaption></figure>
+      <figure><button class="btn btn--primary is-focus" type="button">Взяти</button><figcaption>фокус</figcaption></figure>
+      <figure><button class="btn btn--primary" type="button" disabled>Взяти</button><figcaption>недоступна</figcaption></figure>
+      <figure><button class="btn btn--ghost is-hover" type="button">{{i:restart}}Інша пропозиція</button><figcaption>другорядна, наведення</figcaption></figure>
+      <figure><button class="btn btn--line" type="button">Зроблено</button><figcaption>на кроці дня</figcaption></figure>
+    </div>
+    <h3 class="spec__next">Позначка кроку</h3>
+    <div class="states">
+      <figure><span class="chk" aria-hidden="true"></span><figcaption>не почато</figcaption></figure>
+      <figure><span class="chk chk--go" aria-hidden="true"></span><figcaption>у роботі</figcaption></figure>
+      <figure><span class="chk chk--done" aria-hidden="true">{{i:check}}</span><figcaption>зроблено</figcaption></figure>
+    </div>
+  </div>
+  <div>
+    <h3>Іконки — Solar Linear</h3>
+    <ul class="icons">
+      <li>{{i:sun-2}}sun-2</li><li>{{i:routing-2}}routing-2</li><li>{{i:calendar}}calendar</li><li>{{i:map-point}}map-point</li>
+      <li>{{i:signpost-2}}signpost-2</li><li>{{i:pen-new-square}}pen-new-square</li><li>{{i:restart}}restart</li><li>{{i:clock-circle}}clock-circle</li>
+      <li>{{i:document-text}}document-text</li><li>{{i:link-round}}link-round</li><li>{{i:add-circle}}add-circle</li><li>{{i:check}}check</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Палітра — без жодного відтінку</h3>
+    <ul class="chips">
+      <li><i style="background: var(--way-bg)"></i><span><b>--way-bg</b>сторінка</span></li>
+      <li><i style="background: var(--way-bg-sidebar)"></i><span><b>--way-bg-sidebar</b>бічна панель</span></li>
+      <li><i style="background: var(--way-bg-raised)"></i><span><b>--way-bg-raised</b>callout, крок дня</span></li>
+      <li><i style="background: var(--way-bg-now)"></i><span><b>--way-bg-now</b>смуга «тут зараз»</span></li>
+      <li><i style="background: var(--way-text-1)"></i><span><b>--way-text-1</b>текст, пройдене, головна кнопка</span></li>
+      <li><i style="background: var(--way-text-2)"></i><span><b>--way-text-2</b>другорядний текст</span></li>
+      <li><i style="background: var(--way-text-3)"></i><span><b>--way-text-3</b>службові підписи</span></li>
+      <li><i style="background: var(--way-line-strong)"></i><span><b>--way-line-strong</b>зв'язки графа</span></li>
+    </ul>
+  </div>
+</div>
+</section>

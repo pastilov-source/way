@@ -1,0 +1,559 @@
+<style>
+.d-riso {
+  --paper: #EFEFEC;
+  --ink: #14213D;
+  --ink-2: #47536B;
+  --rule: #C4C8CF;
+  --pink: #FF48B0;
+  --blue: #0078BF;
+  --violet: #472D90;
+  --knock: #FFFFFF;
+  --blue-30: #A7C9DA;
+  --mis: 3px;
+  --over: .72;
+  --gut: 20px;
+  --display: "Dela Gothic One", "Geologica", sans-serif;
+  --ui: "Geologica", sans-serif;
+
+  width: 440px;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.5;
+  caret-color: var(--blue);
+  -webkit-font-smoothing: antialiased;
+}
+.d-riso *, .d-riso *::before, .d-riso *::after { box-sizing: border-box; border-radius: 0; }
+.d-riso ::selection { background: var(--pink); color: var(--ink); }
+.d-riso h1, .d-riso h2, .d-riso h3, .d-riso p, .d-riso ol, .d-riso ul, .d-riso figure { margin: 0; padding: 0; }
+.d-riso ol, .d-riso ul { list-style: none; }
+.d-riso .ic { width: 18px; height: 18px; flex: none; display: block; }
+.d-riso a { color: inherit; }
+.d-riso :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.d-riso .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ink layers: two plates, multiplied where they overprint */
+.d-riso .plate { position: absolute; inset: 0; mix-blend-mode: multiply; }
+.d-riso .plate--p { background: var(--pink); }
+.d-riso .plate--b { background: var(--blue); opacity: var(--over); }
+
+/* ---------- header band: solid blue field ---------- */
+.d-riso .band {
+  background: var(--blue);
+  color: var(--knock);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--gut);
+  height: 56px;
+}
+.d-riso .mark {
+  font-family: var(--display);
+  font-size: 22px; line-height: 1; letter-spacing: 0;
+  color: var(--knock); text-decoration: none;
+}
+.d-riso .nav { display: flex; gap: 2px; }
+.d-riso .nav a {
+  display: block; padding: 8px 10px;
+  font-size: 14px; font-weight: 500; color: var(--knock);
+  text-decoration: none;
+}
+.d-riso .nav a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.d-riso .nav a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline; text-decoration-color: var(--pink);
+  text-decoration-thickness: 3px; text-underline-offset: 7px;
+}
+
+/* ---------- roads of the week ---------- */
+.d-riso .roads {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px var(--gut) 0;
+}
+.d-riso .roads__label { display: flex; align-items: center; color: var(--ink-2); }
+.d-riso .roads__list { display: flex; gap: 6px; flex-wrap: wrap; }
+.d-riso .roads__list a {
+  display: block; padding: 5px 10px;
+  font-size: 13px; font-weight: 500; line-height: 1.4;
+  text-decoration: none; color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+.d-riso .roads__list a:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.d-riso .roads__list a[aria-current="page"] { background: var(--pink); box-shadow: none; font-weight: 600; }
+
+/* ---------- title ---------- */
+.d-riso .head { padding: 24px var(--gut) 8px; }
+.d-riso .head h1 {
+  font-family: var(--display); font-weight: 400;
+  font-size: 52px; line-height: 1; letter-spacing: -0.02em;
+}
+.d-riso .head__meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px; gap: 12px;
+}
+.d-riso .state { display: flex; align-items: center; gap: 8px; }
+.d-riso .state__num {
+  font-family: var(--display); font-size: 30px; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.d-riso .state__txt { font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.d-riso .pill { align-self: center; font-size: 12.5px; font-weight: 600; line-height: 1; padding: 5px 7px; background: var(--blue); color: var(--knock); margin-right: 4px; }
+.d-riso .sign {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--ink-2); white-space: nowrap;
+}
+.d-riso .sign .ic { width: 13px; height: 13px; }
+
+/* ---------- path graph ---------- */
+.d-riso .path { padding: 20px var(--gut) 28px; }
+.d-riso .sect-h { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.d-riso .path .sect-h { margin-bottom: 14px; }
+.d-riso .track { position: relative; }
+.d-riso .row {
+  position: relative;
+  display: grid; grid-template-columns: 32px 1fr; column-gap: 12px;
+  padding: 10px 0;
+}
+.d-riso .rail { position: relative; }
+.d-riso .row .rail { margin: -10px 0; }
+/* line segments: top half reaches the row above, bottom half the row below */
+.d-riso .seg { position: absolute; left: 13.5px; width: 5px; isolation: isolate; }
+.d-riso .seg--t { top: 0; height: 21px; }
+.d-riso .seg--b { top: 21px; bottom: 0; }
+.d-riso .seg--full { top: 0; bottom: 0; }
+/* in progress: blue plate only, dashed; pink plate off-register */
+.d-riso .seg.is-doing .plate--b {
+  opacity: 1;
+  background: repeating-linear-gradient(to bottom, var(--blue) 0 8px, transparent 8px 14px);
+}
+.d-riso .seg.is-doing .plate--p {
+  background: repeating-linear-gradient(to bottom, var(--pink) 0 8px, transparent 8px 14px);
+  transform: translate(var(--mis), var(--mis));
+}
+.d-riso .node {
+  position: absolute; left: 16px; top: 21px;
+  width: 13px; height: 13px; transform: translate(-50%, -50%);
+  background: var(--paper); isolation: isolate; z-index: 1;
+}
+.d-riso .node--start { width: 18px; height: 18px; }
+.d-riso .node--now { width: 16px; height: 16px; }
+.d-riso .node--doing { width: 14px; height: 14px; box-shadow: inset 0 0 0 1.5px var(--blue); }
+.d-riso .node--doing .plate--b { opacity: 1; top: 50%; }
+.d-riso .node--doing .plate--p { background: none; box-shadow: inset 0 0 0 1.5px var(--pink); transform: translate(var(--mis), var(--mis)); }
+.d-riso .node--finish { width: 26px; height: 26px; color: var(--blue); background: var(--paper); top: 20px; }
+.d-riso .node--finish .ic { width: 26px; height: 26px; }
+
+.d-riso .step { font-size: 15px; font-weight: 500; line-height: 22px; }
+.d-riso .meta { display: block; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); margin-top: 2px; }
+.d-riso .step--done { color: var(--ink); }
+.d-riso .hl {
+  position: relative; isolation: isolate;
+  padding: 1px 6px; margin: 0 -6px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  background: var(--pink);
+}
+.d-riso .tag {
+  display: inline-block; margin-top: 6px;
+  font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .01em;
+  padding: 4px 6px; color: var(--knock); background: var(--violet);
+}
+.d-riso .finish-lbl { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+.d-riso .finish-txt { font-size: 17px; font-weight: 600; line-height: 1.3; margin-top: 2px; text-wrap: balance; }
+.d-riso .row--finish { padding-bottom: 16px; }
+.d-riso .stage {
+  font-family: var(--display); font-weight: 400;
+  font-size: 20px; line-height: 1.1; letter-spacing: -0.01em;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.d-riso .stage small { font-family: var(--ui); font-size: 12.5px; font-weight: 500; color: var(--ink-2); letter-spacing: 0; }
+.d-riso .row--stage { padding: 18px 0 8px; }
+.d-riso .row--stage .rail { margin: -18px 0 -8px; }
+.d-riso .row--ahead { padding: 18px 0 0; }
+.d-riso .row--ahead .stage { color: var(--ink-2); }
+.d-riso .blank {
+  grid-column: 2; height: 76px;
+  display: flex; align-items: flex-end;
+  font-size: 12.5px; color: var(--ink-2);
+}
+.d-riso .row--start .step { font-weight: 400; }
+
+/* ---------- where am I: pink ink field ---------- */
+.d-riso .here { background: var(--pink); color: var(--ink); padding: 22px var(--gut) 20px; }
+.d-riso .here .sect-h { display: flex; align-items: center; gap: 6px; }
+.d-riso .here__pos { font-size: 18px; font-weight: 500; line-height: 1.4; margin-top: 10px; text-wrap: pretty; }
+.d-riso .here__note { font-size: 13px; line-height: 1.5; margin-top: 10px; max-width: 46ch; }
+.d-riso .linkbtn {
+  margin-top: 12px; padding: 2px 0;
+  background: none; border: 0; cursor: pointer;
+  font: 600 14px/1.4 var(--ui); color: var(--ink);
+  text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px;
+}
+.d-riso .linkbtn:hover { text-decoration-thickness: 3px; }
+.d-riso .here .linkbtn:focus-visible { outline-color: var(--ink); }
+
+/* ---------- next step ---------- */
+.d-riso .next { padding: 26px var(--gut) 28px; }
+.d-riso .next__step { font-size: 21px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; margin-top: 10px; text-wrap: balance; }
+.d-riso .next__why { font-size: 14px; color: var(--ink-2); margin-top: 8px; }
+.d-riso .next__acts { margin-top: 18px; display: grid; gap: 10px; }
+.d-riso .pri-row { display: flex; align-items: center; gap: 16px; }
+.d-riso .pri-row .btn { flex: 1; }
+.d-riso .sec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.d-riso .sec-row .btn2 { justify-content: center; }
+.d-riso .linkbtn--quiet { margin: 0; flex: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; font-size: 13px; text-decoration-thickness: 1px; }
+.d-riso .linkbtn--quiet .ic { width: 14px; height: 14px; color: var(--blue); }
+
+.d-riso .btn {
+  position: relative; isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 48px; padding: 0 18px;
+  border: 0; cursor: pointer;
+  font: 600 15px/1 var(--ui); letter-spacing: .005em;
+  background: none; color: var(--knock);
+}
+.d-riso .btn::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: var(--blue);
+}
+.d-riso .btn::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: var(--pink);
+  transition: transform .22s cubic-bezier(.16, 1, .3, 1);
+}
+.d-riso .btn:hover::before, .d-riso .btn.is-hover::before,
+.d-riso .btn:focus-visible::before, .d-riso .btn.is-focus::before { transform: translate(var(--mis), var(--mis)); }
+.d-riso .btn.is-focus { outline: 2px solid var(--ink); outline-offset: 2px; }
+.d-riso .btn:focus-visible { outline-offset: 5px; }
+.d-riso .btn.is-focus { outline-offset: 5px; }
+.d-riso .btn:disabled, .d-riso .btn.is-disabled { color: var(--ink); cursor: not-allowed; }
+.d-riso .btn:disabled::after, .d-riso .btn.is-disabled::after { background: var(--blue-30); }
+.d-riso .btn:disabled::before, .d-riso .btn.is-disabled::before { display: none; }
+.d-riso .btn .ic { width: 16px; height: 16px; }
+.d-riso .btn--wide { width: 100%; justify-content: space-between; }
+
+.d-riso .btn2 {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 38px; padding: 0 10px;
+  background: transparent; border: 0; cursor: pointer;
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  font: 500 13px/1 var(--ui); color: var(--ink);
+}
+.d-riso .btn2 .ic { width: 14px; height: 14px; color: var(--blue); }
+.d-riso .btn2:hover, .d-riso .btn2.is-hover { background: var(--pink); }
+.d-riso .btn2:hover .ic, .d-riso .btn2.is-hover .ic { color: var(--ink); }
+
+/* ---------- stages ---------- */
+.d-riso .stages { padding: 0 var(--gut) 32px; }
+.d-riso .stages .sect-h { margin-bottom: 8px; }
+.d-riso .stages li {
+  display: grid; grid-template-columns: 22px 1fr auto; align-items: center; column-gap: 12px;
+  padding: 12px 8px; margin: 0 -8px;
+  border-top: 1px solid var(--rule);
+}
+.d-riso .stages li:last-child { border-bottom: 1px solid var(--rule); }
+.d-riso .stages li[aria-current="step"] { background: var(--pink); border-color: transparent; }
+.d-riso .stages li[aria-current="step"] + li { border-top-color: transparent; }
+.d-riso .stages .nm { font-family: var(--display); font-size: 17px; line-height: 1.2; }
+.d-riso .stages .st { font-size: 12.5px; font-weight: 500; color: var(--ink-2); }
+.d-riso .stages li[aria-current="step"] .st { color: var(--ink); }
+.d-riso .sq { position: relative; isolation: isolate; width: 14px; height: 14px; display: block; }
+.d-riso .sq--ahead { box-shadow: inset 0 0 0 1.5px var(--blue); }
+.d-riso .sq--here { background: var(--ink); }
+
+/* ---------- check mark ---------- */
+.d-riso .check {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: none; border: 0; padding: 6px 2px; cursor: pointer;
+  font: 600 14px/1 var(--ui); color: var(--ink);
+}
+.d-riso .box { position: relative; isolation: isolate; width: 22px; height: 22px; flex: none; background: var(--paper); }
+.d-riso .box--todo { box-shadow: inset 0 0 0 1.5px var(--blue); }
+.d-riso .box--doing { box-shadow: inset 0 0 0 1.5px var(--blue); }
+.d-riso .box--doing::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: var(--blue); }
+.d-riso .box--done { background: var(--pink); }
+.d-riso .box--done::after {
+  content: ""; position: absolute; left: 7px; top: 3px; width: 7px; height: 12px;
+  border: solid var(--blue); border-width: 0 3px 3px 0;
+  transform: rotate(45deg); mix-blend-mode: multiply;
+}
+.d-riso .check:hover .box--todo, .d-riso .check:hover .box--doing { box-shadow: inset 0 0 0 2.5px var(--blue); }
+
+/* ---------- floating step of the day ---------- */
+.d-riso .float {
+  position: sticky; bottom: 12px; z-index: 5;
+  margin: 0 12px 12px;
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px;
+  padding: 12px 12px 12px 16px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--ink), 0 10px 28px -6px rgba(20, 33, 61, .28);
+}
+.d-riso .float__road { font-size: 12px; color: var(--ink-2); line-height: 1.3; }
+.d-riso .float__road b { color: var(--ink); font-weight: 600; }
+.d-riso .float__step { font-size: 15.5px; font-weight: 600; line-height: 1.3; margin-top: 3px; }
+
+/* ---------- authored moment: the just-done step registers ---------- */
+@keyframes d-riso-register {
+  from { transform: translate(calc(var(--mis) * 2), calc(var(--mis) * 2)); }
+  to { transform: translate(0, 0); }
+}
+.d-riso .node--now .plate--p, .d-riso .hl { animation: d-riso-register .9s cubic-bezier(.16, 1, .3, 1) .2s both; }
+@media (prefers-reduced-motion: reduce) {
+  .d-riso .node--now .plate--p, .d-riso .hl { animation: none; }
+  .d-riso .btn::before { transition: none; }
+}
+
+/* ---------- specimen strip ---------- */
+.d-riso .spec { border-top: 6px solid var(--blue); padding: 26px var(--gut) 32px; display: grid; gap: 26px; }
+.d-riso .spec h3 { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 10px; color: var(--ink); }
+.d-riso .fonts { display: grid; gap: 14px; }
+.d-riso .font__s1 { font-family: var(--display); font-size: 30px; line-height: 1.05; letter-spacing: -0.02em; }
+.d-riso .font__s2 { font-family: var(--ui); font-size: 17px; font-weight: 400; line-height: 1.4; }
+.d-riso .font__s2 b { font-weight: 700; }
+.d-riso .font__s2 span { font-weight: 300; }
+.d-riso .font__cap { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+.d-riso .font__cap b { color: var(--ink); font-weight: 600; }
+.d-riso .grid4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 12px; }
+.d-riso .cell { display: grid; gap: 6px; justify-items: start; }
+.d-riso .cell .btn { width: 100%; }
+.d-riso .cap { font-size: 12px; color: var(--ink-2); line-height: 1.3; }
+.d-riso .checks { display: flex; gap: 22px; }
+.d-riso .checks .cell { justify-items: center; }
+.d-riso .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 8px; }
+.d-riso .icons li { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.d-riso .icons .ic { width: 24px; height: 24px; color: var(--blue); }
+.d-riso .icons .cap { font-size: 11px; overflow-wrap: anywhere; }
+.d-riso .chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 12px; }
+.d-riso .chips li { display: grid; grid-template-columns: 36px 1fr; column-gap: 10px; align-items: center; }
+.d-riso .chip { position: relative; isolation: isolate; width: 36px; height: 36px; box-shadow: inset 0 0 0 1px var(--rule); }
+.d-riso .chip--over .plate--p { right: 9px; bottom: 9px; }
+.d-riso .chip--over .plate--b { left: 9px; top: 9px; }
+.d-riso .hex { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.d-riso .role { font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
+</style>
+
+<section class="d-riso" aria-label="Різограф: екран «Дорога»">
+
+  <header class="band">
+    <a class="mark" href="#">WAY</a>
+    <nav class="nav" aria-label="Розділи">
+      <a href="#">Сьогодні</a>
+      <a href="#" aria-current="page">Дорога</a>
+      <a href="#">Тиждень</a>
+    </nav>
+  </header>
+
+  <nav class="roads" aria-label="Дороги тижня">
+    <span class="roads__label" title="Дороги тижня"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path fill-rule="evenodd" d="M18.5 14C20.4328 14 21.9997 15.4581 22 17.2568C22 19.0417 20.8825 21.1253 19.1396 21.8701C18.7336 22.0435 18.2664 22.0435 17.8604 21.8701C16.1175 21.1253 15 19.0417 15 17.2568C15.0003 15.4581 16.5672 14 18.5 14ZM18.5 16.5C17.9477 16.5 17.5 16.9477 17.5 17.5C17.5 18.0523 17.9477 18.5 18.5 18.5C19.0523 18.5 19.5 18.0523 19.5 17.5C19.5 16.9477 19.0523 16.5 18.5 16.5Z" clip-rule="evenodd"/><path d="M16.1318 4.25C18.8831 4.25 19.9295 7.84324 17.6084 9.32031L7.19727 15.9453C6.14222 16.6167 6.61765 18.25 7.86816 18.25H10.1895L9.96973 18.0303C9.6769 17.7374 9.6769 17.2626 9.96973 16.9697C10.2626 16.6768 10.7374 16.6769 11.0303 16.9697L12.5303 18.4697C12.8232 18.7626 12.8232 19.2374 12.5303 19.5303L11.0303 21.0303C10.7374 21.3231 10.2626 21.3231 9.96973 21.0303C9.6769 20.7374 9.6769 20.2626 9.96973 19.9697L10.1895 19.75H7.86816C5.11698 19.75 4.07057 16.1568 6.3916 14.6797L16.8027 8.05469C17.8578 7.38329 17.3824 5.75 16.1318 5.75H12C11.5858 5.74995 11.25 5.41418 11.25 5C11.25 4.58582 11.5858 4.25005 12 4.25H16.1318Z"/><path fill-rule="evenodd" d="M5.5 2C7.43282 2 8.99972 3.45809 9 5.25684C9 7.04171 7.88254 9.1253 6.13965 9.87012C5.73361 10.0435 5.26639 10.0435 4.86035 9.87012C3.11746 9.1253 2 7.04171 2 5.25684C2.00028 3.45809 3.56718 2 5.5 2ZM5.5 4.5C4.94772 4.5 4.5 4.94772 4.5 5.5C4.5 6.05228 4.94772 6.5 5.5 6.5C6.05228 6.5 6.5 6.05228 6.5 5.5C6.5 4.94772 6.05228 4.5 5.5 4.5Z" clip-rule="evenodd"/></g></svg><span class="vh">Дороги тижня</span></span>
+    <ul class="roads__list">
+      <li><a href="#" aria-current="page">Портфоліо</a></li>
+      <li><a href="#">Англійська</a></li>
+      <li><a href="#">Моушн-дизайн</a></li>
+    </ul>
+  </nav>
+
+  <div class="head">
+    <h1>Портфоліо</h1>
+    <div class="head__meta">
+      <p class="state"><span class="pill">у русі</span><span class="state__num">5</span><span class="state__txt">кроків<br>від старту</span></p>
+      <p class="sign"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z"/><path fill-rule="evenodd" d="M2 12C2 11.161 2 10.4153 2.0129 9.75H21.9871C22 10.4153 22 11.161 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12ZM17 14C17.5523 14 18 13.5523 18 13C18 12.4477 17.5523 12 17 12C16.4477 12 16 12.4477 16 13C16 13.5523 16.4477 14 17 14ZM17 18C17.5523 18 18 17.5523 18 17C18 16.4477 17.5523 16 17 16C16.4477 16 16 16.4477 16 17C16 17.5523 16.4477 18 17 18ZM13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12C12.5523 12 13 12.4477 13 13ZM13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16C12.5523 16 13 16.4477 13 17ZM7 14C7.55228 14 8 13.5523 8 13C8 12.4477 7.55228 12 7 12C6.44772 12 6 12.4477 6 13C6 13.5523 6.44772 14 7 14ZM7 18C7.55228 18 8 17.5523 8 17C8 16.4477 7.55228 16 7 16C6.44772 16 6 16.4477 6 17C6 17.5523 6.44772 18 7 18Z" clip-rule="evenodd"/></g></svg>Дедлайн: не задано</p>
+    </div>
+  </div>
+
+  <section class="path" aria-labelledby="riso-path-h">
+    <h2 class="sect-h" id="riso-path-h">Пройдене</h2>
+    <ol class="track" reversed>
+      <li class="row row--finish">
+        <span class="rail"><span class="node node--finish"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M5.75 1C6.16421 1 6.5 1.33579 6.5 1.75V3.6L8.22067 3.25587C9.8712 2.92576 11.5821 3.08284 13.1449 3.70797L13.5582 3.87329C14.9831 4.44323 16.5513 4.54967 18.0401 4.17746C18.6711 4.01972 19.1778 4.7036 18.8432 5.26132L17.5647 7.39221C17.2232 7.96137 17.0524 8.24595 17.0119 8.55549C16.9951 8.68461 16.9951 8.81539 17.0119 8.94451C17.0524 9.25405 17.2232 9.53863 17.5647 10.1078L19.1253 12.7089C19.4361 13.2269 19.1582 13.898 18.5721 14.0445L18.472 14.0695C16.7024 14.5119 14.8385 14.3854 13.1449 13.708C11.5821 13.0828 9.8712 12.9258 8.22067 13.2559L6.5 13.6V21.75C6.5 22.1642 6.16421 22.5 5.75 22.5C5.33579 22.5 5 22.1642 5 21.75V1.75C5 1.33579 5.33579 1 5.75 1Z"/></svg></span></span>
+        <div>
+          <p class="finish-lbl">Фініш</p>
+          <p class="finish-txt">Три кейси на сайті, з якими не соромно йти на співбесіду</p>
+        </div>
+      </li>
+      <li class="row row--ahead">
+        <span class="rail"></span>
+        <div>
+          <p class="stage">Сайт <small>попереду</small></p>
+        </div>
+        <p class="blank">Далі аркуш ще чистий: дорогу надрукує наступний крок.</p>
+      </li>
+      <li class="row row--stage">
+        <span class="rail"></span>
+        <p class="stage">Кейси <small>тут зараз</small></p>
+      </li>
+      <li class="row">
+        <span class="rail">
+          <span class="seg seg--b is-doing"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node node--doing"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <p class="step">Другий кейс<span class="meta">у роботі</span></p>
+      </li>
+      <li class="row">
+        <span class="rail">
+          <span class="seg seg--t is-doing"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="seg seg--b"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node node--now"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <div>
+          <p class="step step--done"><span class="hl">Дописати вступ до кейсу про застосунок для бігу</span></p>
+          <span class="tag">щойно</span>
+        </div>
+      </li>
+      <li class="row">
+        <span class="rail">
+          <span class="seg seg--t"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="seg seg--b"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <p class="step step--done">Структура другого кейсу<span class="meta">записано заднім числом, сьогодні</span></p>
+      </li>
+      <li class="row">
+        <span class="rail">
+          <span class="seg seg--t"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="seg seg--b"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <p class="step step--done">Перший кейс на сайті</p>
+      </li>
+      <li class="row">
+        <span class="rail">
+          <span class="seg seg--t"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="seg seg--b"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <p class="step step--done">Зібрати матеріали першого кейсу</p>
+      </li>
+      <li class="row row--stage">
+        <span class="rail"><span class="seg seg--full"><i class="plate plate--p"></i><i class="plate plate--b"></i></span></span>
+        <p class="stage">Відбір проєктів <small>пройдено</small></p>
+      </li>
+      <li class="row">
+        <span class="rail">
+          <span class="seg seg--t"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="seg seg--b"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <p class="step step--done">Обрати три проєкти для кейсів</p>
+      </li>
+      <li class="row row--start">
+        <span class="rail">
+          <span class="seg seg--t"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+          <span class="node node--start"><i class="plate plate--p"></i><i class="plate plate--b"></i></span>
+        </span>
+        <div>
+          <p class="finish-lbl">Старт</p>
+          <p class="step">Кейсів немає, є лише старий Behance</p>
+        </div>
+      </li>
+    </ol>
+    <p class="vh">Дорога «Портфоліо»: від старту пройдено п'ять кроків, останній — «Дописати вступ до кейсу про застосунок для бігу», щойно. Другий кейс у роботі. Фініш попереду.</p>
+  </section>
+
+  <section class="here" aria-labelledby="riso-here-h">
+    <h2 class="sect-h" id="riso-here-h"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.58172 2 4 6.00258 4 10.5C4 14.9622 6.55332 19.8124 10.5371 21.6744C11.4657 22.1085 12.5343 22.1085 13.4629 21.6744C17.4467 19.8124 20 14.9622 20 10.5C20 6.00258 16.4183 2 12 2ZM12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" clip-rule="evenodd"/></svg>Де я зараз</h2>
+    <p class="here__pos">Етап «Кейси»: перший кейс уже на сайті, у другого є структура й вступ.</p>
+    <p class="here__note">Позицію визначає продукт — за пройденим і фінішем. Якщо не збігається з відчуттям, поправ.</p>
+    <button class="linkbtn" type="button">Поправити позицію</button>
+  </section>
+
+  <section class="next" aria-labelledby="riso-next-h">
+    <h2 class="sect-h" id="riso-next-h">Наступний крок</h2>
+    <p class="next__step">Відібрати 6–8 екранів для кейсу про застосунок для бігу</p>
+    <p class="next__why">Пропоную, бо вступ готовий, а без екранів кейс не покажеш.</p>
+    <div class="next__acts">
+      <div class="pri-row">
+        <button class="btn btn--wide" type="button">Взяти на сьогодні <svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.8351 11.6296L9.20467 5.1999C8.79094 4.79869 8 5.04189 8 5.5703L8 18.4297C8 18.9581 8.79094 19.2013 9.20467 18.8001L15.8351 12.3704C16.055 12.1573 16.0549 11.8427 15.8351 11.6296Z"/></svg></button>
+        <button class="linkbtn linkbtn--quiet" type="button"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM12 7.25C11.5858 7.25 11.25 7.58579 11.25 8V12C11.25 12.1989 11.3291 12.3896 11.4697 12.5303L13.9697 15.0303C14.2626 15.3232 14.7374 15.3232 15.0303 15.0303C15.3232 14.7374 15.3232 14.2626 15.0303 13.9697L12.75 11.6895V8C12.75 7.58579 12.4142 7.25 12 7.25Z" clip-rule="evenodd"/></svg>Відкласти</button>
+      </div>
+      <div class="sec-row">
+        <button class="btn2" type="button"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M21.1938 2.80624C22.2687 3.88124 22.2687 5.62415 21.1938 6.69914L20.6982 7.19469C20.5539 7.16345 20.3722 7.11589 20.1651 7.04404C19.6108 6.85172 18.8823 6.48827 18.197 5.803C17.5117 5.11774 17.1483 4.38923 16.956 3.8349C16.8841 3.62781 16.8366 3.44609 16.8053 3.30179L17.3009 2.80624C18.3759 1.73125 20.1188 1.73125 21.1938 2.80624Z"/><path d="M14.5801 13.3128C14.1761 13.7168 13.9741 13.9188 13.7513 14.0926C13.4886 14.2975 13.2043 14.4732 12.9035 14.6166C12.6485 14.7381 12.3775 14.8284 11.8354 15.0091L8.97709 15.9619C8.71035 16.0508 8.41626 15.9814 8.21744 15.7826C8.01862 15.5837 7.9492 15.2897 8.03811 15.0229L8.99089 12.1646C9.17157 11.6225 9.26191 11.3515 9.38344 11.0965C9.52679 10.7957 9.70249 10.5114 9.90743 10.2487C10.0812 10.0259 10.2832 9.82394 10.6872 9.41993L15.6033 4.50385C15.867 5.19804 16.3293 6.05663 17.1363 6.86366C17.9434 7.67069 18.802 8.13296 19.4962 8.39674L14.5801 13.3128Z"/><path d="M20.5355 20.5355C22 19.0711 22 16.714 22 12C22 10.4517 22 9.15774 21.9481 8.0661L15.586 14.4283C15.2347 14.7797 14.9708 15.0437 14.6738 15.2753C14.3252 15.5473 13.948 15.7804 13.5488 15.9706C13.2088 16.1327 12.8546 16.2506 12.3833 16.4076L9.45143 17.3849C8.64568 17.6535 7.75734 17.4438 7.15678 16.8432C6.55621 16.2427 6.34651 15.3543 6.61509 14.5486L7.59235 11.6167C7.74936 11.1454 7.86732 10.7912 8.02935 10.4512C8.21958 10.052 8.45272 9.6748 8.72466 9.32615C8.9563 9.02918 9.22032 8.76528 9.57173 8.41404L15.9339 2.05188C14.8423 2 13.5483 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355Z"/></g></svg>Записати свій крок</button>
+        <button class="btn2" type="button"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12.0789 2.25C7.2854 2.25 3.34478 5.913 2.96055 10.5833H2.00002C1.69614 10.5833 1.42229 10.7667 1.30655 11.0477C1.19081 11.3287 1.25606 11.6517 1.47178 11.8657L3.15159 13.5324C3.444 13.8225 3.91567 13.8225 4.20808 13.5324L5.88789 11.8657C6.10361 11.6517 6.16886 11.3287 6.05312 11.0477C5.93738 10.7667 5.66353 10.5833 5.35965 10.5833H4.4668C4.84652 6.75167 8.10479 3.75 12.0789 3.75C14.8484 3.75 17.2727 5.20845 18.6156 7.39279C18.8325 7.74565 19.2944 7.85585 19.6473 7.63892C20.0002 7.42199 20.1104 6.96007 19.8934 6.60721C18.2871 3.99427 15.3873 2.25 12.0789 2.25Z"/><path d="M20.8411 10.4666C20.549 10.1778 20.0789 10.1778 19.7867 10.4666L18.1005 12.1333C17.8841 12.3471 17.8184 12.6703 17.9339 12.9517C18.0495 13.233 18.3235 13.4167 18.6277 13.4167H19.5268C19.1455 17.2462 15.8759 20.25 11.8828 20.25C9.10026 20.25 6.66586 18.7903 5.31796 16.6061C5.10042 16.2536 4.63833 16.1442 4.28583 16.3618C3.93334 16.5793 3.82393 17.0414 4.04146 17.3939C5.65407 20.007 8.56406 21.75 11.8828 21.75C16.6906 21.75 20.6475 18.0892 21.0331 13.4167H22.0002C22.3043 13.4167 22.5783 13.233 22.6939 12.9517C22.8095 12.6703 22.7437 12.3471 22.5274 12.1333L20.8411 10.4666Z"/></g></svg>Інша пропозиція</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stages" aria-labelledby="riso-stages-h">
+    <h2 class="sect-h" id="riso-stages-h">Етапи</h2>
+    <ol>
+      <li><span class="sq"><i class="plate plate--p"></i><i class="plate plate--b"></i></span><span class="nm">Відбір проєктів</span><span class="st">пройдено</span></li>
+      <li aria-current="step"><span class="sq sq--here"></span><span class="nm">Кейси</span><span class="st">тут зараз</span></li>
+      <li><span class="sq sq--ahead"></span><span class="nm">Сайт</span><span class="st">попереду</span></li>
+    </ol>
+  </section>
+
+  <aside class="float" aria-label="Крок на сьогодні">
+    <div>
+      <p class="float__road"><b>Англійська</b> · крок на сьогодні</p>
+      <p class="float__step">20 хвилин розмовного клубу</p>
+    </div>
+    <button class="check" type="button" aria-pressed="false"><span class="box box--doing" aria-hidden="true"></span>Зроблено</button>
+  </aside>
+
+  <div class="spec" aria-label="Специмен напряму «Різограф»">
+    <div>
+      <h3>Шрифти</h3>
+      <div class="fonts">
+        <div>
+          <p class="font__s1" lang="uk">Ґанок, їжак і є дорога</p>
+          <p class="font__cap"><b>Dela Gothic One 400</b> — назва дороги, етапи, великі цифри</p>
+        </div>
+        <div>
+          <p class="font__s2" lang="uk"><b>Наступний крок</b> — їхати далі, <span>ґрунт під ногами вже є</span></p>
+          <p class="font__cap"><b>Geologica 300–700</b> — увесь інтерфейс і текст</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Кнопки</h3>
+      <div class="grid4">
+        <div class="cell"><button class="btn" type="button">Взяти на сьогодні</button><span class="cap">звичайна</span></div>
+        <div class="cell"><button class="btn is-hover" type="button">Взяти на сьогодні</button><span class="cap">наведення: рожевий шар з'їхав на 3px</span></div>
+        <div class="cell"><button class="btn is-focus" type="button">Взяти на сьогодні</button><span class="cap">фокус: рожева рамка 2px</span></div>
+        <div class="cell"><button class="btn is-disabled" type="button" disabled>Взяти на сьогодні</button><span class="cap">недоступна: синій 30%</span></div>
+        <div class="cell"><button class="btn2" type="button"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M21.1938 2.80624C22.2687 3.88124 22.2687 5.62415 21.1938 6.69914L20.6982 7.19469C20.5539 7.16345 20.3722 7.11589 20.1651 7.04404C19.6108 6.85172 18.8823 6.48827 18.197 5.803C17.5117 5.11774 17.1483 4.38923 16.956 3.8349C16.8841 3.62781 16.8366 3.44609 16.8053 3.30179L17.3009 2.80624C18.3759 1.73125 20.1188 1.73125 21.1938 2.80624Z"/><path d="M14.5801 13.3128C14.1761 13.7168 13.9741 13.9188 13.7513 14.0926C13.4886 14.2975 13.2043 14.4732 12.9035 14.6166C12.6485 14.7381 12.3775 14.8284 11.8354 15.0091L8.97709 15.9619C8.71035 16.0508 8.41626 15.9814 8.21744 15.7826C8.01862 15.5837 7.9492 15.2897 8.03811 15.0229L8.99089 12.1646C9.17157 11.6225 9.26191 11.3515 9.38344 11.0965C9.52679 10.7957 9.70249 10.5114 9.90743 10.2487C10.0812 10.0259 10.2832 9.82394 10.6872 9.41993L15.6033 4.50385C15.867 5.19804 16.3293 6.05663 17.1363 6.86366C17.9434 7.67069 18.802 8.13296 19.4962 8.39674L14.5801 13.3128Z"/><path d="M20.5355 20.5355C22 19.0711 22 16.714 22 12C22 10.4517 22 9.15774 21.9481 8.0661L15.586 14.4283C15.2347 14.7797 14.9708 15.0437 14.6738 15.2753C14.3252 15.5473 13.948 15.7804 13.5488 15.9706C13.2088 16.1327 12.8546 16.2506 12.3833 16.4076L9.45143 17.3849C8.64568 17.6535 7.75734 17.4438 7.15678 16.8432C6.55621 16.2427 6.34651 15.3543 6.61509 14.5486L7.59235 11.6167C7.74936 11.1454 7.86732 10.7912 8.02935 10.4512C8.21958 10.052 8.45272 9.6748 8.72466 9.32615C8.9563 9.02918 9.22032 8.76528 9.57173 8.41404L15.9339 2.05188C14.8423 2 13.5483 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355Z"/></g></svg>Записати свій крок</button><span class="cap">другорядна</span></div>
+        <div class="cell"><button class="btn2 is-hover" type="button"><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M21.1938 2.80624C22.2687 3.88124 22.2687 5.62415 21.1938 6.69914L20.6982 7.19469C20.5539 7.16345 20.3722 7.11589 20.1651 7.04404C19.6108 6.85172 18.8823 6.48827 18.197 5.803C17.5117 5.11774 17.1483 4.38923 16.956 3.8349C16.8841 3.62781 16.8366 3.44609 16.8053 3.30179L17.3009 2.80624C18.3759 1.73125 20.1188 1.73125 21.1938 2.80624Z"/><path d="M14.5801 13.3128C14.1761 13.7168 13.9741 13.9188 13.7513 14.0926C13.4886 14.2975 13.2043 14.4732 12.9035 14.6166C12.6485 14.7381 12.3775 14.8284 11.8354 15.0091L8.97709 15.9619C8.71035 16.0508 8.41626 15.9814 8.21744 15.7826C8.01862 15.5837 7.9492 15.2897 8.03811 15.0229L8.99089 12.1646C9.17157 11.6225 9.26191 11.3515 9.38344 11.0965C9.52679 10.7957 9.70249 10.5114 9.90743 10.2487C10.0812 10.0259 10.2832 9.82394 10.6872 9.41993L15.6033 4.50385C15.867 5.19804 16.3293 6.05663 17.1363 6.86366C17.9434 7.67069 18.802 8.13296 19.4962 8.39674L14.5801 13.3128Z"/><path d="M20.5355 20.5355C22 19.0711 22 16.714 22 12C22 10.4517 22 9.15774 21.9481 8.0661L15.586 14.4283C15.2347 14.7797 14.9708 15.0437 14.6738 15.2753C14.3252 15.5473 13.948 15.7804 13.5488 15.9706C13.2088 16.1327 12.8546 16.2506 12.3833 16.4076L9.45143 17.3849C8.64568 17.6535 7.75734 17.4438 7.15678 16.8432C6.55621 16.2427 6.34651 15.3543 6.61509 14.5486L7.59235 11.6167C7.74936 11.1454 7.86732 10.7912 8.02935 10.4512C8.21958 10.052 8.45272 9.6748 8.72466 9.32615C8.9563 9.02918 9.22032 8.76528 9.57173 8.41404L15.9339 2.05188C14.8423 2 13.5483 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355Z"/></g></svg>Записати свій крок</button><span class="cap">другорядна, наведення</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Позначка кроку</h3>
+      <div class="checks">
+        <div class="cell"><span class="box box--todo"></span><span class="cap">не почато</span></div>
+        <div class="cell"><span class="box box--doing"></span><span class="cap">у роботі</span></div>
+        <div class="cell"><span class="box box--done"></span><span class="cap">зроблено</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Іконки · Solar Bold</h3>
+      <ul class="icons">
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M5.75 1C6.16421 1 6.5 1.33579 6.5 1.75V3.6L8.22067 3.25587C9.8712 2.92576 11.5821 3.08284 13.1449 3.70797L13.5582 3.87329C14.9831 4.44323 16.5513 4.54967 18.0401 4.17746C18.6711 4.01972 19.1778 4.7036 18.8432 5.26132L17.5647 7.39221C17.2232 7.96137 17.0524 8.24595 17.0119 8.55549C16.9951 8.68461 16.9951 8.81539 17.0119 8.94451C17.0524 9.25405 17.2232 9.53863 17.5647 10.1078L19.1253 12.7089C19.4361 13.2269 19.1582 13.898 18.5721 14.0445L18.472 14.0695C16.7024 14.5119 14.8385 14.3854 13.1449 13.708C11.5821 13.0828 9.8712 12.9258 8.22067 13.2559L6.5 13.6V21.75C6.5 22.1642 6.16421 22.5 5.75 22.5C5.33579 22.5 5 22.1642 5 21.75V1.75C5 1.33579 5.33579 1 5.75 1Z"/></svg><span class="cap">flag-2-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2C7.58172 2 4 6.00258 4 10.5C4 14.9622 6.55332 19.8124 10.5371 21.6744C11.4657 22.1085 12.5343 22.1085 13.4629 21.6744C17.4467 19.8124 20 14.9622 20 10.5C20 6.00258 16.4183 2 12 2ZM12 12C13.1046 12 14 11.1046 14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12Z" clip-rule="evenodd"/></svg><span class="cap">map-point-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path fill-rule="evenodd" d="M18.5 14C20.4328 14 21.9997 15.4581 22 17.2568C22 19.0417 20.8825 21.1253 19.1396 21.8701C18.7336 22.0435 18.2664 22.0435 17.8604 21.8701C16.1175 21.1253 15 19.0417 15 17.2568C15.0003 15.4581 16.5672 14 18.5 14ZM18.5 16.5C17.9477 16.5 17.5 16.9477 17.5 17.5C17.5 18.0523 17.9477 18.5 18.5 18.5C19.0523 18.5 19.5 18.0523 19.5 17.5C19.5 16.9477 19.0523 16.5 18.5 16.5Z" clip-rule="evenodd"/><path d="M16.1318 4.25C18.8831 4.25 19.9295 7.84324 17.6084 9.32031L7.19727 15.9453C6.14222 16.6167 6.61765 18.25 7.86816 18.25H10.1895L9.96973 18.0303C9.6769 17.7374 9.6769 17.2626 9.96973 16.9697C10.2626 16.6768 10.7374 16.6769 11.0303 16.9697L12.5303 18.4697C12.8232 18.7626 12.8232 19.2374 12.5303 19.5303L11.0303 21.0303C10.7374 21.3231 10.2626 21.3231 9.96973 21.0303C9.6769 20.7374 9.6769 20.2626 9.96973 19.9697L10.1895 19.75H7.86816C5.11698 19.75 4.07057 16.1568 6.3916 14.6797L16.8027 8.05469C17.8578 7.38329 17.3824 5.75 16.1318 5.75H12C11.5858 5.74995 11.25 5.41418 11.25 5C11.25 4.58582 11.5858 4.25005 12 4.25H16.1318Z"/><path fill-rule="evenodd" d="M5.5 2C7.43282 2 8.99972 3.45809 9 5.25684C9 7.04171 7.88254 9.1253 6.13965 9.87012C5.73361 10.0435 5.26639 10.0435 4.86035 9.87012C3.11746 9.1253 2 7.04171 2 5.25684C2.00028 3.45809 3.56718 2 5.5 2ZM5.5 4.5C4.94772 4.5 4.5 4.94772 4.5 5.5C4.5 6.05228 4.94772 6.5 5.5 6.5C6.05228 6.5 6.5 6.05228 6.5 5.5C6.5 4.94772 6.05228 4.5 5.5 4.5Z" clip-rule="evenodd"/></g></svg><span class="cap">routing-2-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z"/><path fill-rule="evenodd" d="M2 12C2 11.161 2 10.4153 2.0129 9.75H21.9871C22 10.4153 22 11.161 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12ZM17 14C17.5523 14 18 13.5523 18 13C18 12.4477 17.5523 12 17 12C16.4477 12 16 12.4477 16 13C16 13.5523 16.4477 14 17 14ZM17 18C17.5523 18 18 17.5523 18 17C18 16.4477 17.5523 16 17 16C16.4477 16 16 16.4477 16 17C16 17.5523 16.4477 18 17 18ZM13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12C12.5523 12 13 12.4477 13 13ZM13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16C12.5523 16 13 16.4477 13 17ZM7 14C7.55228 14 8 13.5523 8 13C8 12.4477 7.55228 12 7 12C6.44772 12 6 12.4477 6 13C6 13.5523 6.44772 14 7 14ZM7 18C7.55228 18 8 17.5523 8 17C8 16.4477 7.55228 16 7 16C6.44772 16 6 16.4477 6 17C6 17.5523 6.44772 18 7 18Z" clip-rule="evenodd"/></g></svg><span class="cap">calendar-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.8351 11.6296L9.20467 5.1999C8.79094 4.79869 8 5.04189 8 5.5703L8 18.4297C8 18.9581 8.79094 19.2013 9.20467 18.8001L15.8351 12.3704C16.055 12.1573 16.0549 11.8427 15.8351 11.6296Z"/></svg><span class="cap">alt-arrow-right-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M21.1938 2.80624C22.2687 3.88124 22.2687 5.62415 21.1938 6.69914L20.6982 7.19469C20.5539 7.16345 20.3722 7.11589 20.1651 7.04404C19.6108 6.85172 18.8823 6.48827 18.197 5.803C17.5117 5.11774 17.1483 4.38923 16.956 3.8349C16.8841 3.62781 16.8366 3.44609 16.8053 3.30179L17.3009 2.80624C18.3759 1.73125 20.1188 1.73125 21.1938 2.80624Z"/><path d="M14.5801 13.3128C14.1761 13.7168 13.9741 13.9188 13.7513 14.0926C13.4886 14.2975 13.2043 14.4732 12.9035 14.6166C12.6485 14.7381 12.3775 14.8284 11.8354 15.0091L8.97709 15.9619C8.71035 16.0508 8.41626 15.9814 8.21744 15.7826C8.01862 15.5837 7.9492 15.2897 8.03811 15.0229L8.99089 12.1646C9.17157 11.6225 9.26191 11.3515 9.38344 11.0965C9.52679 10.7957 9.70249 10.5114 9.90743 10.2487C10.0812 10.0259 10.2832 9.82394 10.6872 9.41993L15.6033 4.50385C15.867 5.19804 16.3293 6.05663 17.1363 6.86366C17.9434 7.67069 18.802 8.13296 19.4962 8.39674L14.5801 13.3128Z"/><path d="M20.5355 20.5355C22 19.0711 22 16.714 22 12C22 10.4517 22 9.15774 21.9481 8.0661L15.586 14.4283C15.2347 14.7797 14.9708 15.0437 14.6738 15.2753C14.3252 15.5473 13.948 15.7804 13.5488 15.9706C13.2088 16.1327 12.8546 16.2506 12.3833 16.4076L9.45143 17.3849C8.64568 17.6535 7.75734 17.4438 7.15678 16.8432C6.55621 16.2427 6.34651 15.3543 6.61509 14.5486L7.59235 11.6167C7.74936 11.1454 7.86732 10.7912 8.02935 10.4512C8.21958 10.052 8.45272 9.6748 8.72466 9.32615C8.9563 9.02918 9.22032 8.76528 9.57173 8.41404L15.9339 2.05188C14.8423 2 13.5483 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355Z"/></g></svg><span class="cap">pen-new-square-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12.0789 2.25C7.2854 2.25 3.34478 5.913 2.96055 10.5833H2.00002C1.69614 10.5833 1.42229 10.7667 1.30655 11.0477C1.19081 11.3287 1.25606 11.6517 1.47178 11.8657L3.15159 13.5324C3.444 13.8225 3.91567 13.8225 4.20808 13.5324L5.88789 11.8657C6.10361 11.6517 6.16886 11.3287 6.05312 11.0477C5.93738 10.7667 5.66353 10.5833 5.35965 10.5833H4.4668C4.84652 6.75167 8.10479 3.75 12.0789 3.75C14.8484 3.75 17.2727 5.20845 18.6156 7.39279C18.8325 7.74565 19.2944 7.85585 19.6473 7.63892C20.0002 7.42199 20.1104 6.96007 19.8934 6.60721C18.2871 3.99427 15.3873 2.25 12.0789 2.25Z"/><path d="M20.8411 10.4666C20.549 10.1778 20.0789 10.1778 19.7867 10.4666L18.1005 12.1333C17.8841 12.3471 17.8184 12.6703 17.9339 12.9517C18.0495 13.233 18.3235 13.4167 18.6277 13.4167H19.5268C19.1455 17.2462 15.8759 20.25 11.8828 20.25C9.10026 20.25 6.66586 18.7903 5.31796 16.6061C5.10042 16.2536 4.63833 16.1442 4.28583 16.3618C3.93334 16.5793 3.82393 17.0414 4.04146 17.3939C5.65407 20.007 8.56406 21.75 11.8828 21.75C16.6906 21.75 20.6475 18.0892 21.0331 13.4167H22.0002C22.3043 13.4167 22.5783 13.233 22.6939 12.9517C22.8095 12.6703 22.7437 12.3471 22.5274 12.1333L20.8411 10.4666Z"/></g></svg><span class="cap">refresh-bold</span></li>
+        <li><svg aria-hidden="true" focusable="false" class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM12 7.25C11.5858 7.25 11.25 7.58579 11.25 8V12C11.25 12.1989 11.3291 12.3896 11.4697 12.5303L13.9697 15.0303C14.2626 15.3232 14.7374 15.3232 15.0303 15.0303C15.3232 14.7374 15.3232 14.2626 15.0303 13.9697L12.75 11.6895V8C12.75 7.58579 12.4142 7.25 12 7.25Z" clip-rule="evenodd"/></svg><span class="cap">clock-circle-bold</span></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Фарби</h3>
+      <ul class="chips">
+        <li><span class="chip" style="background:#EFEFEC"></span><span><span class="hex">#EFEFEC</span><br><span class="role">папір, тло</span></span></li>
+        <li><span class="chip" style="background:#14213D"></span><span><span class="hex">#14213D</span><br><span class="role">чорнило, текст</span></span></li>
+        <li><span class="chip" style="background:#FF48B0"></span><span><span class="hex">#FF48B0</span><br><span class="role">Fluorescent Pink: тут і щойно</span></span></li>
+        <li><span class="chip" style="background:#0078BF"></span><span><span class="hex">#0078BF</span><br><span class="role">Riso Blue: дія і план</span></span></li>
+        <li><span class="chip chip--over"><i class="plate plate--p"></i><i class="plate plate--b"></i></span><span><span class="hex">#472D90</span><br><span class="role">накладка: пройдене</span></span></li>
+        <li><span class="chip" style="background:#47536B"></span><span><span class="hex">#47536B</span><br><span class="role">другорядний текст</span></span></li>
+        <li><span class="chip" style="background:#FFFFFF"></span><span><span class="hex">#FFFFFF</span><br><span class="role">виворіт: текст на синьому</span></span></li>
+        <li><span class="chip" style="background:#A7C9DA"></span><span><span class="hex">#A7C9DA</span><br><span class="role">синій 30%: недоступне</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
